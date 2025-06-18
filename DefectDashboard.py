@@ -296,8 +296,8 @@ if selection.empty :
     spin_multiplicity = ele12.loc[:,"Spin multiplicity"]
     spin_multiplicity_m = spin_multiplicity.reset_index().drop("index", axis='columns')
 
-    chosen_host = ele12.loc[:,"Host"]
-    chosen_host_m = chosen_host.reset_index().drop("index", axis='columns')
+    host = ele12.loc[:,"Host"]
+    host_m = host.reset_index().drop("index", axis='columns')
 
     chosenlist = ele12.loc[:,['Defect','Charge state','Optical spin transition','Spin multiplicity','Host']].to_numpy()
 else:
@@ -313,8 +313,8 @@ else:
     spin_multiplicity = selection.loc[:,"Spin multiplicity"]
     spin_multiplicity_m = spin_multiplicity.reset_index().drop("index", axis='columns')
 
-    chosen_host = selection.loc[:,"Host"]
-    chosen_host_m = chosen_host.reset_index().drop("index", axis='columns')
+    host = selection.loc[:,"Host"]
+    host_m = host.reset_index().drop("index", axis='columns')
     
     chosenlist = selection.loc[:,['Defect','Charge state','Optical spin transition','Spin multiplicity','Host']].to_numpy()
 
@@ -329,6 +329,7 @@ for tabs in tab_selection:
         chargestate_defect = chargestate_defect_m.iloc[tabs_index,0]
         spin_transition = spin_transition_m.iloc[tabs_index,0]
         spin_multiplicity = spin_multiplicity_m.iloc[tabs_index,0]
+        host = host_m.iloc[tabs_index,0]
 
         try: 
             name_change = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='updated_data',engine = 'openpyxl')

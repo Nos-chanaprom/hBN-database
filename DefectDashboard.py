@@ -394,6 +394,7 @@ for tabs in tab_selection:
                 cif_triplet = "bulk/database/" + str_defect + "/doublet/ground/structure.cif"
                 cif_excited_triplet = "bulk/database/" + str_defect + "/doublet/excited/structure.cif"
             
+            # Band structure
             ### Ground State ###
             df = pd.read_fwf(triplet_path, sep=" ",header=None)  
 
@@ -671,7 +672,7 @@ for tabs in tab_selection:
                         try: 
                             atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
                         except NameError or ValueError:
-                            latexdefect = 'Al_N'
+                            ## latexdefect = 'Al_N'
                             atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
                     atomicposition = pd.DataFrame(columns = ['properties', 'X','Y','Z'])
                     for row in range(atomicposition_sin.shape[0]):

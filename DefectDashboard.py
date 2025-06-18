@@ -355,7 +355,7 @@ for tabs in tab_selection:
             band_energy_spinDown_unfilled_excited_triplet = []
             fermi_energy_excited_triplet = ['0','0']
 
-            if spin_multiplicity == 'singlet' :
+            if spin_multiplicity == 'singlet' and host=='monolayer':
                 triplet_path = "monolayer/database_doublet_singlet/" + str_defect + "/singlet/ground/output_database.txt"
                 excited_triplet_path= "monolayer/database_doublet_singlet/" + str_defect + "/singlet/excited/output_database.txt"
 
@@ -363,7 +363,7 @@ for tabs in tab_selection:
                 atomposition_excited_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/singlet/excited/CONTCAR_cartesian"
 
                 fractional_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/singlet/ground/CONTCAR_fractional"
-                fractional_excited_triplet = "dmonolayer/database_doublet_singlet/" + str_defect + "/singlet/excited/CONTCAR_fractional"
+                fractional_excited_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/singlet/excited/CONTCAR_fractional"
 
                 cif_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/singlet/ground/structure.cif"
                 cif_excited_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/singlet/excited/structure.cif"

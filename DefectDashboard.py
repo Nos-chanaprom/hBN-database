@@ -339,7 +339,7 @@ for tabs in tab_selection:
         except IndexError:
             latexdefect = str_defect
         ##############################33 Singlet Doublet #################################    
-        if (spin_multiplicity == 'singlet'or spin_multiplicity == 'doublet') and host=='monolayer':
+        if spin_multiplicity == 'singlet'or spin_multiplicity == 'doublet':
 
             ### Ground Sate
             band_energy_spinUp_filled_triplet = []
@@ -355,7 +355,7 @@ for tabs in tab_selection:
             band_energy_spinDown_unfilled_excited_triplet = []
             fermi_energy_excited_triplet = ['0','0']
 
-            if spin_multiplicity == 'singlet':
+            if spin_multiplicity == 'singlet' and host=='monolayer':
                 triplet_path = "monolayer/database_doublet_singlet/" + str_defect + "/singlet/ground/output_database.txt"
                 excited_triplet_path= "monolayer/database_doublet_singlet/" + str_defect + "/singlet/excited/output_database.txt"
 
@@ -368,7 +368,7 @@ for tabs in tab_selection:
                 cif_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/singlet/ground/structure.cif"
                 cif_excited_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/singlet/excited/structure.cif"
 
-            elif spin_multiplicity == 'doublet':
+            elif spin_multiplicity == 'doublet' and host=='monolayer':
                 triplet_path = "monolayer/database_doublet_singlet/" + str_defect + "/doublet/ground/output_database.txt"
                 excited_triplet_path= "monolayer/database_doublet_singlet/" + str_defect + "/doublet/excited/output_database.txt"
 
@@ -953,7 +953,7 @@ for tabs in tab_selection:
     
 
         ############################### Triplet  State ########################################3
-        elif spin_multiplicity == 'triplet' and host=='monolayer':
+        elif spin_multiplicity == 'triplet':
             
 
             if chargestate_defect == 0:
@@ -991,7 +991,7 @@ for tabs in tab_selection:
             band_energy_spinDown_unfilled_excited_triplet = []
             fermi_energy_excited_triplet = ['0','0']
 
-            if chosen_chargestate == ["neutral"] :
+            if chosen_chargestate == ["neutral"] and host=='monolayer':
                 singlet_path = "monolayer/database_triplet/" + str_defect + "/singlet/output_database.txt"
                 triplet_path = "monolayer/database_triplet/" + str_defect + "/triplet/output_database.txt"
                 excited_triplet_path= "monolayer/database_triplet/" + str_defect + "/excited_triplet/output_database.txt"
@@ -1105,7 +1105,7 @@ for tabs in tab_selection:
                 fermi_energy_excited_triplet = [float(i) for i in fermi_energy_excited_triplet]
                             
 
-            elif chosen_chargestate == ["charge_positive_1"]  or chosen_chargestate == ["charge_negative_1"]:
+            elif (chosen_chargestate == ["charge_positive_1"]  or chosen_chargestate == ["charge_negative_1"]) and host=='monolayer':
                 singlet_path = "monolayer/database_triplet/" + str_defect + "/" + chosen_chargestate[0]+"/singlet/output_database.txt"
                 triplet_path = "monolayer/database_triplet/" + str_defect + "/" + chosen_chargestate[0]+"/triplet/output_database.txt"
                 excited_triplet_path = "monolayer/database_triplet/" + str_defect + "/" + chosen_chargestate[0]+"/excited_triplet/output_database.txt"

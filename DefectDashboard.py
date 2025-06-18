@@ -423,6 +423,19 @@ for tabs in tab_selection:
 
                 cif_triplet = "bulk/database/" + str_defect + "/doublet/ground/structure.cif"
                 cif_excited_triplet = "bulk/database/" + str_defect + "/doublet/excited/structure.cif"
+
+            elif spin_multiplicity == 'singlet' and host=='bulk':
+                triplet_path = "bulk/database/" + str_defect + "/singlet/ground/output_database.txt"
+                excited_triplet_path= "bulk/database/" + str_defect + "/singlet/excited/output_database.txt"
+
+                atomposition_triplet = "bulk/database/" + str_defect + "/singlet/ground/CONTCAR_cartesian"
+                atomposition_excited_triplet = "bulk/database/" + str_defect + "/singlet/excited/CONTCAR_cartesian"
+
+                fractional_triplet = "bulk/database/" + str_defect + "/singlet/ground/CONTCAR_fractional"
+                fractional_excited_triplet = "bulk/database/" + str_defect + "/singlet/excited/CONTCAR_fractional"
+
+                cif_triplet = "bulk/database/" + str_defect + "/singlet/ground/structure.cif"
+                cif_excited_triplet = "bulk/database/" + str_defect + "/singlet/excited/structure.cif"
             
             # Band structure
             ### Ground State ###

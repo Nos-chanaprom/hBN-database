@@ -236,7 +236,7 @@ with Search_cont:
     st.header("Search engine for hBN defects")
     Photophysical_properties = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='updated_data',engine = 'openpyxl',header=[0])
     ## rounding numbers
-    Photophysical_properties.iloc[:,4:]=Photophysical_properties.iloc[:,4:].round(2)
+    Photophysical_properties.iloc[:,4:]=Photophysical_properties.iloc[:,4:].round(2)  ## select from columns 4
     
     Photophysical_properties["Emission properties: ZPL (nm)"]=Photophysical_properties["Emission properties: ZPL (nm)"].astype(int)
     Photophysical_properties["Excitation properties: Characteristic time (ns)"]=Photophysical_properties["Excitation properties: Characteristic time (ns)"].astype(int)

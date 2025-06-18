@@ -402,26 +402,25 @@ for tabs in tab_selection:
             band_energy_spinDown_filled_triplet = []
             band_energy_spinDown_unfilled_triplet = []
             fermi_energy_triplet = []
-            if host=='monolayer':
-                for row in range(0,512,1):
-                    if row == 0 or row == 256:
-                        df2 = df.iloc[row,0].split(" ")
-                        df_row = [ele for ele in df2 if ele.strip()]
-                        fermi_energy_triplet.append(df_row[2])
-                    elif row > 3 and row < 256: 
-                        df2 = df.iloc[row,0].split(" ")
-                        df_row = [ele for ele in df2 if ele.strip()]
-                        if round(float(df_row[2])) == 1 :
-                            band_energy_spinUp_filled_triplet.append(float(df_row[1]))
-                        elif round(float(df_row[2])) == 0:
-                            band_energy_spinUp_unfilled_triplet.append(float(df_row[1]))
-                    elif row > 259: 
-                        df2 = df.iloc[row,0].split(" ")
-                        df_row = [ele for ele in df2 if ele.strip()]
-                        if round(float(df_row[2])) == 1 :
-                            band_energy_spinDown_filled_triplet.append(float(df_row[1]))
-                        elif round(float(df_row[2])) == 0:
-                            band_energy_spinDown_unfilled_triplet.append(float(df_row[1]))
+            for row in range(0,512,1):
+                if row == 0 or row == 256:
+                    df2 = df.iloc[row,0].split(" ")
+                    df_row = [ele for ele in df2 if ele.strip()]
+                    fermi_energy_triplet.append(df_row[2])
+                elif row > 3 and row < 256: 
+                    df2 = df.iloc[row,0].split(" ")
+                    df_row = [ele for ele in df2 if ele.strip()]
+                    if round(float(df_row[2])) == 1 :
+                        band_energy_spinUp_filled_triplet.append(float(df_row[1]))
+                    elif round(float(df_row[2])) == 0:
+                        band_energy_spinUp_unfilled_triplet.append(float(df_row[1]))
+                elif row > 259: 
+                    df2 = df.iloc[row,0].split(" ")
+                    df_row = [ele for ele in df2 if ele.strip()]
+                    if round(float(df_row[2])) == 1 :
+                        band_energy_spinDown_filled_triplet.append(float(df_row[1]))
+                    elif round(float(df_row[2])) == 0:
+                        band_energy_spinDown_unfilled_triplet.append(float(df_row[1]))
 
             ### Excited State ###
             df = pd.read_fwf(excited_triplet_path, sep=" ",header=None)  
@@ -431,26 +430,25 @@ for tabs in tab_selection:
             band_energy_spinDown_filled_excited_triplet = []
             band_energy_spinDown_unfilled_excited_triplet = []
             fermi_energy_excited_triplet_path = []
-            if host=='monolayer':
-                for row in range(0,512,1):
-                    if row == 0 or row == 256:
-                        df2 = df.iloc[row,0].split(" ")
-                        df_row = [ele for ele in df2 if ele.strip()]
-                        fermi_energy_excited_triplet.append(df_row[2])
-                    elif row > 3 and row < 256: 
-                        df2 = df.iloc[row,0].split(" ")
-                        df_row = [ele for ele in df2 if ele.strip()]
-                        if round(float(df_row[2])) == 1 :
-                            band_energy_spinUp_filled_excited_triplet.append(float(df_row[1]))
-                        elif round(float(df_row[2])) == 0:
-                            band_energy_spinUp_unfilled_excited_triplet.append(float(df_row[1]))
-                    elif row > 259: 
-                        df2 = df.iloc[row,0].split(" ")
-                        df_row = [ele for ele in df2 if ele.strip()]
-                        if round(float(df_row[2])) == 1 :
-                            band_energy_spinDown_filled_excited_triplet.append(float(df_row[1]))
-                        elif round(float(df_row[2])) == 0:
-                            band_energy_spinDown_unfilled_excited_triplet.append(float(df_row[1]))
+            for row in range(0,512,1):
+                if row == 0 or row == 256:
+                    df2 = df.iloc[row,0].split(" ")
+                    df_row = [ele for ele in df2 if ele.strip()]
+                    fermi_energy_excited_triplet.append(df_row[2])
+                elif row > 3 and row < 256: 
+                    df2 = df.iloc[row,0].split(" ")
+                    df_row = [ele for ele in df2 if ele.strip()]
+                    if round(float(df_row[2])) == 1 :
+                        band_energy_spinUp_filled_excited_triplet.append(float(df_row[1]))
+                    elif round(float(df_row[2])) == 0:
+                        band_energy_spinUp_unfilled_excited_triplet.append(float(df_row[1]))
+                elif row > 259: 
+                    df2 = df.iloc[row,0].split(" ")
+                    df_row = [ele for ele in df2 if ele.strip()]
+                    if round(float(df_row[2])) == 1 :
+                        band_energy_spinDown_filled_excited_triplet.append(float(df_row[1]))
+                    elif round(float(df_row[2])) == 0:
+                        band_energy_spinDown_unfilled_excited_triplet.append(float(df_row[1]))
 
             fermi_energy_triplet = [float(i) for i in fermi_energy_triplet]
             fermi_energy_excited_triplet = [float(i) for i in fermi_energy_excited_triplet]

@@ -349,30 +349,30 @@ for tabs in tab_selection:
             fermi_energy_excited_triplet = ['0','0']
 
             if spin_multiplicity == 'singlet':
-                triplet_path = "database_doublet_single/" + str_defect + "/singlet/ground/output_database.txt"
-                excited_triplet_path= "database_doublet_single/" + str_defect + "/singlet/excited/output_database.txt"
+                triplet_path = "monolayer/database_doublet_singlet/" + str_defect + "/singlet/ground/output_database.txt"
+                excited_triplet_path= "monolayer/database_doublet_singlet/" + str_defect + "/singlet/excited/output_database.txt"
 
-                atomposition_triplet = "database_doublet_single/" + str_defect + "/singlet/ground/CONTCAR_cartesian"
-                atomposition_excited_triplet = "database_doublet_single/" + str_defect + "/singlet/excited/CONTCAR_cartesian"
+                atomposition_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/singlet/ground/CONTCAR_cartesian"
+                atomposition_excited_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/singlet/excited/CONTCAR_cartesian"
 
-                fractional_triplet = "database_doublet_single/" + str_defect + "/singlet/ground/CONTCAR_fractional"
-                fractional_excited_triplet = "database_doublet_single/" + str_defect + "/singlet/excited/CONTCAR_fractional"
+                fractional_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/singlet/ground/CONTCAR_fractional"
+                fractional_excited_triplet = "dmonolayer/database_doublet_singlet/" + str_defect + "/singlet/excited/CONTCAR_fractional"
 
-                cif_triplet = "database_doublet_single/" + str_defect + "/singlet/ground/structure.cif"
-                cif_excited_triplet = "database_doublet_single/" + str_defect + "/singlet/excited/structure.cif"
+                cif_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/singlet/ground/structure.cif"
+                cif_excited_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/singlet/excited/structure.cif"
 
             elif spin_multiplicity == 'doublet':
-                triplet_path = "database_doublet_single/" + str_defect + "/doublet/ground/output_database.txt"
-                excited_triplet_path= "database_doublet_single/" + str_defect + "/doublet/excited/output_database.txt"
+                triplet_path = "monolayer/database_doublet_singlet/" + str_defect + "/doublet/ground/output_database.txt"
+                excited_triplet_path= "monolayer/database_doublet_singlet/" + str_defect + "/doublet/excited/output_database.txt"
 
-                atomposition_triplet = "database_doublet_single/" + str_defect + "/doublet/ground/CONTCAR_cartesian"
-                atomposition_excited_triplet = "database_doublet_single/" + str_defect + "/doublet/excited/CONTCAR_cartesian"
+                atomposition_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/doublet/ground/CONTCAR_cartesian"
+                atomposition_excited_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/doublet/excited/CONTCAR_cartesian"
 
-                fractional_triplet = "database_doublet_single/" + str_defect + "/doublet/ground/CONTCAR_fractional"
-                fractional_excited_triplet = "database_doublet_single/" + str_defect + "/doublet/excited/CONTCAR_fractional"
+                fractional_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/doublet/ground/CONTCAR_fractional"
+                fractional_excited_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/doublet/excited/CONTCAR_fractional"
 
-                cif_triplet = "database_doublet_single/" + str_defect + "/doublet/ground/structure.cif"
-                cif_excited_triplet = "database_doublet_single/" + str_defect + "/doublet/excited/structure.cif"
+                cif_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/doublet/ground/structure.cif"
+                cif_excited_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/doublet/excited/structure.cif"
             
             ### Ground State ###
             df = pd.read_fwf(triplet_path, sep=" ",header=None)  
@@ -644,13 +644,13 @@ for tabs in tab_selection:
                     ########################## atomic position data frame  ###################################
                     if  type(chosen_defect) == str:
                         latexdefect = 'Al_N'
-                        atomicposition_sin = pd.read_csv("database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian",sep=';', header=0)        
+                        atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian",sep=';', header=0)        
                     else:
                         try: 
                             atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
                         except NameError or ValueError:
                             latexdefect = 'Al_N'
-                            atomicposition_sin = pd.read_csv("database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
+                            atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
                     atomicposition = pd.DataFrame(columns = ['properties', 'X','Y','Z'])
                     for row in range(atomicposition_sin.shape[0]):
                         if 0 <row<4:
@@ -985,21 +985,21 @@ for tabs in tab_selection:
             fermi_energy_excited_triplet = ['0','0']
 
             if chosen_chargestate == ["neutral"] :
-                singlet_path = "database_triplet/" + str_defect + "/singlet/output_database.txt"
-                triplet_path = "database_triplet/" + str_defect + "/triplet/output_database.txt"
-                excited_triplet_path= "database_triplet/" + str_defect + "/excited_triplet/output_database.txt"
+                singlet_path = "monolayer/database_triplet/" + str_defect + "/singlet/output_database.txt"
+                triplet_path = "monolayer/database_triplet/" + str_defect + "/triplet/output_database.txt"
+                excited_triplet_path= "monolayer/database_triplet/" + str_defect + "/excited_triplet/output_database.txt"
 
-                atomposition_singlet = "database_triplet/" + str_defect + "/singlet/CONTCAR_cartesian"
-                atomposition_triplet = "database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian"
-                atomposition_excited_triplet = "database_triplet/" + str_defect + "/excited_triplet/CONTCAR_cartesian"
+                atomposition_singlet = "monolayer/database_triplet/" + str_defect + "/singlet/CONTCAR_cartesian"
+                atomposition_triplet = "monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian"
+                atomposition_excited_triplet = "monolayer/database_triplet/" + str_defect + "/excited_triplet/CONTCAR_cartesian"
 
-                fractional_singlet = "database_triplet/" + str_defect + "/singlet/CONTCAR_fractional"
-                fractional_triplet = "database_triplet/" + str_defect + "/triplet/CONTCAR_fractional"
-                fractional_excited_triplet = "database_triplet/" + str_defect + "/excited_triplet/CONTCAR_fractional"
+                fractional_singlet = "monolayer/database_triplet/" + str_defect + "/singlet/CONTCAR_fractional"
+                fractional_triplet = "monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_fractional"
+                fractional_excited_triplet = "monolayer/database_triplet/" + str_defect + "/excited_triplet/CONTCAR_fractional"
 
-                cif_singlet = "database_triplet/" + str_defect + "/singlet/structure.cif"
-                cif_triplet = "database_triplet/" + str_defect + "/triplet/structure.cif"
-                cif_excited_triplet = "database_triplet/" + str_defect + "/excited_triplet/structure.cif"
+                cif_singlet = "monolayer/database_triplet/" + str_defect + "/singlet/structure.cif"
+                cif_triplet = "monolayer/database_triplet/" + str_defect + "/triplet/structure.cif"
+                cif_excited_triplet = "monolayer/database_triplet/" + str_defect + "/excited_triplet/structure.cif"
 
                 ### Singlet State ###
                 df = pd.read_fwf(singlet_path, sep=" ",header=None)  
@@ -1062,10 +1062,10 @@ for tabs in tab_selection:
                     df = pd.read_fwf(excited_triplet_path, sep=" ",header=None)
                 except FileNotFoundError:
                     if spin_transition =="down-down":
-                        try1 = "database_triplet/" + str_defect + "/excited_triplet_down/output_database.txt"
+                        try1 = "monolayer/database_triplet/" + str_defect + "/excited_triplet_down/output_database.txt"
                         df = pd.read_fwf(try1, sep=" ",header=None)
                     elif spin_transition =="up-up":
-                        try1 = "database_triplet/" + str_defect + "/excited_triplet_up/output_database.txt"
+                        try1 = "monolayer/database_triplet/" + str_defect + "/excited_triplet_up/output_database.txt"
                         df = pd.read_fwf(try1, sep=" ",header=None)
 
                 band_energy_spinUp_filled_excited_triplet = []
@@ -1099,21 +1099,21 @@ for tabs in tab_selection:
                             
 
             elif chosen_chargestate == ["charge_positive_1"]  or chosen_chargestate == ["charge_negative_1"]:
-                singlet_path = "database_triplet/" + str_defect + "/" + chosen_chargestate[0]+"/singlet/output_database.txt"
-                triplet_path = "database_triplet/" + str_defect + "/" + chosen_chargestate[0]+"/triplet/output_database.txt"
-                excited_triplet_path = "database_triplet/" + str_defect + "/" + chosen_chargestate[0]+"/excited_triplet/output_database.txt"
+                singlet_path = "monolayer/database_triplet/" + str_defect + "/" + chosen_chargestate[0]+"/singlet/output_database.txt"
+                triplet_path = "monolayer/database_triplet/" + str_defect + "/" + chosen_chargestate[0]+"/triplet/output_database.txt"
+                excited_triplet_path = "monolayer/database_triplet/" + str_defect + "/" + chosen_chargestate[0]+"/excited_triplet/output_database.txt"
 
-                atomposition_singlet = "database_triplet/" + str_defect + "/" + chosen_chargestate[0]+ "/singlet/CONTCAR_cartesian"
-                atomposition_triplet = "database_triplet/" + str_defect + "/" + chosen_chargestate[0]+ "/triplet/CONTCAR_cartesian"
-                atomposition_excited_triplet = "database_triplet/" + str_defect + "/" + chosen_chargestate[0]+ "/excited_triplet/CONTCAR_cartesian"
+                atomposition_singlet = "monolayer/database_triplet/" + str_defect + "/" + chosen_chargestate[0]+ "/singlet/CONTCAR_cartesian"
+                atomposition_triplet = "monolayer/database_triplet/" + str_defect + "/" + chosen_chargestate[0]+ "/triplet/CONTCAR_cartesian"
+                atomposition_excited_triplet = "monolayer/database_triplet/" + str_defect + "/" + chosen_chargestate[0]+ "/excited_triplet/CONTCAR_cartesian"
 
-                fractional_singlet = "database_triplet/" + str_defect +"/" + chosen_chargestate[0]+ "/singlet/CONTCAR_fractional"
-                fractional_triplet = "database_triplet/" + str_defect +"/" + chosen_chargestate[0]+ "/triplet/CONTCAR_fractional"
-                fractional_excited_triplet = "database_triplet/" + str_defect +"/" + chosen_chargestate[0]+ "/excited_triplet/CONTCAR_fractional"
+                fractional_singlet = "monolayer/database_triplet/" + str_defect +"/" + chosen_chargestate[0]+ "/singlet/CONTCAR_fractional"
+                fractional_triplet = "monolayer/database_triplet/" + str_defect +"/" + chosen_chargestate[0]+ "/triplet/CONTCAR_fractional"
+                fractional_excited_triplet = "monolayer/database_triplet/" + str_defect +"/" + chosen_chargestate[0]+ "/excited_triplet/CONTCAR_fractional"
 
-                cif_singlet = "database_triplet/" + str_defect + "/" + chosen_chargestate[0]+"/singlet/structure.cif"
-                cif_triplet = "database_triplet/" + str_defect +"/" + chosen_chargestate[0]+ "/triplet/structure.cif"
-                cif_excited_triplet = "database_triplet/" + str_defect +"/" + chosen_chargestate[0]+ "/excited_triplet/structure.cif"
+                cif_singlet = "monolayer/database_triplet/" + str_defect + "/" + chosen_chargestate[0]+"/singlet/structure.cif"
+                cif_triplet = "monolayer/database_triplet/" + str_defect +"/" + chosen_chargestate[0]+ "/triplet/structure.cif"
+                cif_excited_triplet = "monolayer/database_triplet/" + str_defect +"/" + chosen_chargestate[0]+ "/excited_triplet/structure.cif"
 
                 ### Singlet
                 df = pd.read_fwf(singlet_path, sep=" ",header=None)  
@@ -1179,17 +1179,17 @@ for tabs in tab_selection:
                 except FileNotFoundError:
                     if chosen_chargestate == ["charge_negative_1"]:
                         if spin_transition =="down-down":
-                            try1 = "database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_down/output_database.txt"
+                            try1 = "monolayer/database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_down/output_database.txt"
                             df = pd.read_fwf(try1, sep=" ",header=None)
                         elif spin_transition =="up-up":
-                            try1 = "database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_up/output_database.txt"
+                            try1 = "monolayer/database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_up/output_database.txt"
                             df = pd.read_fwf(try1, sep=" ",header=None)
                     elif chosen_chargestate == ["charge_positive_1"]:
                         if spin_transition =="down-down":
-                            try1 = "database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_down/output_database.txt"
+                            try1 = "monolayer/database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_down/output_database.txt"
                             df = pd.read_fwf(try1, sep=" ",header=None)
                         elif spin_transition =="up-up":
-                            try1 = "database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_up/output_database.txt"
+                            try1 = "monolayer/database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_up/output_database.txt"
                             df = pd.read_fwf(try1, sep=" ",header=None)
                 ##################
                 band_energy_spinUp_filled_excited_triplet = []
@@ -1561,13 +1561,13 @@ for tabs in tab_selection:
                     ######################### atomic position data frame  #################################3
                     if  type(chosen_defect) == str:
                         latexdefect = 'Al_N'
-                        atomicposition_sin = pd.read_csv("database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian",sep=';', header=0)        
+                        atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian",sep=';', header=0)        
                     else:
                         try: 
                             atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
                         except NameError or ValueError:
                             latexdefect = 'Al_N'
-                            atomicposition_sin = pd.read_csv("database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
+                            atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
                     atomicposition = pd.DataFrame(columns = ['properties', 'X','Y','Z'])
                     for row in range(atomicposition_sin.shape[0]):
                         if 0 <row<4:
@@ -1761,9 +1761,9 @@ for tabs in tab_selection:
                                 )
                             except FileNotFoundError:
                                 if spin_transition =="down-down":
-                                    try1 = "database_triplet/" + str_defect + "/excited_triplet_down/CONTCAR_cartesian"                        
+                                    try1 = "monolayer/database_triplet/" + str_defect + "/excited_triplet_down/CONTCAR_cartesian"                        
                                 elif spin_transition =="up-up":
-                                    try1 = "database_triplet/" + str_defect + "/excited_triplet_up/CONTCAR_cartesian"
+                                    try1 = "monolayer/database_triplet/" + str_defect + "/excited_triplet_up/CONTCAR_cartesian"
                                 try:
                                     st.download_button(
                                         label="VASP cartesian excited triplet",
@@ -1780,14 +1780,14 @@ for tabs in tab_selection:
                                 except FileNotFoundError:
                                     if chosen_chargestate == ["charge_negative_1"]:
                                         if spin_transition =="down-down":
-                                            try1 = "database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_down/output_database.txt"
+                                            try1 = "monolayer/database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_down/output_database.txt"
                                         elif spin_transition =="up-up":
-                                            try1 = "database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_up/output_database.txt"
+                                            try1 = "monolayer/database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_up/output_database.txt"
                                     elif chosen_chargestate == ["charge_positive_1"]:
                                         if spin_transition =="down-down":
-                                            try1 = "database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_down/output_database.txt"
+                                            try1 = "monolayer/database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_down/output_database.txt"
                                         elif spin_transition =="up-up":
-                                            try1 = "database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_up/output_database.txt"
+                                            try1 = "monolayer/database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_up/output_database.txt"
                                     try:
                                         st.download_button(
                                             label="VASP cartesian excited triplet",
@@ -1834,9 +1834,9 @@ for tabs in tab_selection:
                                 )
                             except FileNotFoundError:
                                 if spin_transition =="down-down":
-                                    try1 = "database_triplet/" + str_defect + "/excited_triplet_down/CONTCAR_fractional"                        
+                                    try1 = "monolayer/database_triplet/" + str_defect + "/excited_triplet_down/CONTCAR_fractional"                        
                                 elif spin_transition =="up-up":
-                                    try1 = "database_triplet/" + str_defect + "/excited_triplet_up/CONTCAR_fractional"
+                                    try1 = "monolayer/database_triplet/" + str_defect + "/excited_triplet_up/CONTCAR_fractional"
                                 try:    
                                     st.download_button(
                                         label="VASP fractional excited triplet",
@@ -1853,14 +1853,14 @@ for tabs in tab_selection:
                                 except FileNotFoundError:
                                     if chosen_chargestate == ["charge_negative_1"]:
                                         if spin_transition =="down-down":
-                                            try1 = "database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_down/output_database.txt"
+                                            try1 = "monolayer/database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_down/output_database.txt"
                                         elif spin_transition =="up-up":
-                                            try1 = "database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_up/output_database.txt"
+                                            try1 = "monolayer/database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_up/output_database.txt"
                                     elif chosen_chargestate == ["charge_positive_1"]:
                                         if spin_transition =="down-down":
-                                            try1 = "database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_down/output_database.txt"
+                                            try1 = "monolayer/database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_down/output_database.txt"
                                         elif spin_transition =="up-up":
-                                            try1 = "database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_up/output_database.txt"
+                                            try1 = "monolayer/database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_up/output_database.txt"
                                     try:
                                         st.download_button(
                                             label="VASP fractional excited triplet",
@@ -1906,9 +1906,9 @@ for tabs in tab_selection:
                                 )
                             except FileNotFoundError:
                                 if spin_transition =="down-down":
-                                    try1 = "database_triplet/" + str_defect + "/excited_triplet_down/structure.cif"                        
+                                    try1 = "monolayer/database_triplet/" + str_defect + "/excited_triplet_down/structure.cif"                        
                                 elif spin_transition =="up-up":
-                                    try1 = "database_triplet/" + str_defect + "/excited_triplet_up/structure.cif"
+                                    try1 = "monolayer/database_triplet/" + str_defect + "/excited_triplet_up/structure.cif"
                                 try:
                                     st.download_button(
                                         label="CIF excited triplet",
@@ -1925,14 +1925,14 @@ for tabs in tab_selection:
                                 except FileNotFoundError:
                                     if chosen_chargestate == ["charge_negative_1"]:
                                         if spin_transition =="down-down":
-                                            try1 = "database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_down/output_database.txt"
+                                            try1 = "monolayer/database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_down/output_database.txt"
                                         elif spin_transition =="up-up":
-                                            try1 = "database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_up/output_database.txt"
+                                            try1 = "monolayer/database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_up/output_database.txt"
                                     elif chosen_chargestate == ["charge_positive_1"]:
                                         if spin_transition =="down-down":
-                                            try1 = "database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_down/output_database.txt"
+                                            try1 = "monolayer/database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_down/output_database.txt"
                                         elif spin_transition =="up-up":
-                                            try1 = "database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_up/output_database.txt"
+                                            try1 = "monolayer/database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_up/output_database.txt"
                                     try:
                                         st.download_button(
                                             label="CIF excited triplet",

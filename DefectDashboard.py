@@ -339,7 +339,7 @@ for tabs in tab_selection:
         except IndexError:
             latexdefect = str_defect
         ##############################33 Singlet Doublet #################################    
-        if spin_multiplicity == 'singlet'or spin_multiplicity == 'doublet':
+        if (spin_multiplicity == 'singlet'or spin_multiplicity == 'doublet') and host=='monolayer':
 
             ### Ground Sate
             band_energy_spinUp_filled_triplet = []
@@ -953,7 +953,7 @@ for tabs in tab_selection:
     
 
         ############################### Triplet  State ########################################3
-        elif spin_multiplicity == 'triplet':
+        elif spin_multiplicity == 'triplet' and host=='monolayer':
             
 
             if chargestate_defect == 0:

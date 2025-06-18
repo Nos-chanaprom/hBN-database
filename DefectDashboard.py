@@ -28,15 +28,6 @@ import time
 #    defects[defect] = charge_list
 
 
-## path for doublet singlet
-# defectsDS={}
-# pathDS = "database_doublet_single"
-# defectsDS_list = os.listdir(pathDS)
-# defectsDS_list.sort()
-# for defect in defectsDS_list:
-#     pathDS2 = pathDS+"/"+defect
-#     spin_DS = os.listdir(pathDS2)
-#     defectsDS[defect] = spin_DS
 ################################### WEB ##########################################
 warnings.filterwarnings('ignore')
 
@@ -97,6 +88,45 @@ st.markdown(css, unsafe_allow_html=True)
 
 ####################################################################################
 ####### START SEARCH ENGINE ########
+# ----------------------------
+# Function to Extract NBANDS
+# ----------------------------
+
+def extract_nbands(outcar_path):
+    """
+    Extracts the NBANDS value from the last non-empty line of the OUTCAR_transition file.
+    
+    Parameters:
+    - outcar_path (str): Path to the OUTCAR_transition file.
+    
+    Returns:
+    - int: The number of bands (NBANDS).
+    
+    Raises:
+    - FileNotFoundError: If the specified file does not exist.
+    - ValueError: If NBANDS cannot be found or converted to an integer.
+    """
+    try:
+        with open(outcar_path, 'r') as file:
+            lines = file.readlines()
+    except FileNotFoundError:
+        raise FileNotFoundError(f"The file {outcar_path} was not found.")
+    
+    # Iterate over the lines in reverse to find the last non-empty line
+    for line in reversed(lines):
+        stripped_line = line.strip()
+        if stripped_line:  # Check if the line is not empty
+            # Split the line by whitespace and take the first element
+            first_column = stripped_line.split()[0]
+            try:
+                nbands = int(first_column)
+                return nbands
+            except ValueError:
+                raise ValueError(f"Cannot convert '{first_column}' to an integer for NBANDS.")
+    
+    # If no non-empty lines are found
+    raise ValueError("No non-empty lines found in the OUTCAR_transition file to extract NBANDS.")
+
 def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     """
     Adds a UI on top of a dataframe to let viewers filter columns
@@ -396,7 +426,8 @@ for tabs in tab_selection:
             
             # Band structure
             ### Ground State ###
-            df = pd.read_fwf(triplet_path, sep=" ",header=None)  
+            #df = pd.read_fwf(triplet_path, sep=" ",header=None)  
+            df = pd.read_fwf(triplet_outcar_path, sep="\s+", header=None, skip_blank_lines=True)
 
             band_energy_spinUp_filled_triplet = []
             band_energy_spinUp_unfilled_triplet = []
@@ -424,26 +455,36 @@ for tabs in tab_selection:
                         elif round(float(df_row[2])) == 0:
                             band_energy_spinDown_unfilled_triplet.append(float(df_row[1]))
             elif host == 'bulk':
-                for row in range(0,512,1):
-                    if row == 0 or row == 256:
+                for row in range(len(df)):
+                    if row == 0 or row == NBANDS + 4:    # NBANDS + 4
+                        # Extract Fermi energy
                         df2 = df.iloc[row,0].split(" ")
                         df_row = [ele for ele in df2 if ele.strip()]
-                        fermi_energy_triplet.append(df_row[2])
-                    elif row > 3 and row < 256: 
-                        df2 = df.iloc[row,0].split(" ")
+                        if len(df2) >= 3:
+                            fermi_energy_triplet.append(df2[2])
+                    elif 4 <= row < NBANDS + 4:  # NBANDS + 4
+                        # Spin-up bands
+                        df2 = df.iloc[row, 0].split()
                         df_row = [ele for ele in df2 if ele.strip()]
-                        if round(float(df_row[2])) == 1 :
-                            band_energy_spinUp_filled_triplet.append(float(df_row[1]))
-                        elif round(float(df_row[2])) == 0:
-                            band_energy_spinUp_unfilled_triplet.append(float(df_row[1]))
-                    elif row > 259: 
-                        df2 = df.iloc[row,0].split(" ")
+                        if len(df_row) >= 3:
+                            occupancy = round(float(df_row[2]))
+                            energy = float(df_row[1])
+                            if occupancy == 1:
+                                band_energy_spinUp_filled_triplet.append(energy)
+                            elif occupancy == 0:
+                                band_energy_spinUp_unfilled_triplet.append(energy)
+                    elif row > NBANDS + 9:  # NBANDS + 9
+                        # Spin-down bands
+                        df2 = df.iloc[row, 0].split()
+                        # print(df2)
                         df_row = [ele for ele in df2 if ele.strip()]
-                        if round(float(df_row[2])) == 1 :
-                            band_energy_spinDown_filled_triplet.append(float(df_row[1]))
-                        elif round(float(df_row[2])) == 0:
-                            band_energy_spinDown_unfilled_triplet.append(float(df_row[1]))
-
+                        if len(df_row) >= 3:
+                            occupancy = round(float(df_row[2]))
+                            energy = float(df_row[1])
+                            if occupancy == 1:
+                                band_energy_spinDown_filled_triplet.append(energy)
+                            elif occupancy == 0:
+                                band_energy_spinDown_unfilled_triplet.append(energy)
             ### Excited State ###
             df = pd.read_fwf(excited_triplet_path, sep=" ",header=None)  
 
@@ -473,25 +514,36 @@ for tabs in tab_selection:
                         elif round(float(df_row[2])) == 0:
                             band_energy_spinDown_unfilled_excited_triplet.append(float(df_row[1]))
             elif host == 'bulk':
-                for row in range(0,512,1):
-                    if row == 0 or row == 256:
+                for row in range(len(df)):
+                    if row == 0 or row == NBANDS + 4:    # NBANDS + 4
+                        # Extract Fermi energy
                         df2 = df.iloc[row,0].split(" ")
                         df_row = [ele for ele in df2 if ele.strip()]
-                        fermi_energy_triplet.append(df_row[2])
-                    elif row > 3 and row < 256: 
-                        df2 = df.iloc[row,0].split(" ")
+                        if len(df2) >= 3:
+                            fermi_energy_triplet.append(df2[2])
+                    elif 4 <= row < NBANDS + 4:  # NBANDS + 4
+                        # Spin-up bands
+                        df2 = df.iloc[row, 0].split()
                         df_row = [ele for ele in df2 if ele.strip()]
-                        if round(float(df_row[2])) == 1 :
-                            band_energy_spinUp_filled_triplet.append(float(df_row[1]))
-                        elif round(float(df_row[2])) == 0:
-                            band_energy_spinUp_unfilled_triplet.append(float(df_row[1]))
-                    elif row > 259: 
-                        df2 = df.iloc[row,0].split(" ")
+                        if len(df_row) >= 3:
+                            occupancy = round(float(df_row[2]))
+                            energy = float(df_row[1])
+                            if occupancy == 1:
+                                band_energy_spinUp_filled_triplet.append(energy)
+                            elif occupancy == 0:
+                                band_energy_spinUp_unfilled_triplet.append(energy)
+                    elif row > NBANDS + 9:  # NBANDS + 9
+                        # Spin-down bands
+                        df2 = df.iloc[row, 0].split()
+                        # print(df2)
                         df_row = [ele for ele in df2 if ele.strip()]
-                        if round(float(df_row[2])) == 1 :
-                            band_energy_spinDown_filled_triplet.append(float(df_row[1]))
-                        elif round(float(df_row[2])) == 0:
-                            band_energy_spinDown_unfilled_triplet.append(float(df_row[1]))
+                        if len(df_row) >= 3:
+                            occupancy = round(float(df_row[2]))
+                            energy = float(df_row[1])
+                            if occupancy == 1:
+                                band_energy_spinDown_filled_triplet.append(energy)
+                            elif occupancy == 0:
+                                band_energy_spinDown_unfilled_triplet.append(energy)
 
 
             fermi_energy_triplet = [float(i) for i in fermi_energy_triplet]

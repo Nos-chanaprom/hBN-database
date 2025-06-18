@@ -501,7 +501,8 @@ for tabs in tab_selection:
                             elif occupancy == 0:
                                 band_energy_spinDown_unfilled_triplet.append(energy)
             ### Excited State ###
-            df = pd.read_fwf(excited_triplet_path, sep=" ",header=None)  
+            #df = pd.read_fwf(excited_triplet_path, sep=" ",header=None)  
+            df = pd.read_fwf(excited_triplet_path, sep="\s+", header=None, skip_blank_lines=True)
 
             band_energy_spinUp_filled_excited_triplet = []
             band_energy_spinUp_unfilled_excited_triplet = []
@@ -535,7 +536,7 @@ for tabs in tab_selection:
                         df2 = df.iloc[row,0].split(" ")
                         df_row = [ele for ele in df2 if ele.strip()]
                         if len(df2) >= 3:
-                            fermi_energy_triplet.append(df2[2])
+                            fermi_energy_excited_triplet.append(df2[2])
                     elif 4 <= row < NBANDS + 4:  # NBANDS + 4
                         # Spin-up bands
                         df2 = df.iloc[row, 0].split()

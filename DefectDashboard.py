@@ -296,7 +296,10 @@ if selection.empty :
     spin_multiplicity = ele12.loc[:,"Spin multiplicity"]
     spin_multiplicity_m = spin_multiplicity.reset_index().drop("index", axis='columns')
 
-    chosenlist = ele12.loc[:,['Defect','Charge state','Optical spin transition','Spin multiplicity']].to_numpy()
+    chosen_host = ele12.loc[:,"Host"]
+    chosen_host_m = chosen_host.reset_index().drop("index", axis='columns')
+
+    chosenlist = ele12.loc[:,['Defect','Charge state','Optical spin transition','Spin multiplicity','Host']].to_numpy()
 else:
     chosen_defect = selection.loc[:,'Defect']
     chosen_defect_m = chosen_defect.reset_index().drop("index", axis='columns')
@@ -309,12 +312,15 @@ else:
 
     spin_multiplicity = selection.loc[:,"Spin multiplicity"]
     spin_multiplicity_m = spin_multiplicity.reset_index().drop("index", axis='columns')
+
+    chosen_host = selection.loc[:,"Host"]
+    chosen_host_m = chosen_host.reset_index().drop("index", axis='columns')
     
-    chosenlist = selection.loc[:,['Defect','Charge state','Optical spin transition','Spin multiplicity']].to_numpy()
+    chosenlist = selection.loc[:,['Defect','Charge state','Optical spin transition','Spin multiplicity','Host']].to_numpy()
 
 selection_str =[]
 for ele in chosenlist:
-    selection_str.append(ele[0] + " (charge state: " +str(ele[1]) + ", " +ele[2] +", " + str(ele[3])+")")
+    selection_str.append(ele[0] + " (charge state: " +str(ele[1]) + ", " +ele[2] +", " + str(ele[3]) + str(ele[4]) +")")
 tab_selection = st.tabs(selection_str)
 tabs_index =0
 for tabs in tab_selection:

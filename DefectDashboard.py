@@ -320,7 +320,7 @@ else:
 
 selection_str =[]
 for ele in chosenlist:
-    selection_str.append(ele[0] + " (charge state: " +str(ele[1]) + ", " +ele[2] +", " + str(ele[3]) + str(ele[4]) +")")
+    selection_str.append(ele[0] + " (charge state: " +str(ele[1]) + ", " +ele[2] +", " + str(ele[3]) + ", "+ str(ele[4])+")")
 tab_selection = st.tabs(selection_str)
 tabs_index =0
 for tabs in tab_selection:

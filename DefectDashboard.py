@@ -236,7 +236,7 @@ with Search_cont:
     st.header("Search engine for hBN defects")
     Photophysical_properties = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='updated_data',engine = 'openpyxl',header=[0])
     ## rounding numbers
-    Photophysical_properties.iloc[:,5:]=Photophysical_properties.iloc[:,5:].round(2)  ## select from columns 4
+    Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)  ## select from columns 5
     
     Photophysical_properties["Emission properties: ZPL (nm)"]=Photophysical_properties["Emission properties: ZPL (nm)"].astype(int)
     Photophysical_properties["Excitation properties: Characteristic time (ns)"]=Photophysical_properties["Excitation properties: Characteristic time (ns)"].astype(int)
@@ -922,7 +922,7 @@ for tabs in tab_selection:
                     ## col21
                     #tab1.subheader('Excitation Properties')
                     Photophysical_properties = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='Excitation properties',engine = 'openpyxl',header=[0])
-                    Photophysical_properties.iloc[:,4:]=Photophysical_properties.iloc[:,4:].round(2)
+                    Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
                     Photophysical_properties["Characteristic time (ns)"]=Photophysical_properties["Characteristic time (ns)"].astype(int)
                     Photophysical_properties["Characteristic time (ns)"] = Photophysical_properties["Characteristic time (ns)"].map("{:.2E}".format)
 
@@ -948,7 +948,7 @@ for tabs in tab_selection:
                     #col22.subheader('Emission Properties')
 
                     Photophysical_properties = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='Emission properties',engine = 'openpyxl',header=[0])
-                    Photophysical_properties.iloc[:,4:]=Photophysical_properties.iloc[:,4:].round(2)
+                    Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
                     Photophysical_properties["ZPL (nm)"]=Photophysical_properties["ZPL (nm)"].astype(int)
                     Photophysical_properties["Lifetime (ns)"]=Photophysical_properties["Lifetime (ns)"].astype(int)
                     Photophysical_properties["Lifetime (ns)"] = Photophysical_properties["Lifetime (ns)"].map("{:.2E}".format)
@@ -977,7 +977,7 @@ for tabs in tab_selection:
                     #col23
                     #col23.subheader('Quantum Memory Properties')
                     Photophysical_properties = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='Quantum memory properties',engine = 'openpyxl',header=[0])
-                    Photophysical_properties.iloc[:,4:]=Photophysical_properties.iloc[:,4:].round(2)
+                    Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
                     Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"]=Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].astype(int)
                     Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"] = Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].map("{:.2E}".format)
                     Photophysical_properties["g (MHz)"]=Photophysical_properties["g (MHz)"].astype(int)
@@ -2023,7 +2023,7 @@ for tabs in tab_selection:
                     ## col21
                     #tab1.subheader('Excitation Properties')
                     Photophysical_properties = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='Excitation properties',engine = 'openpyxl',header=[0])
-                    Photophysical_properties.iloc[:,4:]=Photophysical_properties.iloc[:,4:].round(2)
+                    Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
                     Photophysical_properties["Characteristic time (ns)"]=Photophysical_properties["Characteristic time (ns)"].astype(int)
                     Photophysical_properties["Characteristic time (ns)"] = Photophysical_properties["Characteristic time (ns)"].map("{:.2E}".format)
 
@@ -2049,7 +2049,7 @@ for tabs in tab_selection:
                     #col22.subheader('Emission Properties')
 
                     Photophysical_properties = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='Emission properties',engine = 'openpyxl',header=[0])
-                    Photophysical_properties.iloc[:,4:]=Photophysical_properties.iloc[:,4:].round(2)
+                    Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
                     Photophysical_properties["ZPL (nm)"]=Photophysical_properties["ZPL (nm)"].astype(int)
                     Photophysical_properties["Lifetime (ns)"]=Photophysical_properties["Lifetime (ns)"].astype(int)
                     Photophysical_properties["Lifetime (ns)"] = Photophysical_properties["Lifetime (ns)"].map("{:.2E}".format)
@@ -2078,7 +2078,7 @@ for tabs in tab_selection:
                     #col23
                     #col23.subheader('Quantum Memory Properties')
                     Photophysical_properties = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='Quantum memory properties',engine = 'openpyxl',header=[0])
-                    Photophysical_properties.iloc[:,4:]=Photophysical_properties.iloc[:,4:].round(2)
+                    Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
                     Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"]=Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].astype(int)
                     Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"] = Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].map("{:.2E}".format)
                     Photophysical_properties["g (MHz)"]=Photophysical_properties["g (MHz)"].astype(int)

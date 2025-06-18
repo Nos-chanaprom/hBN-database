@@ -476,7 +476,7 @@ for tabs in tab_selection:
                         df2 = df.iloc[row,0].split(" ")
                         df_row = [ele for ele in df2 if ele.strip()]
                         if len(df2) >= 3:
-                            fermi_energy_triplet.append(df2[2])
+                            fermi_energy_triplet.append(df_row[2])
                     elif 4 <= row < NBANDS + 4:  # NBANDS + 4
                         # Spin-up bands
                         df2 = df.iloc[row, 0].split()
@@ -536,7 +536,7 @@ for tabs in tab_selection:
                         df2 = df.iloc[row,0].split(" ")
                         df_row = [ele for ele in df2 if ele.strip()]
                         if len(df2) >= 3:
-                            fermi_energy_excited_triplet.append(df2[2])
+                            fermi_energy_excited_triplet.append(df_row[2])
                     elif 4 <= row < NBANDS + 4:  # NBANDS + 4
                         # Spin-up bands
                         df2 = df.iloc[row, 0].split()

@@ -380,6 +380,19 @@ for tabs in tab_selection:
 
                 cif_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/doublet/ground/structure.cif"
                 cif_excited_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/doublet/excited/structure.cif"
+
+            elif spin_multiplicity == 'doublet' and host=='bulk':
+                triplet_path = "bulk/database/" + str_defect + "/doublet/ground/output_database.txt"
+                excited_triplet_path= "bulk/database/" + str_defect + "/doublet/excited/output_database.txt"
+
+                atomposition_triplet = "bulk/database/" + str_defect + "/doublet/ground/CONTCAR_cartesian"
+                atomposition_excited_triplet = "bulk/database/" + str_defect + "/doublet/excited/CONTCAR_cartesian"
+
+                fractional_triplet = "bulk/database/" + str_defect + "/doublet/ground/CONTCAR_fractional"
+                fractional_excited_triplet = "bulk/database/" + str_defect + "/doublet/excited/CONTCAR_fractional"
+
+                cif_triplet = "bulk/database/" + str_defect + "/doublet/ground/structure.cif"
+                cif_excited_triplet = "bulk/database/" + str_defect + "/doublet/excited/structure.cif"
             
             ### Ground State ###
             df = pd.read_fwf(triplet_path, sep=" ",header=None)  

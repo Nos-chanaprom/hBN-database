@@ -18,14 +18,14 @@ import time
 
 # Get the list of all files and directories 
 # in the root directory
-defects={}
-path = "monolayer/database_triplet" 
-defects_list = os.listdir(path)
-defects_list.sort()
-for defect in defects_list:
-    path2 = path+"/"+defect
-    charge_list = os.listdir(path2)
-    defects[defect] = charge_list
+#defects={}
+#path = "monolayer/database_triplet" 
+#defects_list = os.listdir(path)
+#defects_list.sort()
+#for defect in defects_list:
+#    path2 = path+"/"+defect
+#    charge_list = os.listdir(path2)
+#    defects[defect] = charge_list
 
 
 ## path for doublet singlet

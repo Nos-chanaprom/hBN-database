@@ -632,7 +632,7 @@ for tabs in tab_selection:
             def spin_marker_exc_fig (spinstate, band_energy, size, xcor, e_ref , bandlimit ,emin, emax,fig):
                 fig2=fig
                 scale =32
-                delta = -0.04
+                delta = 0
                 emin = emin
                 emax = emax
                 if spinstate == 'fup':

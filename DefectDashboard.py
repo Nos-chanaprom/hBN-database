@@ -127,6 +127,12 @@ def extract_nbands(outcar_path):
     # If no non-empty lines are found
     raise ValueError("No non-empty lines found in the OUTCAR_transition file to extract NBANDS.")
 
+# Read data from file
+def read_formation_energies(filename):
+    data = pd.read_csv(filename, delim_whitespace=True, comment='#',
+    names=["system", "charge", "corrected", "uncorrected"])
+    return data
+
 def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     """
     Adds a UI on top of a dataframe to let viewers filter columns
@@ -1118,6 +1124,16 @@ for tabs in tab_selection:
                         st.dataframe(df, hide_index=True)
 
             elif host == 'bulk':
+                ###### for plotting defect formation energy
+                path_formationE_Nrich = "bulk/database/" + str_defect + "/singlet/formation_energies_N_rich.txt"
+                path_formationE_Npoor = "bulk/database/" + str_defect + "/singlet/formation_energies_N_poor.txt"
+                # Load both files
+                data_Nrich = read_formation_energies(path_formationE_Nrich)
+                data_Npoor = read_formation_energies(path_formationE_Npoor)
+
+
+
+                ######## for displaying defect formation energy and PL
                 col3, col4 = st.columns(2,gap="medium")
                 with col3:
                     with st.container(border=True):
@@ -1137,7 +1153,7 @@ for tabs in tab_selection:
                         with tab2: 
                             st.components.v1.html(fig2.to_html(include_mathjax='cdn'),width=530, height=600)
 
-
+                ######## for displaying 2 tables
                 col5, col6 = st.columns(2,gap="medium")
                 with col5:
                     with st.container(border=True):

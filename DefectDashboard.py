@@ -841,7 +841,7 @@ for tabs in tab_selection:
                     atomicposition.loc[:,['X','Y','Z']]=atomicposition.loc[:,['X','Y','Z']].astype(float).round(decimals=5)
 
                     #### plot atomic bonds
-                    st.header("Atomic positions for a ground triplet state (${}$)".format(latexdefect))    
+                    st.header("Atomic positions for ${}$".format(latexdefect))    
                     fig3D = go.Figure()
                     i=0
                     letters=letternumber[0]

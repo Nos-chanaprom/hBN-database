@@ -603,11 +603,11 @@ for tabs in tab_selection:
                     excited_triplet_ref = upunfreipletexc[upunfreipletexc > 7.25][0]
 
                 except IndexError:
-                    triplet_ref = 1.24
-                    excited_triplet_ref = 1.24
+                    triplet_ref = -5
+                    excited_triplet_ref = -5
 
-                    tripletunf_ref = 7.25
-                    excited_triplet_ref = 7.25
+                    tripletunf_ref = 1
+                    excited_triplet_ref = 1
 
 
             fup_t = [energy - triplet_ref for energy in band_energy_spinUp_filled_triplet[-spin_nummer:]]

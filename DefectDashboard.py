@@ -1458,8 +1458,8 @@ for tabs in tab_selection:
                         df = pd.DataFrame(
                             {
                                 "Computational Setting": ["DFT calculator", "Functional", "Pseudopotentials","Cutoff Energy","Kpoint",
-                                                        "Supercell size", "Energy convergence","Force convergence","Vacuum region" ],
-                                "Value": ["VASP", "HSE(alpha=0.32)", "PAW","500 eV","Γ point","7x7x1","1e-4 eV","0.01 eV/Å","15 Å"]
+                                                        "Supercell size", "Energy convergence","Force convergence","Van der Waals force" ],
+                                "Value": ["VASP", "HSE(α=0.32)", "PAW","500 eV","Γ point","6x6x4","1e-4 eV","0.01 eV/Å","DFT-D3"]
                             }
                         )
                         st.dataframe(df, hide_index=True)

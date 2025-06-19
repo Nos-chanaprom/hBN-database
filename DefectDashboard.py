@@ -127,11 +127,83 @@ def extract_nbands(outcar_path):
     # If no non-empty lines are found
     raise ValueError("No non-empty lines found in the OUTCAR_transition file to extract NBANDS.")
 
-# Read data from file
-def read_formation_energies(filename):
-    data = pd.read_csv(filename, delim_whitespace=True, comment='#',
-    names=["system", "charge", "corrected", "uncorrected"])
+# Function to read defect formation energies from a file
+def read_formation_energies(file_path):
+    data = {}
+    with open(file_path, 'r') as f:
+        lines = f.readlines()
+
+    for line in lines:
+        if line.startswith('#') or not line.strip():
+            continue
+        parts = line.split()
+        defect_name = parts[0]
+        charge = int(parts[1])
+        corrected_energy = float(parts[2])
+        uncorrected_energy = float(parts[3])
+
+        if defect_name not in data:
+            data[defect_name] = []
+
+        data[defect_name].append({
+            'charge': charge,
+            'corrected': corrected_energy,
+            'uncorrected': uncorrected_energy
+        })
+
     return data
+
+# Function to plot formation energy diagram using Plotly
+def plot_diagram_plotly(data, title):
+    fig = go.Figure()
+
+    for defect_name, charge_states in data.items():
+        for energy_type in ['corrected', 'uncorrected']:
+            for state in charge_states:
+                q = state['charge']
+                E_f0 = state[energy_type]
+                formation_energy = E_f0 + q * E_F
+                label = f"{defect_name} (q={q}, {energy_type})"
+
+                linestyle = 'solid' if energy_type == 'corrected' else 'dash'
+
+                fig.add_trace(go.Scatter(
+                    x=E_F,
+                    y=formation_energy,
+                    mode='lines',
+                    line=dict(dash=linestyle, width=2),
+                    name=label
+                ))
+
+    fig.update_xaxes(
+        title=r"$E_{Fermi}$ (eV)",
+        title_font={"size": 22},
+        showgrid=False,
+        showline=True,
+        linewidth=2,
+        linecolor='black',
+        mirror=True
+    )
+    fig.update_yaxes(
+        title=r"$E_{form}$ (eV)",
+        title_font={"size": 22},
+        showgrid=False,
+        showline=True,
+        linewidth=2,
+        linecolor='black',
+        mirror=True
+    )
+    fig.update_layout(
+        title=title,
+        font=dict(size=18, color="Black"),
+        showlegend=True,
+        xaxis_range=[0, 6],
+        yaxis_range=[-8, 10],
+        width=800,
+        height=600
+    )
+
+    return fig
 
 def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -1125,13 +1197,18 @@ for tabs in tab_selection:
 
             elif host == 'bulk':
                 ###### for plotting defect formation energy
-                path_formationE_Nrich = "bulk/database/" + str_defect + "/singlet/formation_energies_N_rich.txt"
-                path_formationE_Npoor = "bulk/database/" + str_defect + "/singlet/formation_energies_N_poor.txt"
+                path_formationE_Nrich = "bulk/database/" + str_defect + "/singlet/ground/formation_energies_N_rich.txt"
+                path_formationE_Npoor = "bulk/database/" + str_defect + "/singlet/ground/formation_energies_N_poor.txt"
                 # Load both files
-                data_Nrich = read_formation_energies(path_formationE_Nrich)
-                data_Npoor = read_formation_energies(path_formationE_Npoor)
+                rich_data = read_formation_energies(path_formationE_Nrich)
+                poor_data = read_formation_energies(path_formationE_Npoor)
 
-
+                # Fermi level range (0 to 6 eV)
+                E_F = np.linspace(0, 6, 200)            
+                # Plot and render N-rich diagram
+                fig_rich = plot_diagram_plotly(rich_data, 'Defect Formation Energies (N-rich)')
+                # Plot and render N-poor diagram
+                fig_poor = plot_diagram_plotly(poor_data, 'Defect Formation Energies (N-poor)')
 
                 ######## for displaying defect formation energy and PL
                 col3, col4 = st.columns(2,gap="medium")
@@ -1140,9 +1217,9 @@ for tabs in tab_selection:
                         st.header("Defect Formation Energy of "+"${}$".format(latexdefect))
                         tab1, tab2 = st.tabs(["N-rich","N-poor"])
                         with tab1:                
-                            st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=530, height=600)
+                            st.components.v1.html(fig_rich.to_html(include_mathjax='cdn'),width=530, height=600)
                         with tab2: 
-                            st.components.v1.html(fig2.to_html(include_mathjax='cdn'),width=530, height=600)
+                            st.components.v1.html(fig_poor.to_html(include_mathjax='cdn'),width=530, height=600)
                         
                 with col4:
                     with st.container(border=True):

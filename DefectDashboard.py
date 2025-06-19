@@ -442,7 +442,6 @@ for tabs in tab_selection:
             #df = pd.read_fwf(triplet_path, sep=" ",header=None)  
             df = pd.read_fwf(triplet_path, sep="\s+", header=None, skip_blank_lines=True)
             # Extract NBANDS automatically from the OUTCAR_transition file
-            NBANDS = extract_nbands(triplet_path)
 
             band_energy_spinUp_filled_triplet = []
             band_energy_spinUp_unfilled_triplet = []
@@ -470,6 +469,7 @@ for tabs in tab_selection:
                         elif round(float(df_row[2])) == 0:
                             band_energy_spinDown_unfilled_triplet.append(float(df_row[1]))
             elif host == 'bulk':
+                NBANDS = extract_nbands(triplet_path)
                 for row in range(len(df)):
                     if row == 0 or row == NBANDS + 4:    # NBANDS + 4
                         # Extract Fermi energy
@@ -531,6 +531,7 @@ for tabs in tab_selection:
                         elif round(float(df_row[2])) == 0:
                             band_energy_spinDown_unfilled_excited_triplet.append(float(df_row[1]))
             elif host == 'bulk':
+                NBANDS = extract_nbands(excited_triplet_path)
                 for row in range(len(df)):
                     if row == 0 or row == NBANDS + 4:    # NBANDS + 4
                         # Extract Fermi energy

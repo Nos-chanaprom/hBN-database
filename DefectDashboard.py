@@ -501,7 +501,7 @@ for tabs in tab_selection:
                             elif occupancy == 0:
                                 band_energy_spinDown_unfilled_triplet.append(energy)
                                 
-            ### Excited State ###
+            ###### Excited State ###
             #df = pd.read_fwf(excited_triplet_path, sep=" ",header=None)  
             df = pd.read_fwf(excited_triplet_path, sep="\s+", header=None, skip_blank_lines=True)
 
@@ -573,7 +573,7 @@ for tabs in tab_selection:
                     upfreiplet = np.array(band_energy_spinUp_filled_triplet)
                     upfreipletexc = np.array(band_energy_spinUp_filled_excited_triplet)
 
-                    upunfreiplet = np.array(band_energy_spinDown_unfilled_triplet)
+                    upunfreiplet = np.array(band_energy_spinUp_unfilled_triplet)
                     upunfreipletexc = np.array(band_energy_spinUp_unfilled_excited_triplet)
 
                     triplet_ref = upfreiplet[upfreiplet < -5][-1]
@@ -630,7 +630,7 @@ for tabs in tab_selection:
                 eemax = np.max(all_band_energy)
             except ValueError:  #raised if `y` is empty.
                 eemin =0
-                eemax =5
+                eemax =6
 
             def spin_marker_exc_fig (spinstate, band_energy, size, xcor, e_ref , bandlimit ,emin, emax,fig):
                 fig2=fig

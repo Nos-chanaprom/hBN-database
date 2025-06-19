@@ -566,26 +566,47 @@ for tabs in tab_selection:
             fermi_energy_excited_triplet = [float(i) for i in fermi_energy_excited_triplet]
 
             spin_nummer = 4
+            if host == 'monolayer':
+                try: 
+                    upfreiplet = np.array(band_energy_spinUp_filled_triplet)
+                    upfreipletexc = np.array(band_energy_spinUp_filled_excited_triplet)
 
-            try: 
-                upfreiplet = np.array(band_energy_spinUp_filled_triplet)
-                upfreipletexc = np.array(band_energy_spinUp_filled_excited_triplet)
+                    upunfreiplet = np.array(band_energy_spinDown_unfilled_triplet)
+                    upunfreipletexc = np.array(band_energy_spinUp_unfilled_excited_triplet)
 
-                upunfreiplet = np.array(band_energy_spinDown_unfilled_triplet)
-                upunfreipletexc = np.array(band_energy_spinUp_unfilled_excited_triplet)
+                    triplet_ref = upfreiplet[upfreiplet < -5][-1]
+                    excited_triplet_ref = upfreipletexc[upfreipletexc < -5][-1] 
 
-                triplet_ref = upfreiplet[upfreiplet < -5][-1]
-                excited_triplet_ref = upfreipletexc[upfreipletexc < -5][-1] 
+                    tripletunf_ref = upunfreiplet[upunfreiplet > 1][0]
+                    excited_triplet_ref = upunfreipletexc[upunfreipletexc > 1][0]
 
-                tripletunf_ref = upunfreiplet[upunfreiplet > 1][0]
-                excited_triplet_ref = upunfreipletexc[upunfreipletexc > 1][0]
+                except IndexError:
+                    triplet_ref =-5
+                    excited_triplet_ref = -5
 
-            except IndexError:
-                triplet_ref =-5
-                excited_triplet_ref = -5
+                    tripletunf_ref = 1
+                    excited_triplet_ref = 1
+            elif host == 'bulk':
+                try: 
+                    upfreiplet = np.array(band_energy_spinUp_filled_triplet)
+                    upfreipletexc = np.array(band_energy_spinUp_filled_excited_triplet)
 
-                tripletunf_ref = 1
-                excited_triplet_ref = 1
+                    upunfreiplet = np.array(band_energy_spinDown_unfilled_triplet)
+                    upunfreipletexc = np.array(band_energy_spinUp_unfilled_excited_triplet)
+                    # Reference energy for filled spin-up bands (last energy below 1.24 eV)
+                    triplet_ref = upfreiplet[upfreiplet < 1.24][-1]
+                    excited_triplet_ref = upfreipletexc[upfreipletexc < 1.24][-1] 
+
+                    # Reference energy for unfilled spin-up bands (first energy above 7.25 eV)
+                    tripletunf_ref = upunfreiplet[upunfreiplet > 7.25][0]
+                    excited_triplet_ref = upunfreipletexc[upunfreipletexc > 7.25][0]
+
+                except IndexError:
+                    triplet_ref = 1.24
+                    excited_triplet_ref = 1.24
+
+                    tripletunf_ref = 7.25
+                    excited_triplet_ref = 7.25
 
 
             fup_t = [energy - triplet_ref for energy in band_energy_spinUp_filled_triplet[-spin_nummer:]]

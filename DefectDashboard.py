@@ -603,7 +603,7 @@ for tabs in tab_selection:
                     excited_triplet_ref = upunfreipletexc[upunfreipletexc > 7.25][0]
 
                 except IndexError:
-                    triplet_ref = 1.24
+                    triplet_ref = 1.
                     excited_triplet_ref = 1.24
 
                     tripletunf_ref = 7.25

@@ -1251,8 +1251,8 @@ for tabs in tab_selection:
                 path_PL = "bulk/database/" + str_defect + "/singlet/ground/PL.txt"      
                 with col4:
                     with st.container(border=True):
-                        st.header("Photoluminescence of "+"${}$".format(latexdefect))
-                        tab1, = st.tabs(["PL"])
+                        st.header("Luminescence spectrum of "+"${}$".format(latexdefect))
+                        tab1, tab2 = st.tabs(["Photoluminescence","Absorption"])
                         with tab1:
                             # Check if the file exists
                             if os.path.exists(path_PL):
@@ -1300,7 +1300,56 @@ for tabs in tab_selection:
                                 st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=550, height=600)
                             else:
                                 # Show a message if file is not found
-                                st.write(f"**No PL for this defect.**")
+                                st.write(f"**Photoluminescence absent owing to a lack of two-level defect states.**")
+
+                        with tab2:
+                            # Check if the file exists
+                            if os.path.exists(path_PL):
+                                # Load the data
+                                data = np.loadtxt(path_PL)
+                                wavelength = data[:, 0]
+                                intensity = data[:, 1]
+                                absorption_like = 1 - intensity  # simple mirroring
+                                # Create the figure
+                                fig = go.Figure()
+
+                                fig.add_trace(go.Scatter(
+                                    x=wavelength,
+                                    y=absorption_like,
+                                    mode='lines',
+                                    line=dict(width=2, color='orange'),
+                                    name='PL Spectrum'
+                                ))
+
+                                # Update axes and layout
+                                fig.update_xaxes(
+                                    title='Wavelength (nm)',
+                                    title_font={"size": 18},
+                                    showline=True,
+                                    linewidth=2,
+                                    linecolor='black',
+                                    mirror=True
+                                )
+                                fig.update_yaxes(
+                                    title='Normalized Intensity (arb. units)',
+                                    title_font={"size": 18},
+                                    showline=True,
+                                    linewidth=2,
+                                    linecolor='black',
+                                    mirror=True
+                                )
+
+                                fig.update_layout(
+                                    font=dict(size=16, color="black"),
+                                    width=600,
+                                    height=500,
+                                    margin=dict(l=70, r=70, t=30, b=90),
+                                    showlegend=False
+                                )                
+                                st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=550, height=600)
+                            else:
+                                # Show a message if file is not found
+                                st.write(f"**Absorption spectrum absent owing to a lack of two-level defect states.**")
 
                 ######## for displaying 2 tables
                 col5, col6 = st.columns(2,gap="medium")

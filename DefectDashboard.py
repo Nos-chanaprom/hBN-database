@@ -1315,7 +1315,7 @@ for tabs in tab_selection:
 
                                 fig.add_trace(go.Scatter(
                                     x=-wavelength,
-                                    y=absorption_like,
+                                    y=intensity,
                                     mode='lines',
                                     line=dict(width=2, color='orange'),
                                     name='PL Spectrum'

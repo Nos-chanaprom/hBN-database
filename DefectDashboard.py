@@ -1116,25 +1116,26 @@ for tabs in tab_selection:
                             }
                         )
                         st.dataframe(df, hide_index=True)
+
             elif host == 'bulk':
                 col3, col4 = st.columns(2,gap="medium")
                 with col3:
                     with st.container(border=True):
-                    st.header("Defect Formation Energy of "+"${}$".format(latexdefect))
-                    tab1, tab2 = st.tabs(["N-rich","N-poor"])
-                    with tab1:                
-                        st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=530, height=600)
-                    with tab2: 
-                        st.components.v1.html(fig2.to_html(include_mathjax='cdn'),width=530, height=600)
+                        st.header("Defect Formation Energy of "+"${}$".format(latexdefect))
+                        tab1, tab2 = st.tabs(["N-rich","N-poor"])
+                        with tab1:                
+                            st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=530, height=600)
+                        with tab2: 
+                            st.components.v1.html(fig2.to_html(include_mathjax='cdn'),width=530, height=600)
                         
                 with col4:
                     with st.container(border=True):
-                    st.header("Defect Formation Energy of "+"${}$".format(latexdefect))
-                    tab1, tab2 = st.tabs(["N-rich","N-poor"])
-                    with tab1:                
-                        st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=530, height=600)
-                    with tab2: 
-                        st.components.v1.html(fig2.to_html(include_mathjax='cdn'),width=530, height=600)
+                        st.header("Defect Formation Energy of "+"${}$".format(latexdefect))
+                        tab1, tab2 = st.tabs(["N-rich","N-poor"])
+                        with tab1:                
+                            st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=530, height=600)
+                        with tab2: 
+                            st.components.v1.html(fig2.to_html(include_mathjax='cdn'),width=530, height=600)
 
 
                 col5, col6 = st.columns(2,gap="medium")

@@ -1245,15 +1245,62 @@ for tabs in tab_selection:
                             st.components.v1.html(fig_rich.to_html(include_mathjax='cdn'),width=550, height=600)
                         with tab2: 
                             st.components.v1.html(fig_poor.to_html(include_mathjax='cdn'),width=550, height=600)
-                        
+
+                ###### for PL spectrum
+                # Path to the PL file
+                path_PL = "bulk/database/" + str_defect + "/singlet/ground/PL.txt"      
                 with col4:
                     with st.container(border=True):
-                        st.header("Defect Formation Energy of "+"${}$".format(latexdefect))
-                        tab1, tab2 = st.tabs(["N-rich","N-poor"])
-                        with tab1:                
-                            st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=530, height=600)
-                        with tab2: 
-                            st.components.v1.html(fig2.to_html(include_mathjax='cdn'),width=530, height=600)
+                        st.header("Photoluminescence of "+"${}$".format(latexdefect))
+                        tab1 = st.tabs(["PL"])
+                        with tab1:
+                            # Check if the file exists
+                            if os.path.exists(path_PL):
+                                # Load the data
+                                data = np.loadtxt(path_PL)
+                                wavelength = data[:, 0]
+                                intensity = data[:, 1]
+
+                                # Create the figure
+                                fig = go.Figure()
+
+                                fig.add_trace(go.Scatter(
+                                    x=wavelength,
+                                    y=intensity,
+                                    mode='lines',
+                                    line=dict(width=2, color='orange'),
+                                    name='PL Spectrum'
+                                ))
+
+                                # Update axes and layout
+                                fig.update_xaxes(
+                                    title='Wavelength (nm)',
+                                    title_font={"size": 18},
+                                    showline=True,
+                                    linewidth=2,
+                                    linecolor='black',
+                                    mirror=True
+                                )
+                                fig.update_yaxes(
+                                    title='PL Intensity (arb. units)',
+                                    title_font={"size": 18},
+                                    showline=True,
+                                    linewidth=2,
+                                    linecolor='black',
+                                    mirror=True
+                                )
+
+                                fig.update_layout(
+                                    font=dict(size=16, color="black"),
+                                    width=700,
+                                    height=450,
+                                    margin=dict(l=80, r=40, t=30, b=70),
+                                    showlegend=False
+                                )                
+                                st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=550, height=600)
+                            else:
+                                # Show a message if file is not found
+                                st.write(f"**No PL in this case for {str_defect}.**")
 
                 ######## for displaying 2 tables
                 col5, col6 = st.columns(2,gap="medium")

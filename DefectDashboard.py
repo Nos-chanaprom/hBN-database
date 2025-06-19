@@ -170,7 +170,8 @@ def plot_diagram_plotly(data, title):
                 min_energy = min(min_energy, formation_energy.min())
                 max_energy = max(max_energy, formation_energy.max())
 
-                label = f"{defect_name} (q={q}, {energy_type})"
+                label = f"q={q}, {energy_type}"
+                
                 linestyle = 'solid' if energy_type == 'corrected' else 'dash'
 
                 fig.add_trace(go.Scatter(
@@ -213,8 +214,8 @@ def plot_diagram_plotly(data, title):
             x=0.02,
             y=0.98,
             bgcolor='rgba(255,255,255,0.7)',
-            bordercolor='black',
-            borderwidth=1,
+            bordercolor='gray',
+            borderwidth=0.5,
             font=dict(size=12),
             orientation="v"
         )

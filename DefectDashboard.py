@@ -630,7 +630,7 @@ for tabs in tab_selection:
                 eemax = np.max(all_band_energy)
             except ValueError:  #raised if `y` is empty.
                 eemin =0
-                eemax =6
+                eemax =5
 
             def spin_marker_exc_fig (spinstate, band_energy, size, xcor, e_ref , bandlimit ,emin, emax,fig):
                 fig2=fig

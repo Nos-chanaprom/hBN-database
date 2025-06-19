@@ -208,7 +208,7 @@ def plot_diagram_plotly(data, title):
         yaxis_range=[min_energy - 0.5, max_energy + 0.5],  # Padding for aesthetics
         width=600,
         height=500,
-        margin=dict(l=70,r=70,t=70,b=70),
+        margin=dict(l=70,r=70,t=30,b=70),
         legend=dict(
             x=0.02,
             y=0.98,

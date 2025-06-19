@@ -632,7 +632,7 @@ for tabs in tab_selection:
             def spin_marker_exc_fig (spinstate, band_energy, size, xcor, e_ref , bandlimit ,emin, emax,fig):
                 fig2=fig
                 scale =32
-                delta = 0
+                delta = -1
                 emin = emin
                 emax = emax
                 if spinstate == 'fup':
@@ -722,7 +722,7 @@ for tabs in tab_selection:
 
             fig = go.Figure()
             
-            spin_marker_exc_fig ('fup', fup_t, size=0.5, xcor=0.6,e_ref = triplet_ref,bandlimit =tripletunf_ref,emin=eemin, emax=eemax,fig=fig)
+            spin_marker_exc_fig ('fup', fup_t, size=0.5, xcor=0.3,e_ref = triplet_ref,bandlimit =tripletunf_ref,emin=eemin, emax=eemax,fig=fig)
             spin_marker_exc_fig ('ufup', ufup_t, size=0.5, xcor=0.3, e_ref = triplet_ref,bandlimit =tripletunf_ref,emin=eemin, emax=eemax,fig=fig)
             spin_marker_exc_fig ('fdown', fdown_t, size=0.5, xcor=0.7,e_ref = triplet_ref,bandlimit =tripletunf_ref,emin=eemin, emax=eemax,fig=fig)
             spin_marker_exc_fig ('ufdown', ufdown_t, size=0.5, xcor=0.7, e_ref = triplet_ref,bandlimit =tripletunf_ref,emin=eemin, emax=eemax,fig=fig)

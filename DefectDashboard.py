@@ -190,6 +190,7 @@ def plot_diagram_plotly(data, title):
         title_font={"size": 22},
         showgrid=False,
         showline=True,
+        zeroline=False,  # Removes horizontal line at y=0
         linewidth=2,
         linecolor='black',
         mirror=True
@@ -199,9 +200,18 @@ def plot_diagram_plotly(data, title):
         font=dict(size=18, color="Black"),
         showlegend=True,
         xaxis_range=[0, 6],
-        yaxis_range=[-8, 10],
+        yaxis_range=[min_energy - 0.5, max_energy + 0.5],  # Padding for aesthetics
         width=800,
-        height=600
+        height=600,
+        legend=dict(
+            x=0.02,
+            y=0.98,
+            bgcolor='rgba(255,255,255,0.7)',
+            bordercolor='black',
+            borderwidth=1,
+            font=dict(size=12),
+            orientation="v"
+        )
     )
 
     return fig

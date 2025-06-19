@@ -1252,7 +1252,7 @@ for tabs in tab_selection:
                 with col4:
                     with st.container(border=True):
                         st.header("Photoluminescence of "+"${}$".format(latexdefect))
-                        tab1 = st.tabs(["PL"])
+                        tab1, = st.tabs(["PL"])
                         with tab1:
                             # Check if the file exists
                             if os.path.exists(path_PL):

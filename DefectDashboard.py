@@ -1309,12 +1309,12 @@ for tabs in tab_selection:
                                 data = np.loadtxt(path_PL)
                                 wavelength = data[:, 0]
                                 intensity = data[:, 1]
-                                absorption_like = 1 - intensity  # simple mirroring
+                                #absorption_like = 1 - intensity  # simple mirroring
                                 # Create the figure
                                 fig = go.Figure()
 
                                 fig.add_trace(go.Scatter(
-                                    x=wavelength,
+                                    x=-wavelength,
                                     y=absorption_like,
                                     mode='lines',
                                     line=dict(width=2, color='orange'),

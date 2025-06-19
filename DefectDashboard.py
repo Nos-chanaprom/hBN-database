@@ -1309,13 +1309,24 @@ for tabs in tab_selection:
                                 data = np.loadtxt(path_PL)
                                 wavelength = data[:, 0]
                                 intensity = data[:, 1]
-                                #absorption_like = 1 - intensity  # simple mirroring
+                                # Find the index of maximum PL intensity
+                                max_index = np.argmax(pl_intensity)
+                                # ZPL wavelength is the wavelength corresponding to max intensity
+                                ZPL_wavelength = wavelength[max_index]
+                                # Mirror wavelengths about the ZPL
+                                wavelength_mirrored = 2 * ZPL_wavelength - wavelength
+
+                                # Optional: sort the mirrored data by ascending wavelength for clean plotting
+                                sorted_indices = np.argsort(wavelength_mirrored)
+                                wavelength_mirrored_sorted = wavelength_mirrored[sorted_indices]
+                                intensity_sorted = pl_intensity[sorted_indices]
+
                                 # Create the figure
                                 fig = go.Figure()
 
                                 fig.add_trace(go.Scatter(
-                                    x=-wavelength,
-                                    y=intensity,
+                                    x=wavelength_mirrored_sorted,
+                                    y=intensity_sorted,
                                     mode='lines',
                                     line=dict(width=2, color='orange'),
                                     name='PL Spectrum'

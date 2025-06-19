@@ -13,6 +13,7 @@ import pandas as pd
 import os
 import warnings
 import time
+import plotly.colors as pc
 
 ### https://plotly.com/python/images/###
 

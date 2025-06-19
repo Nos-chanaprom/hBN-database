@@ -1109,13 +1109,22 @@ for tabs in tab_selection:
             with col4:
                 with st.container(border=True):
                     st.header('Computational setting')
-                    df = pd.DataFrame(
-                        {
-                            "Computational Setting": ["DFT calculator", "Functional", "Pseudopotentials","Cutoff Energy","Kpoint",
-                                                    "Supercell size", "Energy convergence","Force convergence","Vacuum region" ],
-                            "Value": ["VASP", "HSE06", "PAW","500 eV","Γ point","7x7x1","1e-4 eV","0.01 eV/Å","15 Å"]
-                        }
-                    )
+                    if host == 'monolayer':
+                        df = pd.DataFrame(
+                            {
+                                "Computational Setting": ["DFT calculator", "Functional", "Pseudopotentials","Cutoff Energy","Kpoint",
+                                                        "Supercell size", "Energy convergence","Force convergence","Vacuum region" ],
+                                "Value": ["VASP", "HSE06", "PAW","500 eV","Γ point","7x7x1","1e-4 eV","0.01 eV/Å","15 Å"]
+                            }
+                        )
+                    elif host == 'bulk':
+                        df = pd.DataFrame(
+                            {
+                                "Computational Setting": ["DFT calculator", "Functional", "Pseudopotentials","Cutoff Energy","Kpoint",
+                                                        "Supercell size", "Energy convergence","Force convergence","Vacuum region" ],
+                                "Value": ["VASP", "HSE(alpha=0.32)", "PAW","500 eV","Γ point","7x7x1","1e-4 eV","0.01 eV/Å","15 Å"]
+                            }
+                        )
                     st.dataframe(df, hide_index=True)
     
 

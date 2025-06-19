@@ -1300,7 +1300,7 @@ for tabs in tab_selection:
                                 st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=550, height=600)
                             else:
                                 # Show a message if file is not found
-                                st.write(f"**No PL in this case for {str_defect}.**")
+                                st.write(f"**No PL for this defect.**")
 
                 ######## for displaying 2 tables
                 col5, col6 = st.columns(2,gap="medium")

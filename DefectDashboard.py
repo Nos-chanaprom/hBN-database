@@ -607,8 +607,8 @@ for tabs in tab_selection:
                     triplet_ref = 1.24
                     excited_triplet_ref = 1.24
 
-                    tripletunf_ref = 7.25
-                    excited_triplet_ref = 7.25
+                    tripletunf_ref = 6.25
+                    excited_triplet_ref = 6.25
 
 
             fup_t = [energy - triplet_ref for energy in band_energy_spinUp_filled_triplet[-spin_nummer:]]

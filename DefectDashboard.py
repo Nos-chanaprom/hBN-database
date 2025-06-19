@@ -911,7 +911,7 @@ for tabs in tab_selection:
                         ctrystal_axes_end = np.array([3.736,11.960,1.668])-ctrystal_axes_start
                     elif host == 'bulk':
                         ctrystal_axes_start = np.array([4.979,5.749,0])
-                        ctrystal_axes_start2=np.array([4.979,1.749,0])
+                        ctrystal_axes_start2=np.array([4.979,1.749,5.00298])
                         ctrystal_axes_end = np.array([4.979,9.749,5.00298])-ctrystal_axes_start
 
                     theta_emi =  np.radians((1-tail_emi_plane)*90)

@@ -164,8 +164,11 @@ def plot_diagram_plotly(data, title):
                 q = state['charge']
                 E_f0 = state[energy_type]
                 formation_energy = E_f0 + q * E_F
+                # Update min/max for y-axis
+                min_energy = min(min_energy, formation_energy.min())
+                max_energy = max(max_energy, formation_energy.max())
+                
                 label = f"{defect_name} (q={q}, {energy_type})"
-
                 linestyle = 'solid' if energy_type == 'corrected' else 'dash'
 
                 fig.add_trace(go.Scatter(

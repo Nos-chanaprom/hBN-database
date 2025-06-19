@@ -208,6 +208,7 @@ def plot_diagram_plotly(data, title):
         yaxis_range=[min_energy - 0.5, max_energy + 0.5],  # Padding for aesthetics
         width=600,
         height=500,
+        margin=dict(l=90, r=40, t=50, b=70),  # <-- increased left and bottom margins
         legend=dict(
             x=0.02,
             y=0.98,
@@ -1240,7 +1241,7 @@ for tabs in tab_selection:
                         st.header("Defect Formation Energy of "+"${}$".format(latexdefect))
                         tab1, tab2 = st.tabs(["N-rich","N-poor"])
                         with tab1:                
-                            st.components.v1.html(fig_rich.to_html(include_mathjax='cdn'),width=780, height=600)
+                            st.components.v1.html(fig_rich.to_html(include_mathjax='cdn'),width=530, height=600)
                         with tab2: 
                             st.components.v1.html(fig_poor.to_html(include_mathjax='cdn'),width=530, height=600)
                         

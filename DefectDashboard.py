@@ -1319,7 +1319,7 @@ for tabs in tab_selection:
                                 # Optional: sort the mirrored data by ascending wavelength for clean plotting
                                 sorted_indices = np.argsort(wavelength_mirrored)
                                 wavelength_mirrored_sorted = wavelength_mirrored[sorted_indices]
-                                intensity_sorted = pl_intensity[sorted_indices]
+                                intensity_sorted = intensity[sorted_indices]
 
                                 # Create the figure
                                 fig = go.Figure()

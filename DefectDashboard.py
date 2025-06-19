@@ -426,7 +426,7 @@ for tabs in tab_selection:
 
             elif spin_multiplicity == 'singlet' and host=='bulk':
                 triplet_path = "bulk/database/" + str_defect + "/singlet/ground/output_database.txt"
-                excited_triplet_path= "bulk/database/" + str_defect + "/singlet/excitedd/output_database.txt"
+                excited_triplet_path= "bulk/database/" + str_defect + "/singlet/excited/output_database.txt"
 
                 atomposition_triplet = "bulk/database/" + str_defect + "/singlet/ground/CONTCAR_cartesian"
                 atomposition_excited_triplet = "bulk/database/" + str_defect + "/singlet/excited/CONTCAR_cartesian"
@@ -438,7 +438,7 @@ for tabs in tab_selection:
                 cif_excited_triplet = "bulk/database/" + str_defect + "/singlet/excited/structure.cif"
             
             # Band structure
-            ### Ground State ###
+            ########## Ground State ###
             #df = pd.read_fwf(triplet_path, sep=" ",header=None)  
             df = pd.read_fwf(triplet_path, sep="\s+", header=None, skip_blank_lines=True)
             # Extract NBANDS automatically from the OUTCAR_transition file
@@ -547,9 +547,9 @@ for tabs in tab_selection:
                             occupancy = round(float(df_row[2]))
                             energy = float(df_row[1])
                             if occupancy == 1:
-                                band_energy_spinUp_filled_triplet.append(energy)
+                                band_energy_spinUp_filled_excited_triplet.append(energy)
                             elif occupancy == 0:
-                                band_energy_spinUp_unfilled_triplet.append(energy)
+                                band_energy_spinUp_unfilled_excited_triplet.append(energy)
                     elif row > NBANDS + 9:  # NBANDS + 9
                         # Spin-down bands
                         df2 = df.iloc[row, 0].split()
@@ -559,9 +559,9 @@ for tabs in tab_selection:
                             occupancy = round(float(df_row[2]))
                             energy = float(df_row[1])
                             if occupancy == 1:
-                                band_energy_spinDown_filled_triplet.append(energy)
+                                band_energy_spinDown_filled_excited_triplet.append(energy)
                             elif occupancy == 0:
-                                band_energy_spinDown_unfilled_triplet.append(energy)
+                                band_energy_spinDown_unfilled_excited_triplet.append(energy)
 
 
             fermi_energy_triplet = [float(i) for i in fermi_energy_triplet]

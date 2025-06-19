@@ -157,7 +157,9 @@ def read_formation_energies(file_path):
 # Function to plot formation energy diagram using Plotly
 def plot_diagram_plotly(data, title):
     fig = go.Figure()
-
+    # Track y-axis limits
+    min_energy, max_energy = np.inf, -np.inf
+    
     for defect_name, charge_states in data.items():
         for energy_type in ['corrected', 'uncorrected']:
             for state in charge_states:
@@ -167,7 +169,7 @@ def plot_diagram_plotly(data, title):
                 # Update min/max for y-axis
                 min_energy = min(min_energy, formation_energy.min())
                 max_energy = max(max_energy, formation_energy.max())
-                
+
                 label = f"{defect_name} (q={q}, {energy_type})"
                 linestyle = 'solid' if energy_type == 'corrected' else 'dash'
 

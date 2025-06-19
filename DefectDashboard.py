@@ -723,7 +723,7 @@ for tabs in tab_selection:
 
             fig = go.Figure()
             
-            spin_marker_exc_fig ('fup', fup_t, size=0.5, xcor=0.3,e_ref = triplet_ref,bandlimit =tripletunf_ref,emin=eemin, emax=eemax,fig=fig)
+            spin_marker_exc_fig ('fup', fup_t, size=0.5, xcor=0.3,e_ref = triplet_ref+1,bandlimit =tripletunf_ref,emin=eemin, emax=eemax,fig=fig)
             spin_marker_exc_fig ('ufup', ufup_t, size=0.5, xcor=0.3, e_ref = triplet_ref,bandlimit =tripletunf_ref,emin=eemin, emax=eemax,fig=fig)
             spin_marker_exc_fig ('fdown', fdown_t, size=0.5, xcor=0.7,e_ref = triplet_ref,bandlimit =tripletunf_ref,emin=eemin, emax=eemax,fig=fig)
             spin_marker_exc_fig ('ufdown', ufdown_t, size=0.5, xcor=0.7, e_ref = triplet_ref,bandlimit =tripletunf_ref,emin=eemin, emax=eemax,fig=fig)

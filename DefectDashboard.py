@@ -1292,9 +1292,9 @@ for tabs in tab_selection:
 
                                 fig.update_layout(
                                     font=dict(size=16, color="black"),
-                                    width=700,
-                                    height=450,
-                                    margin=dict(l=80, r=40, t=30, b=70),
+                                    width=600,
+                                    height=500,
+                                    margin=dict(l=70, r=70, t=30, b=90),
                                     showlegend=False
                                 )                
                                 st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=550, height=600)

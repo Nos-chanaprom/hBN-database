@@ -603,7 +603,7 @@ for tabs in tab_selection:
                     excited_triplet_ref = upunfreipletexc[upunfreipletexc > 7.25][0]
 
                 except IndexError:
-                    triplet_ref = 1.
+                    triplet_ref = 1.24
                     excited_triplet_ref = 1.24
 
                     tripletunf_ref = 7.25
@@ -632,7 +632,7 @@ for tabs in tab_selection:
             def spin_marker_exc_fig (spinstate, band_energy, size, xcor, e_ref , bandlimit ,emin, emax,fig):
                 fig2=fig
                 scale =32
-                delta = 0
+                delta = -0.04
                 emin = emin
                 emax = emax
                 if spinstate == 'fup':

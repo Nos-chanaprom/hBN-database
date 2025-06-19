@@ -201,7 +201,7 @@ def plot_diagram_plotly(data, title):
         mirror=True
     )
     fig.update_layout(
-        title=title,
+        #title=title,   # title of the plot
         font=dict(size=18, color="Black"),
         showlegend=True,
         xaxis_range=[0, 6],

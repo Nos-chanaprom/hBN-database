@@ -426,7 +426,7 @@ for tabs in tab_selection:
 
             elif spin_multiplicity == 'singlet' and host=='bulk':
                 triplet_path = "bulk/database/" + str_defect + "/singlet/ground/output_database.txt"
-                excited_triplet_path= "bulk/database/" + str_defect + "/singlet/excited/output_database.txt"
+                excited_triplet_path= "bulk/database/" + str_defect + "/singlet/excitedd/output_database.txt"
 
                 atomposition_triplet = "bulk/database/" + str_defect + "/singlet/ground/CONTCAR_cartesian"
                 atomposition_excited_triplet = "bulk/database/" + str_defect + "/singlet/excited/CONTCAR_cartesian"

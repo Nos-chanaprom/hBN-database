@@ -171,7 +171,7 @@ def plot_diagram_plotly(data, title):
                     x=E_F,
                     y=formation_energy,
                     mode='lines',
-                    line=dict(dash=linestyle, width=2),
+                    line=dict(dash=linestyle, width=2, color=color_map[q]),
                     name=label
                 ))
 
@@ -1204,7 +1204,14 @@ for tabs in tab_selection:
                 poor_data = read_formation_energies(path_formationE_Npoor)
 
                 # Fermi level range (0 to 6 eV)
-                E_F = np.linspace(0, 6, 200)            
+                E_F = np.linspace(0, 6, 200) 
+               
+                # Assign colors for charge states
+                # You can customize this list as needed
+                color_palette = pc.qualitative.D3  # or Set1, Set2, etc.
+                charge_states = sorted(set(state['charge'] for defect in rich_data.values() for state in defect))
+                color_map = {q: color_palette[i % len(color_palette)] for i, q in enumerate(charge_states)}
+           
                 # Plot and render N-rich diagram
                 fig_rich = plot_diagram_plotly(rich_data, 'Defect Formation Energies (N-rich)')
                 # Plot and render N-poor diagram

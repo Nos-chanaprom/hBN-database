@@ -1336,7 +1336,7 @@ for tabs in tab_selection:
                                 fig.update_xaxes(
                                     title='Wavelength (nm)',
                                     title_font={"size": 18},
-                                    showline=True,
+                                    showline=False,
                                     linewidth=2,
                                     linecolor='black',
                                     mirror=True

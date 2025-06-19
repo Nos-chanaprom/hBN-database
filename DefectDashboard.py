@@ -905,10 +905,14 @@ for tabs in tab_selection:
                     tail_emi_cry = dipole_emi['Emission properties: Angle of emission dipole wrt the crystal axis'].values[0]
                     tail_exc_plane = dipole_emi['Excitation properties: linear In-plane Polarization Visibility'].values[0]
                     tail_exc_cry = dipole_emi['Excitation properties: Angle of excitation dipole wrt the crystal axis'].values[0]
-                    
-                    ctrystal_axes_start = np.array([3.736,7.960,1.668])
-                    ctrystal_axes_start2=np.array([3.736,3.960,1.668])
-                    ctrystal_axes_end = np.array([3.736,11.960,1.668])-ctrystal_axes_start
+                    if host == 'monolayer':
+                        ctrystal_axes_start = np.array([3.736,7.960,1.668])
+                        ctrystal_axes_start2=np.array([3.736,3.960,1.668])
+                        ctrystal_axes_end = np.array([3.736,11.960,1.668])-ctrystal_axes_start
+                    elif host == 'bulk':
+                        ctrystal_axes_start = np.array([4.979,5.749,5.00298])
+                        ctrystal_axes_start2=np.array([4.979,1.749,5.00298])
+                        ctrystal_axes_end = np.array([4.979,9.749,5.00298])-ctrystal_axes_start
 
                     theta_emi =  np.radians((1-tail_emi_plane)*90)
                     #theta_emi =  np.radians(90)

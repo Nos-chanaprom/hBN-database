@@ -586,12 +586,13 @@ for tabs in tab_selection:
 
                     tripletunf_ref = 1
                     excited_triplet_ref = 1
+
             elif host == 'bulk':
                 try: 
                     upfreiplet = np.array(band_energy_spinUp_filled_triplet)
                     upfreipletexc = np.array(band_energy_spinUp_filled_excited_triplet)
 
-                    upunfreiplet = np.array(band_energy_spinDown_unfilled_triplet)
+                    upunfreiplet = np.array(band_energy_spinUp_unfilled_triplet)
                     upunfreipletexc = np.array(band_energy_spinUp_unfilled_excited_triplet)
                     # Reference energy for filled spin-up bands (last energy below 1.24 eV)
                     triplet_ref = upfreiplet[upfreiplet < 1.24][-1]

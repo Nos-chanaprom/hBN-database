@@ -1347,6 +1347,7 @@ for tabs in tab_selection:
                                     title_font={"size": 18},
                                     showline=True,
                                     linewidth=2,
+                                    zeroline = False,
                                     linecolor='black',
                                     mirror=True
                                 )

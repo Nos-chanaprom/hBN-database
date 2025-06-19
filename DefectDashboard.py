@@ -183,7 +183,7 @@ def plot_diagram_plotly(data, title):
                 ))
 
     fig.update_xaxes(
-        title=r"$E_{Fermi}$ (eV)",
+        title="$E_{Fermi}$ (eV)",
         title_font={"size": 22},
         showgrid=False,
         showline=True,
@@ -192,7 +192,7 @@ def plot_diagram_plotly(data, title):
         mirror=True
     )
     fig.update_yaxes(
-        title=r"$E_{form}$ (eV)",
+        title="$E_{form}$ (eV)",
         title_font={"size": 22},
         showgrid=False,
         showline=True,

@@ -439,8 +439,8 @@ for tabs in tab_selection:
             
             # Band structure
             ### Ground State ###
-            df = pd.read_fwf(triplet_path, sep=" ",header=None)  
-            #df = pd.read_fwf(triplet_path, sep="\s+", header=None, skip_blank_lines=True)
+            #df = pd.read_fwf(triplet_path, sep=" ",header=None)  
+            df = pd.read_fwf(triplet_path, sep="\s+", header=None, skip_blank_lines=True)
             # Extract NBANDS automatically from the OUTCAR_transition file
 
             band_energy_spinUp_filled_triplet = []

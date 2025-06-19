@@ -1287,6 +1287,7 @@ for tabs in tab_selection:
                                     showline=True,
                                     linewidth=2,
                                     linecolor='black',
+                                    zeroline = False,
                                     mirror=True
                                 )
 

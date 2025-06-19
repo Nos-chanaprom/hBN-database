@@ -600,15 +600,15 @@ for tabs in tab_selection:
                     excited_triplet_ref = upfreipletexc[upfreipletexc < 1.24][-1] 
 
                     # Reference energy for unfilled spin-up bands (first energy above 7.25 eV)
-                    tripletunf_ref = upunfreiplet[upunfreiplet > 7.25][0]
-                    excited_triplet_ref = upunfreipletexc[upunfreipletexc > 7.25][0]
+                    tripletunf_ref = upunfreiplet[upunfreiplet > 5.25][0]
+                    excited_triplet_ref = upunfreipletexc[upunfreipletexc > 5.25][0]
 
                 except IndexError:
                     triplet_ref = 1.24
                     excited_triplet_ref = 1.24
 
-                    tripletunf_ref = 6.25
-                    excited_triplet_ref = 6.25
+                    tripletunf_ref = 5.25
+                    excited_triplet_ref = 5.25
 
 
             fup_t = [energy - triplet_ref for energy in band_energy_spinUp_filled_triplet[-spin_nummer:]]

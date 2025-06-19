@@ -1310,7 +1310,7 @@ for tabs in tab_selection:
                                 wavelength = data[:, 0]
                                 intensity = data[:, 1]
                                 # Find the index of maximum PL intensity
-                                max_index = np.argmax(pl_intensity)
+                                max_index = np.argmax(intensity)
                                 # ZPL wavelength is the wavelength corresponding to max intensity
                                 ZPL_wavelength = wavelength[max_index]
                                 # Mirror wavelengths about the ZPL

@@ -621,7 +621,8 @@ for tabs in tab_selection:
             fdown_t_exc = [energy - triplet_ref for energy in band_energy_spinDown_filled_excited_triplet[-spin_nummer:]]
             ufdown_t_exc = [energy - triplet_ref for energy in band_energy_spinDown_unfilled_excited_triplet[:spin_nummer]]
 
-            all_band_energy = np.concatenate([fup_t_exc,fup_t,ufup_t,ufup_t_exc,fdown_t,fdown_t_exc,ufdown_t,ufdown_t_exc])
+            #all_band_energy = np.concatenate([fup_t_exc,fup_t,ufup_t,ufup_t_exc,fdown_t,fdown_t_exc,ufdown_t,ufdown_t_exc])
+            all_band_energy = np.concatenate([fup_t,fup_t_exc,ufup_t,ufup_t_exc,fdown_t,fdown_t_exc,ufdown_t,ufdown_t_exc])
 
             try:
                 eemin = np.min(all_band_energy)

@@ -171,78 +171,76 @@ def read_formation_energies(file_path):
     return data
 
 # Function to plot formation energy diagram using Plotly
-
-def plot_diagram_plotly(data, title):
-    """
-    Build a formation‑energy diagram that looks consistent in both
-    N‑rich and N‑poor tabs.
-
-    * No hard‑coded axis limits — we let Plotly auto‑range so datasets
-      with wider energy spans (common in N‑rich) aren’t clipped.
-    * Global font brought down to `base_font` (default 12 pt); axis‑title
-      fonts are `base_font + 2`.
-    * Legend is horizontal, sits just above the plot; we dynamically
-      expand the bottom margin if the legend needs more rows.
-    * Uses the **exact same trace logic** you already had — only style
-      changes.
-    """
-
+def plot_diagram_plotly(data, title,base_font: int = 12):
     fig = go.Figure()
+    # Track y-axis limits
+    min_energy, max_energy = np.inf, -np.inf
 
-    # ---- original trace‑building logic (unchanged) ----
-    for charge, payload in data.items():
-        fig.add_trace(
-            go.Scatter(
-                x=payload["mu"],
-                y=payload["Eform"],
-                mode="lines+markers",
-                name=f"q = {charge:+d}",
-            )
-        )
+    for defect_name, charge_states in data.items():
+        for energy_type in ['corrected', 'uncorrected']:
+            for state in charge_states:
+                q = state['charge']
+                E_f0 = state[energy_type]
+                formation_energy = E_f0 + q * E_F
+                # Update min/max for y-axis
+                min_energy = min(min_energy, formation_energy.min())
+                max_energy = max(max_energy, formation_energy.max())
 
-    # ---- styling pass ----
+                label = f"q={q}, {energy_type}"
+                
+                linestyle = 'solid' if energy_type == 'corrected' else 'dash'
+
+                fig.add_trace(go.Scatter(
+                    x=E_F,
+                    y=formation_energy,
+                    mode='lines',
+                    line=dict(dash=linestyle, width=2, color=color_map[q]),
+                    name=label
+                ))
+
     fig.update_xaxes(
-        title="Chemical potential (eV)",
-        title_font=dict(size=base_font + 2),
-        tickfont=dict(size=base_font),
+        title="E<sub>Fermi</sub> (eV)",
+        title_font={"size": 22},
+        showgrid=False,
         showline=True,
-        linewidth=1,
-        linecolor="black",
-        mirror=True,
+        linewidth=2,
+        linecolor='black',
+        mirror=True
     )
-
     fig.update_yaxes(
-        title="Formation energy (eV)",
-        title_font=dict(size=base_font + 2),
-        tickfont=dict(size=base_font),
+        title="E<sub>form</sub> (eV)",
+        title_font={"size": 22},
+        showgrid=False,
         showline=True,
-        linewidth=1,
-        linecolor="black",
-        mirror=True,
+        zeroline=False,  # Removes horizontal line at y=0
+        linewidth=2,
+        linecolor='black',
+        mirror=True
     )
-
-    # number of legend rows ≈ len(data)/4 (max 4 items per row)
-    items_per_row = 4
-    n_rows = (len(data) + items_per_row - 1) // items_per_row
-    bottom_extra = 20 * max(0, n_rows - 1)
-
     fig.update_layout(
-        title=title,
-        font=dict(size=base_font),
+        #title=title,   # title of the plot
+        template="plotly_white",       # still grab all the white-template defaults…
+        paper_bgcolor="white",         # …and force the outside margin to white
+        plot_bgcolor="white",          # …and force the inside plotting area to white
+        font=dict(size=18, color="Black"),
+        showlegend=True,
+        xaxis_range=[0, 6],
+        yaxis_range=[min_energy - 0.5, max_energy + 0.5],  # Padding for aesthetics
+        width=600,
+        height=500,
+        margin=dict(l=70,r=70,t=30,b=90),
         legend=dict(
-            orientation="h",
-            yanchor="bottom",
-            y=1.02,
-            xanchor="left",
-            x=0,
-            font=dict(size=base_font - 1),
-            bgcolor="rgba(0,0,0,0)",
-        ),
-        margin=dict(l=60, r=20, t=50, b=60 + bottom_extra),
+            x=0.02,
+            y=0.98,
+            bgcolor='rgba(255,255,255,0.7)',
+            bordercolor='gray',
+            borderwidth=0.5,
+            font=dict(size=12),
+            orientation="v"
+        )
     )
 
     return fig
-
 
 def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -1267,17 +1265,11 @@ for tabs in tab_selection:
                         st.header("Defect Formation Energy of "+"${}$".format(latexdefect))
                         tab1, tab2 = st.tabs(["N-rich","N-poor"])
                         with tab1:                
-                            #st.components.v1.html(fig_rich.to_html(include_mathjax='cdn'),width=550, height=600)
-                            st.plotly_chart(
-                                plot_diagram_plotly(rich_formation, "N-rich formation energies"),
-                                use_container_width=True,
-                            )
+                            #st.components.v1.html(fig_rich.to_html(include_mathjax='cdn',full_html=False,div_id='formation-rich'),width=550, height=600)
+                            st.plotly_chart(fig_rich, use_container_width=True,theme=None)   #  
                         with tab2: 
-                            #st.components.v1.html(fig_poor.to_html(include_mathjax='cdn'),width=550, height=600)
-                            st.plotly_chart(
-                                plot_diagram_plotly(poor_formation, "N-poor formation energies"),
-                                use_container_width=True,
-                            )
+                            #st.components.v1.html(fig_poor.to_html(include_mathjax='cdn',full_html=False,div_id='formation-poor'),width=550, height=600)
+                            st.plotly_chart(fig_poor, use_container_width=True, theme=None)   #  ← change
 
                 ###### for PL spectrum
                 # Path to the PL file
@@ -1394,7 +1386,7 @@ for tabs in tab_selection:
                                     font=dict(size=16, color="black"),
                                     width=600,
                                     height=500,
-                                    margin=dict(l=70, r=70, t=30, b=90),
+                                    margin=dict(l=100, r=70, t=30, b=90),
                                     showlegend=False
                                 )                
                                 st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=550, height=600)

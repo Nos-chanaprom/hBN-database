@@ -171,7 +171,7 @@ def read_formation_energies(file_path):
     return data
 
 # Function to plot formation energy diagram using Plotly
-def plot_diagram_plotly(data, title):
+def plot_diagram_plotly(data, title,base_font: int = 12):
     fig = go.Figure()
     # Track y-axis limits
     min_energy, max_energy = np.inf, -np.inf
@@ -199,44 +199,18 @@ def plot_diagram_plotly(data, title):
                 ))
     base_font = 22  # change here if you want a different global size
 
-    fig.update_xaxes(
-        title="$E_{Fermi}$ (eV)",
-        title_font={"size": 22},
-        showgrid=False,
-        showline=True,
-        linewidth=2,
-        linecolor='black',
-        mirror=True
-    )
-    fig.update_yaxes(
-        title="$E_{form}$ (eV)",
-        title_font={"size": 22},
-        showgrid=False,
-        showline=True,
-        zeroline=False,  # Removes horizontal line at y=0
-        linewidth=2,
-        linecolor='black',
-        mirror=True
-    )
-    fig.update_layout(
-        #title=title,   # title of the plot
-        font=dict(size=18, color="Black"),
-        showlegend=True,
-        xaxis_range=[0, 6],
-        yaxis_range=[min_energy - 0.5, max_energy + 0.5],  # Padding for aesthetics
-        width=600,
-        height=500,
-        margin=dict(l=70,r=70,t=30,b=90),
-        legend=dict(
-            x=0.02,
-            y=0.98,
-            bgcolor='rgba(255,255,255,0.7)',
-            bordercolor='gray',
-            borderwidth=0.5,
-            font=dict(size=12),
-            orientation="v"
-        )
-    )
+    # plain-text titles, modest fonts, legend on top …
+    fig.update_xaxes(title="Chemical potential (eV)",
+                     title_font=dict(size=base_font + 2),
+                     tickfont=dict(size=base_font))
+    fig.update_yaxes(title="Formation energy (eV)",
+                     title_font=dict(size=base_font + 2),
+                     tickfont=dict(size=base_font))
+    fig.update_layout(font=dict(size=base_font),
+                      legend=dict(orientation="h",
+                                  yanchor="bottom", y=1.02,
+                                  xanchor="left",   x=0),
+                      margin=dict(l=60, r=20, t=50, b=70))
 
     return fig
 

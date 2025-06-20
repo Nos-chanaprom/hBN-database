@@ -434,33 +434,22 @@ with Search_cont:
     Photophysical_properties["Quantum memory properties: g (MHz)"] = Photophysical_properties["Quantum memory properties: g (MHz)"].map("{:.2E}".format)
    
     Photophysical_properties['Defect name']=Photophysical_properties['Defect name'].map(lambda x: "${}$".format(x.replace("$","")))
-    # Apply filters (renders both defect search and refractive-index input)
+    # Apply filters (renders Defect search + refractive-index)
     df_filtered = filter_dataframe(Photophysical_properties)
 
-    # Retrieve refractive index (fallback to 1.85)
+    # Retrieve user-provided refractive index (default 1.85)
     refr_index = st.session_state.get("refractive_index", 1.85)
 
-    # Overwrite lifetime for filtered rows only
+    # Overwrite lifetime for filtered rows
     Photophysical_properties.loc[df_filtered.index, original_col] = (
-        Photophysical_properties.loc[df_filtered.index, "lifetime_db"]
-        .apply(lambda τ: f"{τ * 1.85 / refr_index:.2E}")
+        Photophysical_properties.loc[df_filtered.index, 'lifetime_db']
+        .apply(lambda τ: "{:.2E}".format(τ * 1.85 / refr_index))
     )
 
     # Drop helper column
-    Photophysical_properties.drop(columns=["lifetime_db"], inplace=True)
+    Photophysical_properties.drop(columns=['lifetime_db'], inplace=True)
 
-    # Display filtered table with selection
-    def dataframe_with_selections(df):
-        df_sel = df.copy()
-        df_sel.insert(0, "Select", False)
-        edited = st.data_editor(
-            df_sel,
-            hide_index=True,
-            column_config={"Select": st.column_config.CheckboxColumn(required=True)},
-            disabled=df.columns
-        )
-        return edited[edited.Select]
-
+    # Display selection
     selection = dataframe_with_selections(Photophysical_properties.loc[df_filtered.index])
     st.write("Your selection:")
     st.data_editor(selection, hide_index=True)

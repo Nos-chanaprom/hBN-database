@@ -1215,8 +1215,12 @@ for tabs in tab_selection:
 
             elif host == 'bulk':
                 ###### for plotting defect formation energy
-                path_formationE_Nrich = "bulk/database/" + str_defect + "/singlet/ground/formation_energies_N_rich.txt"
-                path_formationE_Npoor = "bulk/database/" + str_defect + "/singlet/ground/formation_energies_N_poor.txt"
+                if spin_multiplicity == 'singlet':
+                    path_formationE_Nrich = "bulk/database/" + str_defect + "/singlet/ground/formation_energies_N_rich.txt"
+                    path_formationE_Npoor = "bulk/database/" + str_defect + "/singlet/ground/formation_energies_N_poor.txt"
+                elif spin_multiplicity == 'doublet':
+                    path_formationE_Nrich = "bulk/database/" + str_defect + "/doublet/ground/formation_energies_N_rich.txt"
+                    path_formationE_Npoor = "bulk/database/" + str_defect + "/doublet/ground/formation_energies_N_poor.txt"
                 # Load both files
                 rich_data = read_formation_energies(path_formationE_Nrich)
                 poor_data = read_formation_energies(path_formationE_Npoor)
@@ -1248,7 +1252,11 @@ for tabs in tab_selection:
 
                 ###### for PL spectrum
                 # Path to the PL file
-                path_PL = "bulk/database/" + str_defect + "/singlet/ground/PL.txt"      
+                if spin_multiplicity == 'singlet':
+                    path_PL = "bulk/database/" + str_defect + "/singlet/ground/PL.txt" 
+                elif spin_multiplicity == 'doublet':
+                    path_PL = "bulk/database/" + str_defect + "/doublet/ground/PL.txt" 
+
                 with col4:
                     with st.container(border=True):
                         st.header("Luminescence spectrum of "+"${}$".format(latexdefect))

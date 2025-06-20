@@ -1266,7 +1266,7 @@ for tabs in tab_selection:
                             #st.components.v1.html(fig_rich.to_html(include_mathjax='cdn'),width=550, height=600)
                             st.plotly_chart(
                                 plot_diagram_plotly(rich_data, "N-rich formation energies"),
-                                use_container_width=True,
+                                width=550, height=600
                             )
                         with tab2: 
                             st.components.v1.html(fig_poor.to_html(include_mathjax='cdn'),width=550, height=600)

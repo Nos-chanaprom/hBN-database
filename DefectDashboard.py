@@ -1386,7 +1386,7 @@ for tabs in tab_selection:
                                     font=dict(size=16, color="black"),
                                     width=600,
                                     height=500,
-                                    margin=dict(l=70, r=70, t=30, b=90),
+                                    margin=dict(l=100, r=70, t=30, b=90),
                                     showlegend=False
                                 )                
                                 st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=550, height=600)

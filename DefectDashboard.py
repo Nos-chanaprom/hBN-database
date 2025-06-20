@@ -313,24 +313,13 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
                         step=step,
                     )
                 df = df[df[column].between(*(user_num_input_min,user_num_input_max))]
-            elif column == "Defect name":
+            elif column == "Defect":
                 user_text_input = st.text_input(
                     f"To find a defect, use the KrögerVink notation without indices *e.g. AsN for $As_N$*",
                 )
                 if user_text_input:
                     df = df[df[column].str.contains(user_text_input)]
-                # refractive-index input placed immediately after defect search
-                refractive_index = st.number_input(
-                    "Refractive index (n)",
-                    value=1.85,
-                    min_value=0.1,
-                    step=0.01,
-                    format="%.2f",
-                    help="Adjust the reported vacuum lifetime via τ = τ₀·1.85/n",
-                    key="ref_index"
-                )
-                # store refractive_index in session state for later use
-                st.session_state["refractive_index"] = refractive_index
+                
 
             elif column == "Excitation properties: Characteristic time (ns)" or "Emission properties: Lifetime (ns)" or "Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05" or "Quantum memory properties: g (MHz)":
                 df[column] = df[column].astype(float)
@@ -394,14 +383,14 @@ with Search_cont:
     st.header("Search engine for hBN defects")
     
     # interactive refractive-index input for lifetime calculation
-    #refractive_index = st.number_input(
-    #    "Refractive index (n)",
-    #    value=1.85,       # default so initial lifetime matches DB
-    #    min_value=0.1,
-    #    step=0.01,
-    #    format="%.2f",
-    #    help="Adjust the reported vacuum lifetime via τ = τ₀·1.85/n"
-    #)
+    refractive_index = st.number_input(
+        "Refractive index (n)",
+        value=1.85,       # default so initial lifetime matches DB
+        min_value=0.1,
+        step=0.01,
+        format="%.2f",
+        help="Adjust the reported vacuum lifetime via τ = τ₀·1.85/n"
+    )
 
 
     Photophysical_properties = load_table('updated_data')
@@ -420,7 +409,14 @@ with Search_cont:
     Photophysical_properties["Excitation properties: Characteristic time (ns)"] = Photophysical_properties["Excitation properties: Characteristic time (ns)"].map("{:.2E}".format)
     Photophysical_properties["Emission properties: Lifetime (ns)"]=Photophysical_properties["Emission properties: Lifetime (ns)"].astype(int)
     Photophysical_properties["Emission properties: Lifetime (ns)"] = Photophysical_properties["Emission properties: Lifetime (ns)"].map("{:.2E}".format)
-    
+    # overwrite Lifetime column with interactive values
+    Photophysical_properties[original_col] = (
+        Photophysical_properties["lifetime_db"]
+        .apply(lambda τ: "{:.2E}".format(τ * 1.85 / refractive_index))
+    )
+
+    # remove helper column
+    Photophysical_properties.drop(columns=['lifetime_db'], inplace=True)
 
     Photophysical_properties["Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05"]=Photophysical_properties["Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05"].astype(int)
     Photophysical_properties["Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05"] = Photophysical_properties["Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05"].map("{:.2E}".format)
@@ -429,22 +425,6 @@ with Search_cont:
    
     Photophysical_properties['Defect name']=Photophysical_properties['Defect name'].map(lambda x: "${}$".format(x.replace("$","")))
     df_searchEngine = filter_dataframe(Photophysical_properties)
-
-    # Retrieve refractive index from session state (if set)
-    refr_index = st.session_state.get("refractive_index", 1.85)
-    # Overwrite lifetime in the filtered DataFrame based on interactive refractive index
-    df_searchEngine[original_col] = (
-        df_searchEngine["lifetime_db"]
-        .apply(lambda τ: "{:.2E}".format(τ * 1.85 / refr_index))
-    )
-
-    # Drop helper column from both DataFrames
-    df_searchEngine = df_searchEngine.drop(columns=["lifetime_db"])
-    Photophysical_properties = Photophysical_properties.drop(columns=["lifetime_db"])
-
-    # Display filtered table with selection checkboxes
-    def dataframe_with_selections(df):
-        Photophysical_properties.drop(columns=["lifetime_db"], inplace=True)
 
     ### Selected Table ####
     def dataframe_with_selections(df):
@@ -455,7 +435,7 @@ with Search_cont:
         edited_df = st.data_editor(
             df_with_selections,
             hide_index=True,
-            column_config={"Select": st.column_config.CheckboxColumn(required=True)},
+            column_config={"Select": st.column_config.CheckboxColumn(required=True), "Defect name": None},
             disabled=df.columns,
         )
 
@@ -464,9 +444,15 @@ with Search_cont:
         return selected_rows
 
 
-    selection = dataframe_with_selections(Photophysical_properties.loc[df_searchEngine.index])
+    selection = dataframe_with_selections(df_searchEngine)
     st.write("Your selection:")
-    st.data_editor(selection, hide_index=True)
+    selection_selection = st.data_editor(
+            selection,
+            hide_index=True,
+            column_config={},
+            #column_config={"Select": None,"Defect name": None},
+            #disabled=selection.columns
+        )
 
 ####### END SEARCH ENGINE ########
 if selection.empty :

@@ -441,10 +441,9 @@ with Search_cont:
     refr_index = st.session_state.get("refractive_index", 1.85)
 
     # Overwrite lifetime for filtered rows
-    Photophysical_properties.loc[df_filtered.index, original_col] = (
-        Photophysical_properties.loc[df_filtered.index, 'lifetime_db']
-        .apply(lambda τ: "{:.2E}".format(τ * 1.85 / refr_index))
-    )
+    Photophysical_properties.loc[df_filtered.index, original_col] = \
+        Photophysical_properties.loc[df_filtered.index, 'lifetime_db'] \
+            .apply(lambda τ: f"{τ * 1.85 / refr_index:.2E}")
 
     # Drop helper column
     Photophysical_properties.drop(columns=['lifetime_db'], inplace=True)

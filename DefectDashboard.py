@@ -313,7 +313,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
                         step=step,
                     )
                 df = df[df[column].between(*(user_num_input_min,user_num_input_max))]
-            elif column == "Defect":
+            elif column == "Defect name":
                 user_text_input = st.text_input(
                     f"To find a defect, use the KrögerVink notation without indices *e.g. AsN for $As_N$*",
                 )
@@ -432,14 +432,19 @@ with Search_cont:
 
     # Retrieve refractive index from session state (if set)
     refr_index = st.session_state.get("refractive_index", 1.85)
-    # Overwrite lifetime column based on interactive refractive index
-    Photophysical_properties.loc[df_searchEngine.index, original_col] = (
-        Photophysical_properties.loc[df_searchEngine.index, "lifetime_db"]
+    # Overwrite lifetime in the filtered DataFrame based on interactive refractive index
+    df_searchEngine[original_col] = (
+        df_searchEngine["lifetime_db"]
         .apply(lambda τ: "{:.2E}".format(τ * 1.85 / refr_index))
     )
 
-    # remove helper column
-    Photophysical_properties.drop(columns=['lifetime_db'], inplace=True)
+    # Drop helper column from both DataFrames
+    df_searchEngine = df_searchEngine.drop(columns=["lifetime_db"])
+    Photophysical_properties = Photophysical_properties.drop(columns=["lifetime_db"])
+
+    # Display filtered table with selection checkboxes
+    def dataframe_with_selections(df):
+    Photophysical_properties.drop(columns=["lifetime_db"], inplace=True)
 
     ### Selected Table ####
     def dataframe_with_selections(df):
@@ -450,7 +455,7 @@ with Search_cont:
         edited_df = st.data_editor(
             df_with_selections,
             hide_index=True,
-            column_config={"Select": st.column_config.CheckboxColumn(required=True), "Defect name": None},
+            column_config={"Select": st.column_config.CheckboxColumn(required=True)},
             disabled=df.columns,
         )
 
@@ -459,15 +464,9 @@ with Search_cont:
         return selected_rows
 
 
-    selection = dataframe_with_selections(df_searchEngine)
+    selection = dataframe_with_selections(Photophysical_properties.loc[df_searchEngine.index])
     st.write("Your selection:")
-    selection_selection = st.data_editor(
-            selection,
-            hide_index=True,
-            column_config={},
-            #column_config={"Select": None,"Defect name": None},
-            #disabled=selection.columns
-        )
+    st.data_editor(selection, hide_index=True)
 
 ####### END SEARCH ENGINE ########
 if selection.empty :

@@ -171,87 +171,74 @@ def read_formation_energies(file_path):
     return data
 
 # Function to plot formation energy diagram using Plotly
-
 def plot_diagram_plotly(data, title):
-    """
-    Plot defect formation energies vs. Fermi level.
-
-    Fixes the N‑poor display issue by enforcing smaller font sizes
-    and moving the legend below the plot to prevent clipping.
-    Works for both N‑rich and N‑poor inputs.
-    """
     fig = go.Figure()
-
-    # Track y‑axis limits
+    # Track y-axis limits
     min_energy, max_energy = np.inf, -np.inf
 
     for defect_name, charge_states in data.items():
-        for energy_type in ["corrected", "uncorrected"]:
+        for energy_type in ['corrected', 'uncorrected']:
             for state in charge_states:
                 q = state['charge']
                 E_f0 = state[energy_type]
                 formation_energy = E_f0 + q * E_F
-
+                # Update min/max for y-axis
                 min_energy = min(min_energy, formation_energy.min())
                 max_energy = max(max_energy, formation_energy.max())
 
                 label = f"q={q}, {energy_type}"
+                
                 linestyle = 'solid' if energy_type == 'corrected' else 'dash'
-                color = color_map[q]
 
                 fig.add_trace(go.Scatter(
                     x=E_F,
                     y=formation_energy,
                     mode='lines',
-                    line=dict(dash=linestyle, width=2, color=color),
-                    name=label,
+                    line=dict(dash=linestyle, width=2, color=color_map[q]),
+                    name=label
                 ))
-
-    # Unified layout
-    base_font = 12
+    base_font = 22  # change here if you want a different global size
 
     fig.update_xaxes(
         title="$E_{Fermi}$ (eV)",
-        title_font=dict(size=base_font + 2),
-        tickfont=dict(size=base_font),
+        title_font={"size": 22},
         showgrid=False,
         showline=True,
         linewidth=2,
         linecolor='black',
-        mirror=True,
-        range=[0, 6],
+        mirror=True
     )
-
     fig.update_yaxes(
         title="$E_{form}$ (eV)",
-        title_font=dict(size=base_font + 2),
-        tickfont=dict(size=base_font),
+        title_font={"size": 22},
         showgrid=False,
         showline=True,
+        zeroline=False,  # Removes horizontal line at y=0
         linewidth=2,
         linecolor='black',
-        mirror=True,
-        range=[min_energy - 0.5, max_energy + 0.5],
+        mirror=True
     )
-
     fig.update_layout(
-        font=dict(size=base_font, color='black'),
+        #title=title,   # title of the plot
+        font=dict(size=18, color="Black"),
         showlegend=True,
-        legend=dict(
-            orientation='h',
-            y=-0.25,
-            yanchor='top',
-            x=0,
-            xanchor='left',
-            font=dict(size=base_font - 1),
-        ),
+        xaxis_range=[0, 6],
+        yaxis_range=[min_energy - 0.5, max_energy + 0.5],  # Padding for aesthetics
         width=600,
         height=500,
-        margin=dict(l=60, r=40, t=40, b=110),  # extra bottom margin for legend
+        margin=dict(l=70,r=70,t=30,b=90),
+        legend=dict(
+            x=0.02,
+            y=0.98,
+            bgcolor='rgba(255,255,255,0.7)',
+            bordercolor='gray',
+            borderwidth=0.5,
+            font=dict(size=12),
+            orientation="v"
+        )
     )
 
     return fig
-
 
 def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -1277,6 +1264,10 @@ for tabs in tab_selection:
                         tab1, tab2 = st.tabs(["N-rich","N-poor"])
                         with tab1:                
                             st.components.v1.html(fig_rich.to_html(include_mathjax='cdn'),width=550, height=600)
+                            #st.plotly_chart(
+                            #    plot_diagram_plotly(rich_data, "N-rich formation energies"),
+                            #    width=550, height=600
+                            #)
                         with tab2: 
                             st.components.v1.html(fig_poor.to_html(include_mathjax='cdn'),width=550, height=600)
 

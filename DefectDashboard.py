@@ -432,10 +432,10 @@ with Search_cont:
 
     # Retrieve refractive index from session state (if set)
     refr_index = st.session_state.get("refractive_index", 1.85)
-    # overwrite Lifetime column with interactive values
-    Photophysical_properties[original_col] = (
-        Photophysical_properties["lifetime_db"]
-        .apply(lambda τ: "{:.2E}".format(τ * 1.85 / refractive_index))
+    # Overwrite lifetime column based on interactive refractive index
+    Photophysical_properties.loc[df_searchEngine.index, original_col] = (
+        Photophysical_properties.loc[df_searchEngine.index, "lifetime_db"]
+        .apply(lambda τ: "{:.2E}".format(τ * 1.85 / refr_index))
     )
 
     # remove helper column

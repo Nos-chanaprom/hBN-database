@@ -202,10 +202,10 @@ def plot_diagram_plotly(data, title,base_font: int = 12):
     # plain-text titles, modest fonts, legend on top …
     fig.update_xaxes(title="Chemical potential (eV)",
                      title_font=dict(size=base_font + 2),
-                     tickfont=dict(size=base_font))
+                     tickfont=dict(size=base_font),showline=True),
     fig.update_yaxes(title="Formation energy (eV)",
                      title_font=dict(size=base_font + 2),
-                     tickfont=dict(size=base_font))
+                     tickfont=dict(size=base_font),showline=True,)
     fig.update_layout(font=dict(size=base_font),
                       legend=dict(orientation="h",
                                   yanchor="bottom", y=1.02,

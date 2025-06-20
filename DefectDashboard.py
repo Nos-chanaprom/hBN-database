@@ -379,6 +379,17 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 Search_cont = st.container(border=True)
 with Search_cont:
     st.header("Search engine for hBN defects")
+    # interactive refractive-index input for lifetime calculation
+    refractive_index = st.number_input(
+        "Refractive index (n)",
+        value=1.85,       # default so initial lifetime matches DB
+        min_value=0.1,
+        step=0.01,
+        format="%.2f",
+        help="Adjust the reported vacuum lifetime via τ = τ₀·1.85/n"
+    )
+
+
     Photophysical_properties = load_table('updated_data')
     ## rounding numbers
     Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)  ## select from columns 5
@@ -388,6 +399,14 @@ with Search_cont:
     Photophysical_properties["Excitation properties: Characteristic time (ns)"] = Photophysical_properties["Excitation properties: Characteristic time (ns)"].map("{:.2E}".format)
     Photophysical_properties["Emission properties: Lifetime (ns)"]=Photophysical_properties["Emission properties: Lifetime (ns)"].astype(int)
     Photophysical_properties["Emission properties: Lifetime (ns)"] = Photophysical_properties["Emission properties: Lifetime (ns)"].map("{:.2E}".format)
+    # overwrite Lifetime column with interactive values
+    Photophysical_properties["Emission properties: Lifetime (ns)"] = (
+        Photophysical_properties['lifetime_db']
+        .apply(lambda τ: "{:.2E}".format(τ * 1.85 / refractive_index))
+    )
+    # remove helper column
+    Photophysical_properties.drop(columns=['lifetime_db'], inplace=True)
+
     Photophysical_properties["Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05"]=Photophysical_properties["Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05"].astype(int)
     Photophysical_properties["Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05"] = Photophysical_properties["Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05"].map("{:.2E}".format)
     Photophysical_properties["Quantum memory properties: g (MHz)"]=Photophysical_properties["Quantum memory properties: g (MHz)"].astype(int)
@@ -419,8 +438,9 @@ with Search_cont:
     selection_selection = st.data_editor(
             selection,
             hide_index=True,
-            column_config={"Select": None,"Defect name": None},
-            disabled=selection.columns
+            column_config={},
+            #column_config={"Select": None,"Defect name": None},
+            #disabled=selection.columns
         )
 
 ####### END SEARCH ENGINE ########

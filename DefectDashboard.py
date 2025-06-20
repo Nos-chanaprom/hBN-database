@@ -219,7 +219,9 @@ def plot_diagram_plotly(data, title,base_font: int = 12):
     )
     fig.update_layout(
         #title=title,   # title of the plot
-        template="plotly_white",
+        template="plotly_white",       # still grab all the white-template defaults…
+        paper_bgcolor="white",         # …and force the outside margin to white
+        plot_bgcolor="white",          # …and force the inside plotting area to white
         font=dict(size=18, color="Black"),
         showlegend=True,
         xaxis_range=[0, 6],

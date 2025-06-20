@@ -444,7 +444,7 @@ with Search_cont:
 
     # Display filtered table with selection checkboxes
     def dataframe_with_selections(df):
-    Photophysical_properties.drop(columns=["lifetime_db"], inplace=True)
+        Photophysical_properties.drop(columns=["lifetime_db"], inplace=True)
 
     ### Selected Table ####
     def dataframe_with_selections(df):

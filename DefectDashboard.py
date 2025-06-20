@@ -444,7 +444,7 @@ with Search_cont:
     Photophysical_properties.loc[df_filtered.index, original_col] = (
         Photophysical_properties.loc[df_filtered.index, 'lifetime_db']
         .apply(lambda τ: "{:.2E}".format(τ * 1.85 / refr_index))
-    ))
+    )
 
     # Drop helper column
     Photophysical_properties.drop(columns=['lifetime_db'], inplace=True)

@@ -1265,7 +1265,7 @@ for tabs in tab_selection:
                             st.components.v1.html(fig_rich.to_html(include_mathjax='cdn',full_html=False,div_id='formation-rich'),width=550, height=600)
                             #st.plotly_chart(fig_rich, use_container_width=True)   #  ← change
                         with tab2: 
-                            st.components.v1.html(fig_poor.to_html(include_mathjax='cdn',full_html=False,div_id='formation-poor'),width=550, height=600)
+                            st.components.v1.html(fig_poor.to_html(full_html=False,include_plotlyjs=False,div_id='formation-poor'),width=550, height=600)
                             #st.plotly_chart(fig_poor, use_container_width=True)   #  ← change
 
                 ###### for PL spectrum

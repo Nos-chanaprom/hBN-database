@@ -15,6 +15,22 @@ import warnings
 import time
 import plotly.colors as pc
 
+import sqlite3  # Added for DB support
+
+@st.cache_data
+def load_table(table_name: str, db_path: str = "Supplementary_database_totalE_2.db") -> pd.DataFrame:
+    """
+    Load a full table from the SQLite database into a DataFrame.
+    """
+    conn = sqlite3.connect(db_path)
+    query = f'SELECT * FROM "{table_name}"'
+    df = pd.read_sql_query(query, conn)
+    conn.close()
+    return df
+
+# --- Replace Excel backend with DB backend ---
+
+
 ### https://plotly.com/python/images/###
 
 # Get the list of all files and directories 
@@ -155,7 +171,7 @@ def read_formation_energies(file_path):
     return data
 
 # Function to plot formation energy diagram using Plotly
-def plot_diagram_plotly(data, title):
+def plot_diagram_plotly(data, title,base_font: int = 12):
     fig = go.Figure()
     # Track y-axis limits
     min_energy, max_energy = np.inf, -np.inf
@@ -183,7 +199,7 @@ def plot_diagram_plotly(data, title):
                 ))
 
     fig.update_xaxes(
-        title="$E_{Fermi}$ (eV)",
+        title="E<sub>Fermi</sub> (eV)",
         title_font={"size": 22},
         showgrid=False,
         showline=True,
@@ -192,7 +208,7 @@ def plot_diagram_plotly(data, title):
         mirror=True
     )
     fig.update_yaxes(
-        title="$E_{form}$ (eV)",
+        title="E<sub>form</sub> (eV)",
         title_font={"size": 22},
         showgrid=False,
         showline=True,
@@ -203,6 +219,9 @@ def plot_diagram_plotly(data, title):
     )
     fig.update_layout(
         #title=title,   # title of the plot
+        template="plotly_white",       # still grab all the white-template defaults…
+        paper_bgcolor="white",         # …and force the outside margin to white
+        plot_bgcolor="white",          # …and force the inside plotting area to white
         font=dict(size=18, color="Black"),
         showlegend=True,
         xaxis_range=[0, 6],
@@ -360,7 +379,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 Search_cont = st.container(border=True)
 with Search_cont:
     st.header("Search engine for hBN defects")
-    Photophysical_properties = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='updated_data',engine = 'openpyxl',header=[0])
+    Photophysical_properties = load_table('updated_data')
     ## rounding numbers
     Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)  ## select from columns 5
     
@@ -458,7 +477,7 @@ for tabs in tab_selection:
         host = host_m.iloc[tabs_index,0]
 
         try: 
-            name_change = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='updated_data',engine = 'openpyxl')
+            name_change = load_table('updated_data')
             latexdefect = name_change[name_change['Defect']==str_defect]['Defect name'].reset_index().iloc[0,1]
             latexdefect = latexdefect.replace("$","")
 
@@ -863,7 +882,7 @@ for tabs in tab_selection:
                     )
 
             try: 
-                name_change = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='updated_data',engine = 'openpyxl')
+                name_change = load_table('updated_data')
                 latexdefect = name_change[name_change['Defect']==str_defect]['Defect name'].reset_index().iloc[0,1]
                 latexdefect = latexdefect.replace("$","")
 
@@ -989,7 +1008,7 @@ for tabs in tab_selection:
 
 
                     ## dipole
-                    dipole = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='updated_data',engine = 'openpyxl',header=[0])
+                    dipole = load_table('updated_data')
                     try: 
                         dipole_emi = dipole[(dipole['Defect'] == str_defect) & (dipole['Charge state'] ==chargetrans[str_charge]) & (dipole['Optical spin transition'] == spin_transition)]
                     except  NameError :
@@ -1123,7 +1142,7 @@ for tabs in tab_selection:
                         tab1, tab2, tab3 = st.tabs(["Excitation Properties", "Emission Properties", "Quantum Memory Properties"])
                         ## col21
                         #tab1.subheader('Excitation Properties')
-                        Photophysical_properties = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='Excitation properties',engine = 'openpyxl',header=[0])
+                        Photophysical_properties = load_table('Excitation properties')
                         Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
                         Photophysical_properties["Characteristic time (ns)"]=Photophysical_properties["Characteristic time (ns)"].astype(int)
                         Photophysical_properties["Characteristic time (ns)"] = Photophysical_properties["Characteristic time (ns)"].map("{:.2E}".format)
@@ -1149,7 +1168,7 @@ for tabs in tab_selection:
                         ## col22
                         #col22.subheader('Emission Properties')
 
-                        Photophysical_properties = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='Emission properties',engine = 'openpyxl',header=[0])
+                        Photophysical_properties = load_table('Emission properties')
                         Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
                         Photophysical_properties["ZPL (nm)"]=Photophysical_properties["ZPL (nm)"].astype(int)
                         Photophysical_properties["Lifetime (ns)"]=Photophysical_properties["Lifetime (ns)"].astype(int)
@@ -1178,7 +1197,7 @@ for tabs in tab_selection:
                         
                         #col23
                         #col23.subheader('Quantum Memory Properties')
-                        Photophysical_properties = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='Quantum memory properties',engine = 'openpyxl',header=[0])
+                        Photophysical_properties = load_table('Quantum memory properties')
                         Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
                         Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"]=Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].astype(int)
                         Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"] = Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].map("{:.2E}".format)
@@ -1246,9 +1265,11 @@ for tabs in tab_selection:
                         st.header("Defect Formation Energy of "+"${}$".format(latexdefect))
                         tab1, tab2 = st.tabs(["N-rich","N-poor"])
                         with tab1:                
-                            st.components.v1.html(fig_rich.to_html(include_mathjax='cdn'),width=550, height=600)
+                            #st.components.v1.html(fig_rich.to_html(include_mathjax='cdn',full_html=False,div_id='formation-rich'),width=550, height=600)
+                            st.plotly_chart(fig_rich, use_container_width=True,theme=None)   #  
                         with tab2: 
-                            st.components.v1.html(fig_poor.to_html(include_mathjax='cdn'),width=550, height=600)
+                            #st.components.v1.html(fig_poor.to_html(include_mathjax='cdn',full_html=False,div_id='formation-poor'),width=550, height=600)
+                            st.plotly_chart(fig_poor, use_container_width=True, theme=None)   #  ← change
 
                 ###### for PL spectrum
                 # Path to the PL file
@@ -1365,7 +1386,7 @@ for tabs in tab_selection:
                                     font=dict(size=16, color="black"),
                                     width=600,
                                     height=500,
-                                    margin=dict(l=70, r=70, t=30, b=90),
+                                    margin=dict(l=100, r=70, t=30, b=90),
                                     showlegend=False
                                 )                
                                 st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=550, height=600)
@@ -1382,7 +1403,7 @@ for tabs in tab_selection:
                         tab1, tab2, tab3 = st.tabs(["Excitation Properties", "Emission Properties", "Quantum Memory Properties"])
                         ## col21
                         #tab1.subheader('Excitation Properties')
-                        Photophysical_properties = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='Excitation properties',engine = 'openpyxl',header=[0])
+                        Photophysical_properties = load_table('Excitation properties')
                         Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
                         Photophysical_properties["Characteristic time (ns)"]=Photophysical_properties["Characteristic time (ns)"].astype(int)
                         Photophysical_properties["Characteristic time (ns)"] = Photophysical_properties["Characteristic time (ns)"].map("{:.2E}".format)
@@ -1408,7 +1429,7 @@ for tabs in tab_selection:
                         ## col22
                         #col22.subheader('Emission Properties')
 
-                        Photophysical_properties = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='Emission properties',engine = 'openpyxl',header=[0])
+                        Photophysical_properties = load_table('Emission properties')
                         Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
                         Photophysical_properties["ZPL (nm)"]=Photophysical_properties["ZPL (nm)"].astype(int)
                         Photophysical_properties["Lifetime (ns)"]=Photophysical_properties["Lifetime (ns)"].astype(int)
@@ -1437,7 +1458,7 @@ for tabs in tab_selection:
                         
                         #col23
                         #col23.subheader('Quantum Memory Properties')
-                        Photophysical_properties = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='Quantum memory properties',engine = 'openpyxl',header=[0])
+                        Photophysical_properties = load_table('Quantum memory properties')
                         Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
                         Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"]=Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].astype(int)
                         Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"] = Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].map("{:.2E}".format)
@@ -2034,7 +2055,7 @@ for tabs in tab_selection:
 
 
             try: 
-                name_change = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='updated_data',engine = 'openpyxl')
+                name_change = load_table('updated_data')
                 latexdefect = name_change[name_change['Defect']==str_defect]['Defect name'].reset_index().iloc[0,1]
                 latexdefect = latexdefect.replace("$","")
 
@@ -2178,7 +2199,7 @@ for tabs in tab_selection:
 
 
                     ## dipole
-                    dipole = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='updated_data',engine = 'openpyxl',header=[0])
+                    dipole = load_table('updated_data')
                     try: 
                         dipole_emi = dipole[(dipole['Defect'] == str_defect) & (dipole['Charge state'] ==chargetrans[str_charge]) & (dipole['Optical spin transition'] == spin_transition)]
                     except  NameError :
@@ -2483,7 +2504,7 @@ for tabs in tab_selection:
                     tab1, tab2, tab3 = st.tabs(["Excitation Properties", "Emission Properties", "Quantum Memory Properties"])
                     ## col21
                     #tab1.subheader('Excitation Properties')
-                    Photophysical_properties = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='Excitation properties',engine = 'openpyxl',header=[0])
+                    Photophysical_properties = load_table('Excitation properties')
                     Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
                     Photophysical_properties["Characteristic time (ns)"]=Photophysical_properties["Characteristic time (ns)"].astype(int)
                     Photophysical_properties["Characteristic time (ns)"] = Photophysical_properties["Characteristic time (ns)"].map("{:.2E}".format)
@@ -2509,7 +2530,7 @@ for tabs in tab_selection:
                     ## col22
                     #col22.subheader('Emission Properties')
 
-                    Photophysical_properties = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='Emission properties',engine = 'openpyxl',header=[0])
+                    Photophysical_properties = load_table('Emission properties')
                     Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
                     Photophysical_properties["ZPL (nm)"]=Photophysical_properties["ZPL (nm)"].astype(int)
                     Photophysical_properties["Lifetime (ns)"]=Photophysical_properties["Lifetime (ns)"].astype(int)
@@ -2538,7 +2559,7 @@ for tabs in tab_selection:
                     
                     #col23
                     #col23.subheader('Quantum Memory Properties')
-                    Photophysical_properties = pd.read_excel('Supplementary_database_totalE_2.xlsx',sheet_name='Quantum memory properties',engine = 'openpyxl',header=[0])
+                    Photophysical_properties = load_table('Quantum memory properties')
                     Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
                     Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"]=Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].astype(int)
                     Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"] = Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].map("{:.2E}".format)

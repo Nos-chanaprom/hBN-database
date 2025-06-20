@@ -197,6 +197,7 @@ def plot_diagram_plotly(data, title):
                     line=dict(dash=linestyle, width=2, color=color_map[q]),
                     name=label
                 ))
+    base_font = 22  # change here if you want a different global size
 
     fig.update_xaxes(
         title="$E_{Fermi}$ (eV)",

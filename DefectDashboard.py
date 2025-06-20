@@ -448,6 +448,18 @@ with Search_cont:
     # Drop helper column
     Photophysical_properties.drop(columns=['lifetime_db'], inplace=True)
 
+    # Provide a table with selection checkboxes
+    def dataframe_with_selections(df):
+        df_with_selections = df.copy()
+        df_with_selections.insert(0, "Select", False)
+        edited_df = st.data_editor(
+            df_with_selections,
+            hide_index=True,
+            column_config={"Select": st.column_config.CheckboxColumn(required=True)},
+            disabled=df.columns,
+        )
+        return edited_df[edited_df.Select]
+
     # Display selection
     selection = dataframe_with_selections(Photophysical_properties.loc[df_filtered.index])
     st.write("Your selection:")

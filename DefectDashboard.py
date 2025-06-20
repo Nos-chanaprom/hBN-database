@@ -391,6 +391,13 @@ with Search_cont:
 
 
     Photophysical_properties = load_table('updated_data')
+    #stash the original (vacuum) lifetime before formatting
+    original_col = "Emission properties: Lifetime (ns)"
+    Photophysical_properties["lifetime_db"] = (
+        Photophysical_properties[original_col]
+        .astype(float)
+    )
+
     ## rounding numbers
     Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)  ## select from columns 5
     
@@ -400,10 +407,11 @@ with Search_cont:
     Photophysical_properties["Emission properties: Lifetime (ns)"]=Photophysical_properties["Emission properties: Lifetime (ns)"].astype(int)
     Photophysical_properties["Emission properties: Lifetime (ns)"] = Photophysical_properties["Emission properties: Lifetime (ns)"].map("{:.2E}".format)
     # overwrite Lifetime column with interactive values
-    Photophysical_properties["Emission properties: Lifetime (ns)"] = (
-        Photophysical_properties['lifetime_db']
+    Photophysical_properties[original_col] = (
+        Photophysical_properties["lifetime_db"]
         .apply(lambda τ: "{:.2E}".format(τ * 1.85 / refractive_index))
     )
+
     # remove helper column
     Photophysical_properties.drop(columns=['lifetime_db'], inplace=True)
 

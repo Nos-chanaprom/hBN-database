@@ -420,13 +420,13 @@ with Search_cont:
     Photophysical_properties["Emission properties: Lifetime (ns)"]=Photophysical_properties["Emission properties: Lifetime (ns)"].astype(int)
     Photophysical_properties["Emission properties: Lifetime (ns)"] = Photophysical_properties["Emission properties: Lifetime (ns)"].map("{:.2E}".format)
     # overwrite Lifetime column with interactive values
-    Photophysical_properties[original_col] = (
-        Photophysical_properties["lifetime_db"]
-        .apply(lambda τ: "{:.2E}".format(τ * 1.85 / refractive_index))
-    )
+   # Photophysical_properties[original_col] = (
+   #     Photophysical_properties["lifetime_db"]
+   #     .apply(lambda τ: "{:.2E}".format(τ * 1.85 / refractive_index))
+   # )
 
     # remove helper column
-    Photophysical_properties.drop(columns=['lifetime_db'], inplace=True)
+    #Photophysical_properties.drop(columns=['lifetime_db'], inplace=True)
 
     Photophysical_properties["Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05"]=Photophysical_properties["Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05"].astype(int)
     Photophysical_properties["Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05"] = Photophysical_properties["Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05"].map("{:.2E}".format)

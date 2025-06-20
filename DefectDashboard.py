@@ -199,7 +199,7 @@ def plot_diagram_plotly(data, title,base_font: int = 12):
                 ))
 
     fig.update_xaxes(
-        title="$E_{Fermi}$ (eV)",
+        title=r"$E_{Fermi}$ (eV)",
         title_font={"size": 22},
         showgrid=False,
         showline=True,
@@ -208,7 +208,7 @@ def plot_diagram_plotly(data, title,base_font: int = 12):
         mirror=True
     )
     fig.update_yaxes(
-        title="$E_{form}$ (eV)",
+        title=r"$E_{form}$ (eV)",
         title_font={"size": 22},
         showgrid=False,
         showline=True,
@@ -1263,10 +1263,10 @@ for tabs in tab_selection:
                         tab1, tab2 = st.tabs(["N-rich","N-poor"])
                         with tab1:                
                             #st.components.v1.html(fig_rich.to_html(include_mathjax='cdn',full_html=False,div_id='formation-rich'),width=550, height=600)
-                            st.plotly_chart(fig_rich, use_container_width=True,theme=None)   #  ← change
+                            st.plotly_chart(fig_rich, use_container_width=True,theme=None)   #  
                         with tab2: 
                             #st.components.v1.html(fig_poor.to_html(include_mathjax='cdn',full_html=False,div_id='formation-poor'),width=550, height=600)
-                            st.plotly_chart(fig_poor, use_container_width=True, theme='streamlit')   #  ← change
+                            st.plotly_chart(fig_poor, use_container_width=True, theme=None)   #  ← change
 
                 ###### for PL spectrum
                 # Path to the PL file

@@ -379,6 +379,10 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 Search_cont = st.container(border=True)
 with Search_cont:
     st.header("Search engine for hBN defects")
+    st.write(
+        "To find a defect, use the Kröger–Vink notation without indices, "
+        "e.g., AsN for As<sub>N</sub>" , unsafe_allow_html=True
+    )
     # interactive refractive-index input for lifetime calculation
     refractive_index = st.number_input(
         "Refractive index (n)",

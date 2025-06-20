@@ -320,6 +320,16 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
                 if user_text_input:
                     df = df[df[column].str.contains(user_text_input)]
                    ### start here
+                # refractive-index input placed below the defect search
+                refractive_index = st.number_input(
+                    "Refractive index (n)",
+                    value=1.85,
+                    min_value=0.1,
+                    step=0.01,
+                    format="%.2f",
+                    help="Adjust the reported vacuum lifetime via τ = τ₀·1.85/n"
+                )
+                st.session_state["refractive_index"] = refractive_index
 
             elif column == "Excitation properties: Characteristic time (ns)" or "Emission properties: Lifetime (ns)" or "Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05" or "Quantum memory properties: g (MHz)":
                 df[column] = df[column].astype(float)
@@ -383,14 +393,14 @@ with Search_cont:
     st.header("Search engine for hBN defects")
     
     # interactive refractive-index input for lifetime calculation
-    refractive_index = st.number_input(
-        "Refractive index (n)",
-        value=1.85,       # default so initial lifetime matches DB
-        min_value=0.1,
-        step=0.01,
-        format="%.2f",
-        help="Adjust the reported vacuum lifetime via τ = τ₀·1.85/n"
-    )
+    #refractive_index = st.number_input(
+    #    "Refractive index (n)",
+    #    value=1.85,       # default so initial lifetime matches DB
+    #    min_value=0.1,
+    #    step=0.01,
+    #    format="%.2f",
+    #    help="Adjust the reported vacuum lifetime via τ = τ₀·1.85/n"
+    #)
 
 
     Photophysical_properties = load_table('updated_data')
@@ -424,35 +434,36 @@ with Search_cont:
     Photophysical_properties["Quantum memory properties: g (MHz)"] = Photophysical_properties["Quantum memory properties: g (MHz)"].map("{:.2E}".format)
    
     Photophysical_properties['Defect name']=Photophysical_properties['Defect name'].map(lambda x: "${}$".format(x.replace("$","")))
-    df_searchEngine = filter_dataframe(Photophysical_properties)
+    # Apply filters (renders both defect search and refractive-index input)
+    df_filtered = filter_dataframe(Photophysical_properties)
 
-    ### Selected Table ####
+    # Retrieve refractive index (fallback to 1.85)
+    refr_index = st.session_state.get("refractive_index", 1.85)
+
+    # Overwrite lifetime for filtered rows only
+    Photophysical_properties.loc[df_filtered.index, original_col] = (
+        Photophysical_properties.loc[df_filtered.index, "lifetime_db"]
+        .apply(lambda τ: f"{τ * 1.85 / refr_index:.2E}")
+    )
+
+    # Drop helper column
+    Photophysical_properties.drop(columns=["lifetime_db"], inplace=True)
+
+    # Display filtered table with selection
     def dataframe_with_selections(df):
-        df_with_selections = df.copy()
-        df_with_selections.insert(0, "Select", False)
-
-        # Get dataframe row-selections from user with st.data_editor
-        edited_df = st.data_editor(
-            df_with_selections,
+        df_sel = df.copy()
+        df_sel.insert(0, "Select", False)
+        edited = st.data_editor(
+            df_sel,
             hide_index=True,
-            column_config={"Select": st.column_config.CheckboxColumn(required=True), "Defect name": None},
-            disabled=df.columns,
+            column_config={"Select": st.column_config.CheckboxColumn(required=True)},
+            disabled=df.columns
         )
+        return edited[edited.Select]
 
-        # Filter the dataframe using the temporary column, then drop the column
-        selected_rows = edited_df[edited_df.Select]
-        return selected_rows
-
-
-    selection = dataframe_with_selections(df_searchEngine)
+    selection = dataframe_with_selections(Photophysical_properties.loc[df_filtered.index])
     st.write("Your selection:")
-    selection_selection = st.data_editor(
-            selection,
-            hide_index=True,
-            column_config={},
-            #column_config={"Select": None,"Defect name": None},
-            #disabled=selection.columns
-        )
+    st.data_editor(selection, hide_index=True)
 
 ####### END SEARCH ENGINE ########
 if selection.empty :

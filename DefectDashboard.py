@@ -466,7 +466,7 @@ def spin_marker_exc_fig (spinstate, band_energy, size, xcor, e_ref , bandlimit ,
                         #fig2.add_shape(type="rect",x0=xcor+0.1, y0=1-fermi_energy, x1=xcor-0.15, y1=1+emax,fillcolor="red",opacity=0.1)
 
                         delta += 0.02
-                        
+
 # with st.container(border=True):
 #     st.markdown(
 #         """
@@ -689,15 +689,35 @@ for tabs in tab_selection:
                                     e_ref=triplet_ref, bandlimit=tripletunf_ref,
                                     emin=0, emax=6, fig=fig_g)
 
-                # layout styling (unchanged)
-                fig_g.update_layout(
-                    showlegend=False,
-                    xaxis=dict(showgrid=False, showticklabels=False, zeroline=False),
-                    yaxis=dict(showgrid=False, zeroline=False),
-                    font=dict(size=18),
-                    xaxis_title=f"${latexdefect}$",
-                    yaxis_title="$E$ (eV)"
-                )
+                # layout styling (unchanged
+                fig_g.update_xaxes(
+                    title_font = {"size": 30},
+                    showgrid=False,
+                    range=[0, 1],
+                    showticklabels=False,zeroline=False,
+                    showline=True, linewidth=2, linecolor='black', mirror=True
+                    )
+
+                fig_g.update_yaxes(
+                    title_font = {"size": 20},
+                    showgrid=False,zeroline=False,
+                    showline=True, linewidth=2, linecolor='black', mirror=True,
+                    )
+                
+                fig.update_layout(showlegend=False, 
+                            xaxis_title=r"${}$".format(latexdefect),
+                            yaxis_title=r"$E(eV)$ ",
+                            font=dict(size=18,color="Black")
+                            )
+
+                #fig_g.update_layout(
+                #    showlegend=False,
+                #    xaxis=dict(showgrid=False, showticklabels=False, zeroline=False),
+                #    yaxis=dict(showgrid=False, zeroline=False),
+                #    font=dict(size=18,color="Black"),
+                #    xaxis_title=f"${latexdefect}$",
+                #    yaxis_title="$E$ (eV)"
+                #)
 
                 figs_ground[charge] = fig_g
 

@@ -796,27 +796,6 @@ for tabs in tab_selection:
 
 
 
-            if chargestate_defect == 0:
-                str_charge = "neutral"
-            elif chargestate_defect == -1:
-                str_charge = "m1"
-            elif chargestate_defect == -2:
-                str_charge = "m2"
-            elif chargestate_defect == 1:
-                str_charge = "p1"
-            elif chargestate_defect == 2:
-                str_charge = "p2"
-
-            atomposition_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/ground/CONTCAR_cartesian"
-            atomposition_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/CONTCAR_cartesian"
-
-            fractional_triplet = "bulk/database/" + str_defect  + "/" + str_charge + "/ground/CONTCAR_fractional"
-            fractional_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/CONTCAR_fractional"
-
-            cif_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/ground/structure.cif"
-            cif_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/structure.cif"
-
-
         ##############################33 Singlet Doublet #################################    
         if spin_multiplicity == 'singlet'or spin_multiplicity == 'doublet':
 

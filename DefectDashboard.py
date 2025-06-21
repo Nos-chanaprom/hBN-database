@@ -1208,7 +1208,7 @@ for tabs in tab_selection:
             col5, col6 = st.columns(2,gap="medium")
             with col5:
                 with st.container(border=True):
-                    st.header(f"Photophysical properties of ${latexdefect}^{{{chargestate_defect}}}$")
+                    st.header(f"Photophysical properties of "+"${}$".format(latexdefect))
                             # col21, col22, col23 = st.columns(3)
                     tab1, tab2, tab3 = st.tabs(["Excitation Properties", "Emission Properties", "Quantum Memory Properties"])
                             ## col21
@@ -1220,10 +1220,10 @@ for tabs in tab_selection:
 
                     try: 
                         ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge])]
-                    except  NameError :
-                        ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
-                    except  KeyError:
-                        ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                    #except  NameError :
+                    #    ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                    #except  KeyError:
+                    #    ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
                     ep2=ppdefects.iloc[:,3:]
                     ep2.rename(columns={"dipole_x":"µₓ (Debye)","dipole_y":"μᵧ (Debye)","dipole_z":"µz (Debye)","Intensity":"Intensity (Debye)","Angle of excitation dipole wrt the crystal axis":"Angle of excitation dipole wrt the crystal axis (degree)"},inplace=True)
                     ep2=ep2.T

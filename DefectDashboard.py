@@ -520,7 +520,7 @@ for tabs in tab_selection:
             charge_map = {0:'neutral', -1:'m1', -2:'m2', 1:'p1', 2:'p2'}
             excited_charge = charge_map[chargestate_defect]
             for charge in charge_bulk:
-                triplet_path = f"bulk/database/{str_defect}/{charge}/ground/output_database.txt"
+                triplet_path = f"bulk/database/{str_defect}/{charge}/output_database.txt"
                 df = pd.read_fwf(triplet_path, sep="\s+", header=None, skip_blank_lines=True)
                 #### Ground states
                 band_energy_spinUp_filled_triplet = []

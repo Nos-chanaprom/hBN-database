@@ -544,7 +544,8 @@ with Search_cont:
 
 ####### END SEARCH ENGINE ########
 if selection.empty :
-    ele1 = Photophysical_properties[Photophysical_properties['Defect']=="AlN"]
+    ele1 = Photophysical_properties[(Photophysical_properties["Defect"] == "AlN") &
+        (Photophysical_properties["Host"]  == "monolayer")]
     ele2 = Photophysical_properties[Photophysical_properties['Defect']=="AlNPB"]
     ele12 = pd.concat([ele1,ele2])
 

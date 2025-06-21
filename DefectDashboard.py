@@ -852,15 +852,23 @@ for tabs in tab_selection:
                     cif_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/structure.cif"
             
                     ########################## atomic position data frame  ###################################
-                    atomicposition_sin = pd.read_csv("bulk/database/" + str_defect + "/neutral/CONTCAR_cartesian",sep=';', header=0)
-                    atomicposition = pd.DataFrame(columns = ['properties', 'X','Y','Z'])
-                    for row in range(atomicposition_sin.shape[0]):
-                        if 0 <row<4:
-                            df2 = atomicposition_sin.iloc[row,0].split(" ")
-                            df_row = [ele for ele in df2 if ele.strip()]
-                            atomicposition.loc[row,['X','Y','Z']] = df_row
-                    atomicposition.loc[1:4,'properties'] = ['Lattice a', 'Lattice b', 'Lattice c']
-                    ##
+                    if  type(chosen_defect) == str:
+                            latexdefect = 'Al_N'
+                            atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian",sep=';', header=0)        
+                        else:
+                            try: 
+                                atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
+                            except NameError or ValueError:
+                                latexdefect = 'Al_N'
+                                atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
+                        atomicposition = pd.DataFrame(columns = ['properties', 'X','Y','Z'])
+                        for row in range(atomicposition_sin.shape[0]):
+                            if 0 <row<4:
+                                df2 = atomicposition_sin.iloc[row,0].split(" ")
+                                df_row = [ele for ele in df2 if ele.strip()]
+                                atomicposition.loc[row,['X','Y','Z']] = df_row
+                        atomicposition.loc[1:4,'properties'] = ['Lattice a', 'Lattice b', 'Lattice c']
+                        ##
                     iindex =0
                     startind =6
                     dataframeind = 3

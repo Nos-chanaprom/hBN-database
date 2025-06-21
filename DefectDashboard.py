@@ -851,15 +851,7 @@ for tabs in tab_selection:
                     cif_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/structure.cif"
             
                     ########################## atomic position data frame  ###################################
-                    if  type(chosen_defect) == str:
-                        latexdefect = 'Al_N'
-                        atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian",sep=';', header=0)        
-                    else:
-                        try: 
-                            atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
-                        except NameError or ValueError:
-                            ## latexdefect = 'Al_N'
-                            atomicposition_sin = pd.read_csv("bulk/database/" + str_defect + "/neutral/CONTCAR_cartesian",sep=';', header=0)
+                    atomicposition_sin = pd.read_csv("bulk/database/" + str_defect + "/neutral/CONTCAR_cartesian",sep=';', header=0)
                     atomicposition = pd.DataFrame(columns = ['properties', 'X','Y','Z'])
                     for row in range(atomicposition_sin.shape[0]):
                         if 0 <row<4:

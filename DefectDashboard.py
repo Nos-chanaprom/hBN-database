@@ -582,12 +582,6 @@ for tabs in tab_selection:
                 fdown_t = [energy - triplet_ref for energy in band_energy_spinDown_filled_triplet[-spin_nummer:]]
                 ufdown_t = [energy - triplet_ref for energy in band_energy_spinDown_unfilled_triplet[:spin_nummer]]
                 
-                try:
-                    eemin = np.min(all_band_energy)
-                    eemax = np.max(all_band_energy)
-                except ValueError:  #raised if `y` is empty.
-                    eemin =0
-                    eemax =6
 
             def spin_marker_exc_fig (spinstate, band_energy, size, xcor, e_ref , bandlimit ,emin, emax,fig):
                 fig2=fig

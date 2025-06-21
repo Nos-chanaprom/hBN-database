@@ -1796,7 +1796,7 @@ for tabs in tab_selection:
 
                 fermi_energy = [float(i) for i in fermi_energy]
                 fermi_energy_triplet = [float(i) for i in fermi_energy_triplet]
-                fermi_energy_excited_triplet = [float(i) for i in fermi_energy_excited_triplet]          
+                fermi_energy_excited_triplet = [float(i) for i in fermi_energy_excited_triplet]    
 
                 
             spin_nummer = 4

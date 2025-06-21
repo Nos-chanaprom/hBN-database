@@ -830,14 +830,25 @@ for tabs in tab_selection:
 
             with col2:
                 with st.container(border=True):
-                    atomposition_triplet = "bulk/database/" + str_defect + "/neutral/CONTCAR_cartesian"
-                    atomposition_excited_triplet = "bulk/database/" + str_defect + "/neutral/excited/CONTCAR_cartesian"
+                    if chargestate_defect == 0:
+                        str_charge = "neutral"
+                    elif chargestate_defect == -1:
+                        str_charge = "m1"
+                    elif chargestate_defect == -2:
+                        str_charge = "m2"
+                    elif chargestate_defect == 1:
+                        str_charge = "p1"
+                    elif chargestate_defect == 2:
+                        str_charge = "p2"
 
-                    fractional_triplet = "bulk/database/" + str_defect + "/neutral/CONTCAR_fractional"
-                    fractional_excited_triplet = "bulk/database/" + str_defect + "/neutral/excited/CONTCAR_fractional"
+                    atomposition_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/CONTCAR_cartesian"
+                    atomposition_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/CONTCAR_cartesian"
 
-                    cif_triplet = "bulk/database/" + str_defect + "/neutral/structure.cif"
-                    cif_excited_triplet = "bulk/database/" + str_defect + "/neutral/excited/structure.cif"
+                    fractional_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/CONTCAR_fractional"
+                    fractional_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/CONTCAR_fractional"
+
+                    cif_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/structure.cif"
+                    cif_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/structure.cif"
             
                     ########################## atomic position data frame  ###################################
                     if  type(chosen_defect) == str:

@@ -1203,6 +1203,106 @@ for tabs in tab_selection:
                         else:
                                     # Show a message if file is not found
                             st.write(f"**Absorption spectrum absent owing to a lack of two-level defect states.**")
+            
+            ######## for displaying 2 tables
+            col5, col6 = st.columns(2,gap="medium")
+            with col5:
+                with st.container(border=True):
+                    st.header("Photophysical properties of "+"${}$".format(latexdefect))
+                            # col21, col22, col23 = st.columns(3)
+                    tab1, tab2, tab3 = st.tabs(["Excitation Properties", "Emission Properties", "Quantum Memory Properties"])
+                            ## col21
+                            #tab1.subheader('Excitation Properties')
+                    Photophysical_properties = load_table('Excitation properties')
+                    Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
+                    Photophysical_properties["Characteristic time (ns)"]=Photophysical_properties["Characteristic time (ns)"].astype(int)
+                    Photophysical_properties["Characteristic time (ns)"] = Photophysical_properties["Characteristic time (ns)"].map("{:.2E}".format)
+
+                    try: 
+                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge])]
+                    except  NameError :
+                        ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                    except  KeyError:
+                        ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                    ep2=ppdefects.iloc[:,3:]
+                    ep2.rename(columns={"dipole_x":"µₓ (Debye)","dipole_y":"μᵧ (Debye)","dipole_z":"µz (Debye)","Intensity":"Intensity (Debye)","Angle of excitation dipole wrt the crystal axis":"Angle of excitation dipole wrt the crystal axis (degree)"},inplace=True)
+                    ep2=ep2.T
+                    jj =1
+                    newheadcol =[]
+                            #latppdefects.iloc[1,0].replace("$","")
+                    for head in ep2.iloc[0]:
+                        newheadcol.append('[Value {i}]'.format(i=jj))
+                        jj+=1
+                    ep2.columns =newheadcol
+                    tab1.dataframe(ep2,use_container_width=True)
+
+                            ## col22
+                            #col22.subheader('Emission Properties')
+
+                    Photophysical_properties = load_table('Emission properties')
+                    Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
+                    Photophysical_properties["ZPL (nm)"]=Photophysical_properties["ZPL (nm)"].astype(int)
+                    Photophysical_properties["Lifetime (ns)"]=Photophysical_properties["Lifetime (ns)"].astype(int)
+                    Photophysical_properties["Lifetime (ns)"] = Photophysical_properties["Lifetime (ns)"].map("{:.2E}".format)
+                    Photophysical_properties["Configuration coordinate (amu^(1/2) \AA)"]=Photophysical_properties["Configuration coordinate (amu^(1/2) \AA)"]
+                    Photophysical_properties["Ground-state total energy (eV)"]=Photophysical_properties["Ground-state total energy (eV)"]
+                    Photophysical_properties["Excited-state total energy (eV)"]=Photophysical_properties["Excited-state total energy (eV)"]
+
+                    try: 
+                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge])]
+                    except  NameError :
+                        ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                    except  KeyError:
+                        ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                    emp=ppdefects.iloc[:,3:]
+                    emp.rename(columns={"dipole_x":"µₓ (Debye)","dipole_y":"μᵧ (Debye)","dipole_z":"µz (Debye)","Intensity":"Intensity (Debye)","Angle of emission dipole wrt the crystal axis":"Angle of emission dipole wrt the crystal axis (degree)","Configuration coordinate (amu^(1/2) \AA)":"Configuration coordinate (amu^(1/2) Å)","Ground-state total energy (eV)":"Ground-state total energy (eV)","Excited-state total energy (eV)":"Excited-state total energy (eV)"},inplace=True)
+                    emp=emp.T
+                    jj =1
+                    newheadcol =[]
+                            #latppdefects.iloc[1,0].replace("$","")
+                    for head in emp.iloc[0]:
+                        newheadcol.append('[Value {i}]'.format(i=jj))
+                        jj+=1
+                    emp.columns =newheadcol
+                    tab2.dataframe(emp,use_container_width=True)
+                            
+                            #col23
+                            #col23.subheader('Quantum Memory Properties')
+                    Photophysical_properties = load_table('Quantum memory properties')
+                    Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
+                    Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"]=Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].astype(int)
+                    Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"] = Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].map("{:.2E}".format)
+                    Photophysical_properties["g (MHz)"]=Photophysical_properties["g (MHz)"].astype(int)
+                    Photophysical_properties["g (MHz)"] = Photophysical_properties["g (MHz)"].map("{:.2E}".format)
+                        
+                    try: 
+                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge])]
+                    except  NameError :
+                        ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                    except  KeyError:
+                        ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                    qmp = ppdefects.iloc[:,3:]
+                    qmp=qmp.T
+                    jj =1
+                    newheadcol =[]
+                            #latppdefects.iloc[1,0].replace("$","")
+                    for head in qmp.iloc[0]:
+                        newheadcol.append('[Value {i}]'.format(i=jj))
+                        jj+=1
+                    qmp.columns =newheadcol
+                    tab3.dataframe(qmp,use_container_width=True)
+            with col6:
+                with st.container(border=True):
+                    st.header('Computational setting')
+                    df = pd.DataFrame(
+                                {
+                                    "Computational Setting": ["DFT calculator", "Functional", "Pseudopotentials","Cutoff Energy","Kpoint",
+                                                            "Supercell size", "Energy convergence","Force convergence","Van der Waals force" ],
+                                    "Value": ["VASP", "HSE(α=0.32)", "PAW","500 eV","Γ point","6x6x4","1e-4 eV","0.01 eV/Å","DFT-D3"]
+                                }
+                            )
+                    st.dataframe(df, hide_index=True)
+
 
 
         elif host == 'monolayer':

@@ -704,7 +704,7 @@ for tabs in tab_selection:
                     showline=True, linewidth=2, linecolor='black', mirror=True,
                     )
                 
-                fig.update_layout(showlegend=False, 
+                fig_g.update_layout(showlegend=False, 
                             xaxis_title=r"${}$".format(latexdefect),
                             yaxis_title=r"$E(eV)$ ",
                             font=dict(size=18,color="Black")

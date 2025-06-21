@@ -1085,7 +1085,7 @@ for tabs in tab_selection:
                         st.plotly_chart(fig_poor, use_container_width=True, theme=None)   #  ← change
             ###### for PL spectrum
             # Path to the PL file
-            path_PL = "bulk/database/" + str_defect + "/" + str_defect + "/ground/PL.txt" 
+            path_PL = "bulk/database/" + str_defect + "/" + str_charge + "/ground/PL.txt" 
 
             with col4:
                 with st.container(border=True):

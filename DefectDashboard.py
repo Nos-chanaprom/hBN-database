@@ -376,6 +376,97 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 
     return df
 
+def spin_marker_exc_fig (spinstate, band_energy, size, xcor, e_ref , bandlimit ,emin, emax,fig):
+                fig2=fig
+                scale =32
+                delta = -0.04
+                emin = emin
+                emax = emax
+                if spinstate == 'fup':
+                    for band in band_energy:
+                        xl= np.array(xcor)
+                        yl =np.array(band)
+                        x_arrow = np.array([xcor+delta,xcor+size/scale+delta,xcor+size/(scale*2)+delta,
+                                            xcor+size/(scale*2)+delta,xcor+3*size/scale,xcor+3*size/scale,xcor+size/(scale*2)+delta,
+                                            xcor+size/(scale*2)+delta,xcor-size/(scale*2)+delta,
+                                            xcor-size/(scale*2)+delta,xcor-3*size/scale,xcor-3*size/scale,xcor-size/(scale*2)+delta,
+                                            xcor-size/(scale*2)+delta,xcor-size/scale+delta,xcor+delta])
+                        y_arrow = np.array([band+size/2,band+size/2-size/3,band+size/2-size/3,
+                                            band,band,band-size/12,band-size/12,
+                                            band-size/2,band-size/2,
+                                            band-size/12,band-size/12,band,band,
+                                            band+size/2-size/3,band+size/2-size/3,band+size/2])
+
+                        fig2.add_trace(go.Scatter(x=x_arrow, y=y_arrow, fill="toself",mode='lines',opacity=1, fillcolor= 'black',
+                                                name=r'{}'.format(band)))
+                        fig2.add_shape(type="rect",x0=0, y0=0, x1=1, y1=-1+emin,fillcolor='rgb(116, 167, 200)', layer="below")
+
+                        delta += 0.02
+
+                elif spinstate == 'fdown':
+                    for band in band_energy:
+                        xl= np.array(xcor)
+                        yl =np.array(band)            
+                        x_arrow = np.array([xcor+delta,xcor+size/scale+delta,xcor+size/(scale*2)+delta,
+                                            xcor+size/(scale*2)+delta,xcor+3*size/scale,xcor+3*size/scale,xcor+size/(scale*2)+delta,
+                                            xcor+size/(scale*2)+delta,xcor-size/(scale*2)+delta,
+                                            xcor-size/(scale*2)+delta,xcor-3*size/scale,xcor-3*size/scale,xcor-size/(scale*2)+delta,
+                                            xcor-size/(scale*2)+delta,xcor-size/scale+delta,xcor+delta])
+                        y_arrow = np.array([band-size/2,band-size/2+size/3,band-size/2+size/3,
+                                            band,band,band+size/12,band+size/12,
+                                            band+size/2,band+size/2,
+                                            band+size/12,band+size/12,band,band,
+                                            band-size/2+size/3,band-size/2+size/3,band-size/2])            
+                        
+                        fig2.add_trace(go.Scatter(x=x_arrow, y=y_arrow, fill="toself",mode='lines', opacity=1, fillcolor= 'black',
+                                                name=r'{}'.format(band)))
+                        #fig2.add_shape(type="rect",x0=xcor+0.1, y0=-5-fermi_energy, x1=xcor-0.15, y1=-1+emin,fillcolor="Blue",opacity=0.1)
+
+                        delta += 0.02
+
+                elif spinstate == 'ufup':
+                    for band in band_energy:
+                        xl= np.array(xcor)
+                        yl =np.array(band)
+                        x_arrow = np.array([xcor+delta,xcor+size/scale+delta,xcor+size/(scale*2)+delta,
+                                            xcor+size/(scale*2)+delta,xcor+3*size/scale,xcor+3*size/scale,xcor+size/(scale*2)+delta,
+                                            xcor+size/(scale*2)+delta,xcor-size/(scale*2)+delta,
+                                            xcor-size/(scale*2)+delta,xcor-3*size/scale,xcor-3*size/scale,xcor-size/(scale*2)+delta,
+                                            xcor-size/(scale*2)+delta,xcor-size/scale+delta,xcor+delta])
+                        y_arrow = np.array([band+size/2,band+size/2-size/3,band+size/2-size/3,
+                                            band,band,band-size/12,band-size/12,
+                                            band-size/2,band-size/2,
+                                            band-size/12,band-size/12,band,band,
+                                            band+size/2-size/3,band+size/2-size/3,band+size/2])
+                        
+                        fig2.add_trace(go.Scatter(x=x_arrow, y=y_arrow,mode='lines', fill="toself",opacity=1, fillcolor= 'white',
+                                                name=r'{}'.format(band)))
+                        fig2.add_shape(type="rect",x0=0, y0=bandlimit-e_ref, x1=1, y1=1+emax,fillcolor= 'rgb(237, 140, 140)', layer="below")
+
+                        delta += 0.02
+
+                elif spinstate == 'ufdown':
+                    for band in band_energy:
+                        xl= np.array(xcor)
+                        yl =np.array(band)
+                        x_arrow = np.array([xcor+delta,xcor+size/scale+delta,xcor+size/(scale*2)+delta,
+                                            xcor+size/(scale*2)+delta,xcor+3*size/scale,xcor+3*size/scale,xcor+size/(scale*2)+delta,
+                                            xcor+size/(scale*2)+delta,xcor-size/(scale*2)+delta,
+                                            xcor-size/(scale*2)+delta,xcor-3*size/scale,xcor-3*size/scale,xcor-size/(scale*2)+delta,
+                                            xcor-size/(scale*2)+delta,xcor-size/scale+delta,xcor+delta])
+                        y_arrow = np.array([band-size/2,band-size/2+size/3,band-size/2+size/3,
+                                            band,band,band+size/12,band+size/12,
+                                            band+size/2,band+size/2,
+                                            band+size/12,band+size/12,band,band,
+                                            band-size/2+size/3,band-size/2+size/3,band-size/2])
+
+                        fig2.add_trace(go.Scatter(x=x_arrow, y=y_arrow,mode='lines',fill="toself",opacity=1, fillcolor= 'white',
+                                                name=r'{}'.format(band)))
+                        
+                        #fig2.add_shape(type="rect",x0=xcor+0.1, y0=1-fermi_energy, x1=xcor-0.15, y1=1+emax,fillcolor="red",opacity=0.1)
+
+                        delta += 0.02
+                        
 # with st.container(border=True):
 #     st.markdown(
 #         """
@@ -582,97 +673,6 @@ for tabs in tab_selection:
                 fdown_t = [energy - triplet_ref for energy in band_energy_spinDown_filled_triplet[-spin_nummer:]]
                 ufdown_t = [energy - triplet_ref for energy in band_energy_spinDown_unfilled_triplet[:spin_nummer]]
                 
-
-            def spin_marker_exc_fig (spinstate, band_energy, size, xcor, e_ref , bandlimit ,emin, emax,fig):
-                fig2=fig
-                scale =32
-                delta = -0.04
-                emin = emin
-                emax = emax
-                if spinstate == 'fup':
-                    for band in band_energy:
-                        xl= np.array(xcor)
-                        yl =np.array(band)
-                        x_arrow = np.array([xcor+delta,xcor+size/scale+delta,xcor+size/(scale*2)+delta,
-                                            xcor+size/(scale*2)+delta,xcor+3*size/scale,xcor+3*size/scale,xcor+size/(scale*2)+delta,
-                                            xcor+size/(scale*2)+delta,xcor-size/(scale*2)+delta,
-                                            xcor-size/(scale*2)+delta,xcor-3*size/scale,xcor-3*size/scale,xcor-size/(scale*2)+delta,
-                                            xcor-size/(scale*2)+delta,xcor-size/scale+delta,xcor+delta])
-                        y_arrow = np.array([band+size/2,band+size/2-size/3,band+size/2-size/3,
-                                            band,band,band-size/12,band-size/12,
-                                            band-size/2,band-size/2,
-                                            band-size/12,band-size/12,band,band,
-                                            band+size/2-size/3,band+size/2-size/3,band+size/2])
-
-                        fig2.add_trace(go.Scatter(x=x_arrow, y=y_arrow, fill="toself",mode='lines',opacity=1, fillcolor= 'black',
-                                                name=r'{}'.format(band)))
-                        fig2.add_shape(type="rect",x0=0, y0=0, x1=1, y1=-1+emin,fillcolor='rgb(116, 167, 200)', layer="below")
-
-                        delta += 0.02
-
-                elif spinstate == 'fdown':
-                    for band in band_energy:
-                        xl= np.array(xcor)
-                        yl =np.array(band)            
-                        x_arrow = np.array([xcor+delta,xcor+size/scale+delta,xcor+size/(scale*2)+delta,
-                                            xcor+size/(scale*2)+delta,xcor+3*size/scale,xcor+3*size/scale,xcor+size/(scale*2)+delta,
-                                            xcor+size/(scale*2)+delta,xcor-size/(scale*2)+delta,
-                                            xcor-size/(scale*2)+delta,xcor-3*size/scale,xcor-3*size/scale,xcor-size/(scale*2)+delta,
-                                            xcor-size/(scale*2)+delta,xcor-size/scale+delta,xcor+delta])
-                        y_arrow = np.array([band-size/2,band-size/2+size/3,band-size/2+size/3,
-                                            band,band,band+size/12,band+size/12,
-                                            band+size/2,band+size/2,
-                                            band+size/12,band+size/12,band,band,
-                                            band-size/2+size/3,band-size/2+size/3,band-size/2])            
-                        
-                        fig2.add_trace(go.Scatter(x=x_arrow, y=y_arrow, fill="toself",mode='lines', opacity=1, fillcolor= 'black',
-                                                name=r'{}'.format(band)))
-                        #fig2.add_shape(type="rect",x0=xcor+0.1, y0=-5-fermi_energy, x1=xcor-0.15, y1=-1+emin,fillcolor="Blue",opacity=0.1)
-
-                        delta += 0.02
-
-                elif spinstate == 'ufup':
-                    for band in band_energy:
-                        xl= np.array(xcor)
-                        yl =np.array(band)
-                        x_arrow = np.array([xcor+delta,xcor+size/scale+delta,xcor+size/(scale*2)+delta,
-                                            xcor+size/(scale*2)+delta,xcor+3*size/scale,xcor+3*size/scale,xcor+size/(scale*2)+delta,
-                                            xcor+size/(scale*2)+delta,xcor-size/(scale*2)+delta,
-                                            xcor-size/(scale*2)+delta,xcor-3*size/scale,xcor-3*size/scale,xcor-size/(scale*2)+delta,
-                                            xcor-size/(scale*2)+delta,xcor-size/scale+delta,xcor+delta])
-                        y_arrow = np.array([band+size/2,band+size/2-size/3,band+size/2-size/3,
-                                            band,band,band-size/12,band-size/12,
-                                            band-size/2,band-size/2,
-                                            band-size/12,band-size/12,band,band,
-                                            band+size/2-size/3,band+size/2-size/3,band+size/2])
-                        
-                        fig2.add_trace(go.Scatter(x=x_arrow, y=y_arrow,mode='lines', fill="toself",opacity=1, fillcolor= 'white',
-                                                name=r'{}'.format(band)))
-                        fig2.add_shape(type="rect",x0=0, y0=bandlimit-e_ref, x1=1, y1=1+emax,fillcolor= 'rgb(237, 140, 140)', layer="below")
-
-                        delta += 0.02
-
-                elif spinstate == 'ufdown':
-                    for band in band_energy:
-                        xl= np.array(xcor)
-                        yl =np.array(band)
-                        x_arrow = np.array([xcor+delta,xcor+size/scale+delta,xcor+size/(scale*2)+delta,
-                                            xcor+size/(scale*2)+delta,xcor+3*size/scale,xcor+3*size/scale,xcor+size/(scale*2)+delta,
-                                            xcor+size/(scale*2)+delta,xcor-size/(scale*2)+delta,
-                                            xcor-size/(scale*2)+delta,xcor-3*size/scale,xcor-3*size/scale,xcor-size/(scale*2)+delta,
-                                            xcor-size/(scale*2)+delta,xcor-size/scale+delta,xcor+delta])
-                        y_arrow = np.array([band-size/2,band-size/2+size/3,band-size/2+size/3,
-                                            band,band,band+size/12,band+size/12,
-                                            band+size/2,band+size/2,
-                                            band+size/12,band+size/12,band,band,
-                                            band-size/2+size/3,band-size/2+size/3,band-size/2])
-
-                        fig2.add_trace(go.Scatter(x=x_arrow, y=y_arrow,mode='lines',fill="toself",opacity=1, fillcolor= 'white',
-                                                name=r'{}'.format(band)))
-                        
-                        #fig2.add_shape(type="rect",x0=xcor+0.1, y0=1-fermi_energy, x1=xcor-0.15, y1=1+emax,fillcolor="red",opacity=0.1)
-
-                        delta += 0.02
 
                 # build ground‐state figure
                 fig_g = go.Figure()

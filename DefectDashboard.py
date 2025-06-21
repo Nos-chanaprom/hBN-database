@@ -689,7 +689,7 @@ for tabs in tab_selection:
                                     e_ref=triplet_ref, bandlimit=tripletunf_ref,
                                     emin=0, emax=6, fig=fig_g)
 
-                # layout styling (unchanged
+                # layout styling
                 fig_g.update_xaxes(
                     title_font = {"size": 30},
                     showgrid=False,
@@ -709,15 +709,6 @@ for tabs in tab_selection:
                             yaxis_title=r"$E(eV)$ ",
                             font=dict(size=18,color="Black")
                             )
-
-                #fig_g.update_layout(
-                #    showlegend=False,
-                #    xaxis=dict(showgrid=False, showticklabels=False, zeroline=False),
-                #    yaxis=dict(showgrid=False, zeroline=False),
-                #    font=dict(size=18,color="Black"),
-                #    xaxis_title=f"${latexdefect}$",
-                #    yaxis_title="$E$ (eV)"
-                #)
 
                 figs_ground[charge] = fig_g
 
@@ -792,14 +783,26 @@ for tabs in tab_selection:
                                 e_ref=triplet_ref_exc, bandlimit=tripletunf_ref_exc,
                                 emin=0, emax=6, fig=fig_e)
 
-            fig_e.update_layout(
-                showlegend=False,
-                xaxis=dict(showgrid=False, showticklabels=False, zeroline=False),
-                yaxis=dict(showgrid=False, zeroline=False),
-                font=dict(size=18),
-                xaxis_title=f"${latexdefect}$",
-                yaxis_title="$E$ (eV)"
-            )
+            # layout styling
+            fig_e.update_xaxes(
+                    title_font = {"size": 30},
+                    showgrid=False,
+                    range=[0, 1],
+                    showticklabels=False,zeroline=False,
+                    showline=True, linewidth=2, linecolor='black', mirror=True
+                    )
+
+            fig_e.update_yaxes(
+                    title_font = {"size": 20},
+                    showgrid=False,zeroline=False,
+                    showline=True, linewidth=2, linecolor='black', mirror=True,
+                    )
+                
+            fig_e.update_layout(showlegend=False, 
+                            xaxis_title=r"${}$".format(latexdefect),
+                            yaxis_title=r"$E(eV)$ ",
+                            font=dict(size=18,color="Black")
+                            )
 
             figs_excited[excited_charge] = fig_e
 

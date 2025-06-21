@@ -808,12 +808,18 @@ for tabs in tab_selection:
             tabs = st.tabs(tab_labels)
             for lbl, tab in zip(tab_labels, tabs):
                 with tab:
-                    st.subheader(lbl if lbl != 'excited' else f"Excited ({excited_charge})")
+                    st.subheader(
+                        lbl if lbl != 'excited' 
+                        else f"Excited ({excited_charge})"
+                    )
                     if lbl in figs_ground:
-                        st.plotly_chart(figs_ground[lbl], use_container_width=True)
+                        # ground‐state figure
+                        html = figs_ground[lbl].to_html(include_mathjax='cdn')
+                        st.components.v1.html(html, width=530, height=600)
                     else:
-                        st.plotly_chart(figs_excited[excited_charge], use_container_width=True)
-
+                        # the single excited‐state figure
+                        html = figs_excited[excited_charge].to_html(include_mathjax='cdn')
+                        st.components.v1.html(html, width=530, height=600)
 
 
         ##############################33 Singlet Doublet #################################    

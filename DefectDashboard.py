@@ -1089,7 +1089,7 @@ for tabs in tab_selection:
 
             with col4:
                 with st.container(border=True):
-                    st.header("Luminescence spectrum of "+"${}$".format(latexdefect)+str_charge)
+                    st.header("Luminescence spectrum of "+"${}$".format(latexdefect)+chargestate_defect)
                     tab1, tab2 = st.tabs(["Photoluminescence","Absorption"])
                     with tab1:
                                 # Check if the file exists

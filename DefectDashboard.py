@@ -1214,7 +1214,7 @@ for tabs in tab_selection:
                             ## col21
                             #tab1.subheader('Excitation Properties')
                     Photophysical_properties = load_table('Excitation properties')
-                    Photophysical_properties["Host"]=host
+                    Photophysical_properties["Host"]=Host
                     Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
                     Photophysical_properties["Characteristic time (ns)"]=Photophysical_properties["Characteristic time (ns)"].astype(int)
                     Photophysical_properties["Characteristic time (ns)"] = Photophysical_properties["Characteristic time (ns)"].map("{:.2E}".format)

@@ -830,6 +830,9 @@ for tabs in tab_selection:
 
             with col2:
                 with st.container(border=True):
+                    atomposition_triplet = "bulk/database/" + str_defect + "/neutral/CONTCAR_cartesian"
+                    atomposition_excited_triplet = "bulk/database/" + str_defect + "/neutral/excited/CONTCAR_cartesian"
+
                     ########################## atomic position data frame  ###################################
                     if  type(chosen_defect) == str:
                         latexdefect = 'Al_N'

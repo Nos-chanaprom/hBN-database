@@ -831,34 +831,208 @@ for tabs in tab_selection:
             with col2:
                 with st.container(border=True):
                     ########################## atomic position data frame  ###################################
-                    if isinstance(chosen_defect, str):
-                        atomicposition_sin = pd.read_csv(
-                            f"monolayer/database_triplet/{chosen_defect}/triplet/CONTCAR_cartesian",
-                            sep=';', header=0
-                        )
+                    if  type(chosen_defect) == str:
+                        latexdefect = 'Al_N'
+                        atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian",sep=';', header=0)        
                     else:
-                        try:
-                            atomicposition_sin = pd.read_csv(atomposition_triplet, sep=';', header=0)
-                        except (NameError, ValueError):
-                            if host == 'monolayer':
-                                atomicposition_sin = pd.read_csv(
-                                    f"monolayer/database_triplet/{str_defect}/triplet/CONTCAR_cartesian",
-                                    sep=';', header=0
-                                )
-                            elif host == 'bulk':
-                                atomicposition_sin = pd.read_csv(
-                                    f"bulk/database/{str_defect}/triplet/CONTCAR_cartesian",
-                                    sep=';', header=0
-                                )
-
-                    atomicposition = pd.DataFrame(columns=['properties', 'X', 'Y', 'Z'])
+                        try: 
+                            atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
+                        except NameError or ValueError:
+                            ## latexdefect = 'Al_N'
+                            atomicposition_sin = pd.read_csv("bulk/database/" + str_defect + "/neutral/CONTCAR_cartesian",sep=';', header=0)
+                    atomicposition = pd.DataFrame(columns = ['properties', 'X','Y','Z'])
                     for row in range(atomicposition_sin.shape[0]):
-                        if 0 < row < 4:
-                            parts = [ele for ele in atomicposition_sin.iloc[row,0].split() if ele.strip()]
-                            atomicposition.loc[row, ['X','Y','Z']] = parts
-                    atomicposition.loc[1:4, 'properties'] = ['Lattice a', 'Lattice b', 'Lattice c']
+                        if 0 <row<4:
+                            df2 = atomicposition_sin.iloc[row,0].split(" ")
+                            df_row = [ele for ele in df2 if ele.strip()]
+                            atomicposition.loc[row,['X','Y','Z']] = df_row
+                    atomicposition.loc[1:4,'properties'] = ['Lattice a', 'Lattice b', 'Lattice c']
+                    ##
+                    iindex =0
+                    startind =6
+                    dataframeind = 3
+                    letternumber =[[ele for ele in atomicposition_sin.iloc[4,0].split(" ") if ele.strip()],
+                                [ele for ele in atomicposition_sin.iloc[5,0].split(" ") if ele.strip()]]
+                    bnnumber=[]
 
-                    st.dataframe(atomicposition)
+                    for num in letternumber[1]:
+                        letter =letternumber[0][iindex]
+                        numnum = int(num)
+                        bnnumber.append(numnum)
+                        for element in range(1,numnum+1):
+                            startind =startind+1
+                            dataframeind= dataframeind+1     
+                            df2 = atomicposition_sin.iloc[startind,0].split(" ")
+                            df_row = [ele for ele in df2 if ele.strip()]
+                            atomicposition.loc[dataframeind,['X','Y','Z']] = df_row[0:3]
+                            atomicposition.loc[dataframeind,'properties'] = '{}-{}'.format(letter,element)
+                        iindex+=1
+                    
+                    atomicposition.loc[:,['X','Y','Z']]=atomicposition.loc[:,['X','Y','Z']].astype(float).round(decimals=5)
+
+                    #### plot atomic bonds
+                    st.header("Atomic positions for ${}$".format(latexdefect))    
+                    fig3D = go.Figure()
+                    i=0
+                    letters=letternumber[0]
+                    numbers=letternumber[1]
+
+                    numcounter=0
+                    indexcounter=3
+                    atomsize=6
+                    for ele in letters:
+                        if ele == 'B':
+                            numberint= int(numbers[numcounter])
+                            xb,yb,zb= np.array(atomicposition.iloc[indexcounter:indexcounter+numberint,1]),np.array(atomicposition.iloc[indexcounter:indexcounter+numberint,2]),np.array(atomicposition.iloc[indexcounter:indexcounter+numberint,3])
+                            fig3D.add_trace(go.Scatter3d(x= xb,y=yb,z=zb, mode='markers', name=ele,marker=dict( size=atomsize, color='rgb(255,147,150)')))
+                        elif ele == 'C':
+                            numberint= int(numbers[numcounter])
+                            xb,yb,zb= np.array(atomicposition.iloc[indexcounter:indexcounter+numberint,1]),np.array(atomicposition.iloc[indexcounter:indexcounter+numberint,2]),np.array(atomicposition.iloc[indexcounter:indexcounter+numberint,3])
+                            fig3D.add_trace(go.Scatter3d(x= xb,y=yb,z=zb, mode='markers', name=ele,marker=dict(size=atomsize,color='rgb(206,0,0)')))
+                        elif ele == 'N':
+                            numberint= int(numbers[numcounter])
+                            xb,yb,zb= np.array(atomicposition.iloc[indexcounter:indexcounter+numberint,1]),np.array(atomicposition.iloc[indexcounter:indexcounter+numberint,2]),np.array(atomicposition.iloc[indexcounter:indexcounter+numberint,3])
+                            fig3D.add_trace(go.Scatter3d(x= xb,y=yb,z=zb, mode='markers', name=ele, marker=dict(size=atomsize,color='rgb(0,0,255)')))
+                        else:
+                            numberint= int(numbers[numcounter])
+                            xb,yb,zb= np.array(atomicposition.iloc[indexcounter:indexcounter+numberint,1]),np.array(atomicposition.iloc[indexcounter:indexcounter+numberint,2]),np.array(atomicposition.iloc[indexcounter:indexcounter+numberint,3])
+                            fig3D.add_trace(go.Scatter3d(x= xb,y=yb,z=zb, mode='markers', name=ele, marker=dict( size=atomsize)))
+                        numcounter+=1
+                        indexcounter=indexcounter+numberint
+
+                    ## atome bonds
+                    atoms= atomicposition.iloc[3:]
+                    for ele in atoms['properties']:
+                        if  list(ele)[0] =='B':
+                            ele_loc=atoms[atoms['properties'] == ele]
+                            ele_index=ele_loc.index
+                            other= atoms.drop(ele_index)
+                            other.iloc[:,1:4]=other.iloc[:,1:4]-atoms.iloc[ele_index[0]-4,1:4]
+                            other['norm'] = other.iloc[:,1:4].apply(lambda x: x **2).apply(np.sum, axis=1)
+                            near_atom_diff= other.sort_values(by=['norm'],ascending=True)
+                            near_atom_diff=near_atom_diff[near_atom_diff["norm"]<3]
+                            near_atom_1=atoms.iloc[near_atom_diff.index-4]
+                            near_atom_2=near_atom_1.copy()
+                            near_atom_2['element'] = near_atom_2['properties'].map(lambda x:  list(x)[0])
+                            near_atom_3=near_atom_2[near_atom_2['element']== 'N']
+                            near_atom=atoms.iloc[near_atom_3.index-4].iloc[0:3]
+                            tail=ele_loc.to_numpy()
+                            head=near_atom.to_numpy()
+                            for i in range(0,near_atom.shape[0]):
+                                fig3D.add_trace(go.Scatter3d(x=[tail[0,1],head[i,1]], y=[tail[0,2],head[i,2]],z=[tail[0,3],head[i,3]],hoverinfo ='skip', mode='lines', line=dict(color='black',width=5),showlegend=False))
+
+
+                    ## dipole
+                    dipole = load_table('updated_data')
+                    try: 
+                        dipole_emi = dipole[(dipole['Defect'] == str_defect) & (dipole['Charge state'] ==chargetrans[str_charge]) & (dipole['Optical spin transition'] == spin_transition)]
+                    except  NameError :
+                        dipole_emi = dipole[dipole['Defect'] == str_defect]
+                    except  KeyError:
+                        dipole_emi = dipole[dipole['Defect'] == str_defect]
+
+                    tail_emi_plane = dipole_emi['Emission properties: linear In-plane Polarization Visibility'].values[0]
+                    tail_emi_cry = dipole_emi['Emission properties: Angle of emission dipole wrt the crystal axis'].values[0]
+                    tail_exc_plane = dipole_emi['Excitation properties: linear In-plane Polarization Visibility'].values[0]
+                    tail_exc_cry = dipole_emi['Excitation properties: Angle of excitation dipole wrt the crystal axis'].values[0]
+                    
+                    ctrystal_axes_start = np.array([4.979,5.749,5.00298])
+                    ctrystal_axes_start2=np.array([4.979,1.749,5.00298])
+                    ctrystal_axes_end = np.array([4.979,9.749,5.00298])-ctrystal_axes_start
+                    theta_emi =  np.radians((1-tail_emi_plane)*90)
+                    #theta_emi =  np.radians(90)
+                    theta_exc =  np.radians((1-tail_exc_plane)*90)
+
+                    phi_emi = np.radians(tail_emi_cry)
+                    #phi_emi =np.radians(0)
+                    phi_exc = np.radians(tail_exc_cry)
+
+                    ## ploting Emission Dipole
+                    # rotate z-axis
+                    c, s = np.cos(phi_emi), np.sin(phi_emi)
+                    r_z = np.array(((c,-s,0), (s,c,0), (0,0,1)))
+                    # rotate x-axis
+                    c, s = np.cos(theta_emi), np.sin(theta_emi)
+                    r_x = np.array(((1,0,0), (0,c, -s), (0,s, c)))
+
+                    r_xz=np.dot(r_x,r_z)
+                    head = np.dot(r_xz,ctrystal_axes_end)  #ctrystal_axes_end
+                    tail=np.array([4.979,5.749,5.00298])
+
+                    head=head+ctrystal_axes_start
+                    ctrystal_axes_end= ctrystal_axes_end+ctrystal_axes_start        
+
+                    fig3D.add_trace(go.Cone(x=[head[0]], y=[head[1]], z=[head[2]], u=[head[0]-tail[0]], v=[head[1]-tail[1]], w=[head[2]-tail[2]],
+                                            colorscale='ylorrd',showscale=False,hoverinfo='skip',sizeref=0.2))
+                    fig3D.add_trace(go.Scatter3d(x=[tail[0],head[0]], y=[tail[1],head[1]],z=[tail[2],head[2]],hoverinfo ='skip',marker=dict(size=3, color='yellow'),
+                                                line=dict(color='orange',width=6),showlegend=True,name="Emission"))
+                    fig3D.add_trace(go.Scatter3d(x=[ctrystal_axes_start2[0],ctrystal_axes_end[0]], y=[ctrystal_axes_start2[1],ctrystal_axes_end[1]],z=[ctrystal_axes_start2[2],ctrystal_axes_end[2]],
+                                                hoverinfo ='skip', marker=dict(size=1, color='red'), line=dict(color='red',width=5,dash='dot'),showlegend=True,name="Crystal Axis"))
+                    
+                    ## ploting Excitation Dipole
+                    ctrystal_axes_end = np.array([4.979,9.749,5.00298])-ctrystal_axes_start
+                    # rotate z-axis
+                    c, s = np.cos(phi_exc), np.sin(phi_exc)
+                    r_z = np.array(((c,-s,0), (s,c,0), (0,0,1)))
+                    # rotate x-axis
+                    c, s = np.cos(theta_exc), np.sin(theta_exc)
+                    r_x = np.array(((1,0,0), (0,c, -s), (0,s, c)))
+
+                    r_xz=np.dot(r_x,r_z)
+                    head = np.dot(r_xz,ctrystal_axes_end)  #ctrystal_axes_end
+                    tail=np.array([4.979,5.749,5.00298])
+                    head=head+ctrystal_axes_start
+                    ctrystal_axes_end= ctrystal_axes_end+ctrystal_axes_start        
+
+                    fig3D.add_trace(go.Cone(x=[head[0]], y=[head[1]], z=[head[2]], u=[head[0]-tail[0]], v=[head[1]-tail[1]], w=[head[2]-tail[2]],
+                                            colorscale='Greens',showscale=False,hoverinfo='skip',sizeref=0.2))
+                    fig3D.add_trace(go.Scatter3d(x=[tail[0],head[0]], y=[tail[1],head[1]],z=[tail[2],head[2]],hoverinfo ='skip',marker=dict(size=3, color='green'),
+                                                line=dict(color='green',width=6),showlegend=True,name="Excitation"))
+
+                    fig3D.update_layout(scene = dict( zaxis = dict( range=[0,25],showgrid=False, backgroundcolor="rgb(0,0,0)",gridcolor="rgb(0,0,0)",zeroline=False,showticklabels =False,title =' '), 
+                                                    yaxis = dict(showgrid=False,backgroundcolor="rgb(0,0,0)",gridcolor="rgb(0,0,0)",zeroline=False,showticklabels =False,title =' '), 
+                                                    xaxis = dict(showgrid=False,backgroundcolor="rgb(0,0,0)",gridcolor="rgb(0,0,0)",zeroline=False,showticklabels =False,title =' '), 
+                                                    camera_eye=dict(x=0, y=0, z=0.8))
+                    )
+                    st.plotly_chart(fig3D, use_container_width=True)
+
+                    ### download data
+                    with st.container(border=False):
+                        st.header("Download data")
+                        cold1, cold2,cold3  = st.columns(3,gap="Small")
+                        with cold1:
+                            st.download_button(
+                                label="VASP cartesian ground-state",
+                                data= open(atomposition_triplet, "r"),
+                                file_name=f'VASP cartesian ground-state-{str_defect}'
+                            )
+                            st.download_button(
+                                label="VASP cartesian excited-state",
+                                data= open(atomposition_excited_triplet, "r"),
+                                file_name=f'VASP cartesian excited-state-{str_defect}'
+                            )
+                        with cold2:
+                            st.download_button(
+                                label="VASP fractional ground-state",
+                                data= open(fractional_triplet, "r"),
+                                file_name=f'VASP fractional  ground-state-{str_defect}'
+                            )
+                            st.download_button(
+                                label="VASP fractional excited-state",
+                                data= open(fractional_excited_triplet, "r"),
+                                file_name=f'VASP fractional excited-state-{str_defect}'
+                            )
+                        with cold3:
+                            st.download_button(
+                                label="CIF ground-state",
+                                data= open(cif_triplet, "r"),
+                                file_name=f'CIF ground-state-{str_defect}.cif'                
+                            )
+                            st.download_button(
+                                label="CIF excited-sate",
+                                data= open(cif_excited_triplet, "r"),
+                                file_name=f'CIF excited-sate-{str_defect}.cif'                
+                            )
 
 
         ##############################33 Singlet Doublet #################################    

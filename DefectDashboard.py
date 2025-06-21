@@ -511,6 +511,318 @@ for tabs in tab_selection:
 
         except IndexError:
             latexdefect = str_defect
+        ##################### Bulk defects
+        if host == 'bulk':
+            charge_bulk = ['neutral','m1','m2','p1','p2']
+            figs_ground = {}
+            figs_excited = {}
+            # Map your numeric chargestate_defect → folder name
+            charge_map = {0:'neutral', -1:'m1', -2:'m2', 1:'p1', 2:'p2'}
+            excited_charge = charge_map[chargestate_defect]
+            for charge in charge_bulk:
+                triplet_path = f"bulk/database/{str_defect}/{charge}/ground/output_database.txt"
+                df = pd.read_fwf(triplet_path, sep="\s+", header=None, skip_blank_lines=True)
+                #### Ground states
+                band_energy_spinUp_filled_triplet = []
+                band_energy_spinUp_unfilled_triplet = []
+                band_energy_spinDown_filled_triplet = []
+                band_energy_spinDown_unfilled_triplet = []
+                fermi_energy_triplet = []
+                NBANDS = extract_nbands(triplet_path)
+                for row in range(len(df)):
+                    if row == 0 or row == NBANDS + 4:    # NBANDS + 4
+                        # Extract Fermi energy
+                        df2 = df.iloc[row,0].split()
+                        #df_row = [ele for ele in df2 if ele.strip()]
+                        if len(df2) >= 3:
+                            fermi_energy_triplet.append(df2[2])
+                    elif 4 <= row < NBANDS + 4:  # NBANDS + 4
+                        # Spin-up bands
+                        df2 = df.iloc[row, 0].split()
+                        df_row = [ele for ele in df2 if ele.strip()]
+                        if len(df_row) >= 3:
+                            occupancy = round(float(df_row[2]))
+                            energy = float(df_row[1])
+                            if occupancy == 1:
+                                band_energy_spinUp_filled_triplet.append(energy)
+                            elif occupancy == 0:
+                                band_energy_spinUp_unfilled_triplet.append(energy)
+                    elif row > NBANDS + 9:  # NBANDS + 9
+                        # Spin-down bands
+                        df2 = df.iloc[row, 0].split()
+                        # print(df2)
+                        df_row = [ele for ele in df2 if ele.strip()]
+                        if len(df_row) >= 3:
+                            occupancy = round(float(df_row[2]))
+                            energy = float(df_row[1])
+                            if occupancy == 1:
+                                band_energy_spinDown_filled_triplet.append(energy)
+                            elif occupancy == 0:
+                                band_energy_spinDown_unfilled_triplet.append(energy)
+
+                fermi_energy_triplet = [float(i) for i in fermi_energy_triplet]
+                # compute reference energies
+                spin_nummer = 4
+                try: 
+                    upfreiplet = np.array(band_energy_spinUp_filled_triplet)
+
+                    upunfreiplet = np.array(band_energy_spinUp_unfilled_triplet)
+                        # Reference energy for filled spin-up bands (last energy below 1.24 eV)
+                    triplet_ref = upfreiplet[upfreiplet < 1.24][-1]
+
+                        # Reference energy for unfilled spin-up bands (first energy above 7.25 eV)
+                    tripletunf_ref = upunfreiplet[upunfreiplet > 7.25][0]
+
+                except IndexError:
+                    triplet_ref = 1.24
+                    tripletunf_ref = 7.25
+            
+                fup_t = [energy - triplet_ref for energy in band_energy_spinUp_filled_triplet[-spin_nummer:]]
+                ufup_t = [energy - triplet_ref for energy in band_energy_spinUp_unfilled_triplet[:spin_nummer]]
+                fdown_t = [energy - triplet_ref for energy in band_energy_spinDown_filled_triplet[-spin_nummer:]]
+                ufdown_t = [energy - triplet_ref for energy in band_energy_spinDown_unfilled_triplet[:spin_nummer]]
+                
+                try:
+                    eemin = np.min(all_band_energy)
+                    eemax = np.max(all_band_energy)
+                except ValueError:  #raised if `y` is empty.
+                    eemin =0
+                    eemax =6
+
+            def spin_marker_exc_fig (spinstate, band_energy, size, xcor, e_ref , bandlimit ,emin, emax,fig):
+                fig2=fig
+                scale =32
+                delta = -0.04
+                emin = emin
+                emax = emax
+                if spinstate == 'fup':
+                    for band in band_energy:
+                        xl= np.array(xcor)
+                        yl =np.array(band)
+                        x_arrow = np.array([xcor+delta,xcor+size/scale+delta,xcor+size/(scale*2)+delta,
+                                            xcor+size/(scale*2)+delta,xcor+3*size/scale,xcor+3*size/scale,xcor+size/(scale*2)+delta,
+                                            xcor+size/(scale*2)+delta,xcor-size/(scale*2)+delta,
+                                            xcor-size/(scale*2)+delta,xcor-3*size/scale,xcor-3*size/scale,xcor-size/(scale*2)+delta,
+                                            xcor-size/(scale*2)+delta,xcor-size/scale+delta,xcor+delta])
+                        y_arrow = np.array([band+size/2,band+size/2-size/3,band+size/2-size/3,
+                                            band,band,band-size/12,band-size/12,
+                                            band-size/2,band-size/2,
+                                            band-size/12,band-size/12,band,band,
+                                            band+size/2-size/3,band+size/2-size/3,band+size/2])
+
+                        fig2.add_trace(go.Scatter(x=x_arrow, y=y_arrow, fill="toself",mode='lines',opacity=1, fillcolor= 'black',
+                                                name=r'{}'.format(band)))
+                        fig2.add_shape(type="rect",x0=0, y0=0, x1=1, y1=-1+emin,fillcolor='rgb(116, 167, 200)', layer="below")
+
+                        delta += 0.02
+
+                elif spinstate == 'fdown':
+                    for band in band_energy:
+                        xl= np.array(xcor)
+                        yl =np.array(band)            
+                        x_arrow = np.array([xcor+delta,xcor+size/scale+delta,xcor+size/(scale*2)+delta,
+                                            xcor+size/(scale*2)+delta,xcor+3*size/scale,xcor+3*size/scale,xcor+size/(scale*2)+delta,
+                                            xcor+size/(scale*2)+delta,xcor-size/(scale*2)+delta,
+                                            xcor-size/(scale*2)+delta,xcor-3*size/scale,xcor-3*size/scale,xcor-size/(scale*2)+delta,
+                                            xcor-size/(scale*2)+delta,xcor-size/scale+delta,xcor+delta])
+                        y_arrow = np.array([band-size/2,band-size/2+size/3,band-size/2+size/3,
+                                            band,band,band+size/12,band+size/12,
+                                            band+size/2,band+size/2,
+                                            band+size/12,band+size/12,band,band,
+                                            band-size/2+size/3,band-size/2+size/3,band-size/2])            
+                        
+                        fig2.add_trace(go.Scatter(x=x_arrow, y=y_arrow, fill="toself",mode='lines', opacity=1, fillcolor= 'black',
+                                                name=r'{}'.format(band)))
+                        #fig2.add_shape(type="rect",x0=xcor+0.1, y0=-5-fermi_energy, x1=xcor-0.15, y1=-1+emin,fillcolor="Blue",opacity=0.1)
+
+                        delta += 0.02
+
+                elif spinstate == 'ufup':
+                    for band in band_energy:
+                        xl= np.array(xcor)
+                        yl =np.array(band)
+                        x_arrow = np.array([xcor+delta,xcor+size/scale+delta,xcor+size/(scale*2)+delta,
+                                            xcor+size/(scale*2)+delta,xcor+3*size/scale,xcor+3*size/scale,xcor+size/(scale*2)+delta,
+                                            xcor+size/(scale*2)+delta,xcor-size/(scale*2)+delta,
+                                            xcor-size/(scale*2)+delta,xcor-3*size/scale,xcor-3*size/scale,xcor-size/(scale*2)+delta,
+                                            xcor-size/(scale*2)+delta,xcor-size/scale+delta,xcor+delta])
+                        y_arrow = np.array([band+size/2,band+size/2-size/3,band+size/2-size/3,
+                                            band,band,band-size/12,band-size/12,
+                                            band-size/2,band-size/2,
+                                            band-size/12,band-size/12,band,band,
+                                            band+size/2-size/3,band+size/2-size/3,band+size/2])
+                        
+                        fig2.add_trace(go.Scatter(x=x_arrow, y=y_arrow,mode='lines', fill="toself",opacity=1, fillcolor= 'white',
+                                                name=r'{}'.format(band)))
+                        fig2.add_shape(type="rect",x0=0, y0=bandlimit-e_ref, x1=1, y1=1+emax,fillcolor= 'rgb(237, 140, 140)', layer="below")
+
+                        delta += 0.02
+
+                elif spinstate == 'ufdown':
+                    for band in band_energy:
+                        xl= np.array(xcor)
+                        yl =np.array(band)
+                        x_arrow = np.array([xcor+delta,xcor+size/scale+delta,xcor+size/(scale*2)+delta,
+                                            xcor+size/(scale*2)+delta,xcor+3*size/scale,xcor+3*size/scale,xcor+size/(scale*2)+delta,
+                                            xcor+size/(scale*2)+delta,xcor-size/(scale*2)+delta,
+                                            xcor-size/(scale*2)+delta,xcor-3*size/scale,xcor-3*size/scale,xcor-size/(scale*2)+delta,
+                                            xcor-size/(scale*2)+delta,xcor-size/scale+delta,xcor+delta])
+                        y_arrow = np.array([band-size/2,band-size/2+size/3,band-size/2+size/3,
+                                            band,band,band+size/12,band+size/12,
+                                            band+size/2,band+size/2,
+                                            band+size/12,band+size/12,band,band,
+                                            band-size/2+size/3,band-size/2+size/3,band-size/2])
+
+                        fig2.add_trace(go.Scatter(x=x_arrow, y=y_arrow,mode='lines',fill="toself",opacity=1, fillcolor= 'white',
+                                                name=r'{}'.format(band)))
+                        
+                        #fig2.add_shape(type="rect",x0=xcor+0.1, y0=1-fermi_energy, x1=xcor-0.15, y1=1+emax,fillcolor="red",opacity=0.1)
+
+                        delta += 0.02
+
+                # build ground‐state figure
+                fig_g = go.Figure()
+                spin_marker_exc_fig('fup',   fup_t,    size=0.5, xcor=0.3,
+                                    e_ref=triplet_ref, bandlimit=tripletunf_ref,
+                                    emin=0, emax=6, fig=fig_g)  # replace emin/emax with your eemin, eemax if you compute them
+                spin_marker_exc_fig('ufup',  ufup_t,   size=0.5, xcor=0.3,
+                                    e_ref=triplet_ref, bandlimit=tripletunf_ref,
+                                    emin=0, emax=6, fig=fig_g)
+                spin_marker_exc_fig('fdown', fdown_t,  size=0.5, xcor=0.7,
+                                    e_ref=triplet_ref, bandlimit=tripletunf_ref,
+                                    emin=0, emax=6, fig=fig_g)
+                spin_marker_exc_fig('ufdown',ufdown_t, size=0.5, xcor=0.7,
+                                    e_ref=triplet_ref, bandlimit=tripletunf_ref,
+                                    emin=0, emax=6, fig=fig_g)
+
+                # layout styling (unchanged)
+                fig_g.update_layout(
+                    showlegend=False,
+                    xaxis=dict(showgrid=False, showticklabels=False, zeroline=False),
+                    yaxis=dict(showgrid=False, zeroline=False),
+                    font=dict(size=18),
+                    xaxis_title=f"${latexdefect}$",
+                    yaxis_title="$E$ (eV)"
+                )
+
+                figs_ground[charge] = fig_g
+
+            excited_path = f"bulk/database/{str_defect}/{excited_charge}/excited/output_database.txt"
+            df_exc = pd.read_fwf(excited_path, sep="\s+", header=None, skip_blank_lines=True)  # ← unchanged
+            # initialize lists (unchanged)
+            band_energy_spinUp_filled_excited_triplet   = []
+            band_energy_spinUp_unfilled_excited_triplet = []
+            band_energy_spinDown_filled_excited_triplet = []
+            band_energy_spinDown_unfilled_excited_triplet = []
+            fermi_energy_excited_triplet = []
+
+            # parse excited bands (unchanged)
+            NBANDS_exc = extract_nbands(excited_path)
+            for row in range(len(df_exc)):
+                if row == 0 or row == NBANDS_exc + 4:
+                    df2 = df_exc.iloc[row, 0].split()
+                    if len(df2) >= 3:
+                        fermi_energy_excited_triplet.append(df2[2])
+                elif 4 <= row < NBANDS_exc + 4:
+                    df2 = df_exc.iloc[row, 0].split()
+                    df_row = [ele for ele in df2 if ele.strip()]
+                    if len(df_row) >= 3:
+                        occ = round(float(df_row[2]))
+                        en  = float(df_row[1])
+                        if occ == 1:
+                            band_energy_spinUp_filled_excited_triplet.append(en)
+                        else:
+                            band_energy_spinUp_unfilled_excited_triplet.append(en)
+                elif row > NBANDS_exc + 9:
+                    df2 = df_exc.iloc[row, 0].split()
+                    df_row = [ele for ele in df2 if ele.strip()]
+                    if len(df_row) >= 3:
+                        occ = round(float(df_row[2]))
+                        en  = float(df_row[1])
+                        if occ == 1:
+                            band_energy_spinDown_filled_excited_triplet.append(en)
+                        else:
+                            band_energy_spinDown_unfilled_excited_triplet.append(en)
+
+            # convert Fermi (unchanged)
+            fermi_energy_excited_triplet = [float(i) for i in fermi_energy_excited_triplet]
+
+            # compute references (you can reuse ground refs or recompute)
+            try:
+                upfreipletexc = np.array(band_energy_spinUp_filled_excited_triplet)
+                upunfreipletexc = np.array(band_energy_spinUp_unfilled_excited_triplet)
+                triplet_ref_exc     = upfreipletexc[upfreipletexc < 1.24][-1]
+                tripletunf_ref_exc  = upunfreipletexc[upunfreipletexc > 7.25][0]
+            except IndexError:
+                triplet_ref_exc    = 1.24
+                tripletunf_ref_exc = 7.25
+
+            # shift energies (unchanged)
+            fup_t_exc    = [e - triplet_ref_exc for e in band_energy_spinUp_filled_excited_triplet[-spin_nummer:]]
+            ufup_t_exc   = [e - triplet_ref_exc for e in band_energy_spinUp_unfilled_excited_triplet[:spin_nummer]]
+            fdown_t_exc  = [e - triplet_ref_exc for e in band_energy_spinDown_filled_excited_triplet[-spin_nummer:]]
+            ufdown_t_exc = [e - triplet_ref_exc for e in band_energy_spinDown_unfilled_excited_triplet[:spin_nummer]]
+
+            # build excited‐state figure
+            fig_e = go.Figure()
+            spin_marker_exc_fig('fup',   fup_t_exc,  size=0.5, xcor=0.3,
+                                e_ref=triplet_ref_exc, bandlimit=tripletunf_ref_exc,
+                                emin=0, emax=6, fig=fig_e)
+            spin_marker_exc_fig('ufup',  ufup_t_exc, size=0.5, xcor=0.3,
+                                e_ref=triplet_ref_exc, bandlimit=tripletunf_ref_exc,
+                                emin=0, emax=6, fig=fig_e)
+            spin_marker_exc_fig('fdown', fdown_t_exc, size=0.5, xcor=0.7,
+                                e_ref=triplet_ref_exc, bandlimit=tripletunf_ref_exc,
+                                emin=0, emax=6, fig=fig_e)
+            spin_marker_exc_fig('ufdown',ufdown_t_exc, size=0.5, xcor=0.7,
+                                e_ref=triplet_ref_exc, bandlimit=tripletunf_ref_exc,
+                                emin=0, emax=6, fig=fig_e)
+
+            fig_e.update_layout(
+                showlegend=False,
+                xaxis=dict(showgrid=False, showticklabels=False, zeroline=False),
+                yaxis=dict(showgrid=False, zeroline=False),
+                font=dict(size=18),
+                xaxis_title=f"${latexdefect}$",
+                yaxis_title="$E$ (eV)"
+            )
+
+            figs_excited[excited_charge] = fig_e
+
+            # Render the six tabs
+            tab_labels = charge_bulk + ['excited']
+            tabs = st.tabs(tab_labels)
+            for lbl, tab in zip(tab_labels, tabs):
+                with tab:
+                    st.subheader(lbl if lbl != 'excited' else f"Excited ({excited_charge})")
+                    if lbl in figs_ground:
+                        st.plotly_chart(figs_ground[lbl], use_container_width=True)
+                    else:
+                        st.plotly_chart(figs_excited[excited_charge], use_container_width=True)
+
+
+
+            if chargestate_defect == 0:
+                str_charge = "neutral"
+            elif chargestate_defect == -1:
+                str_charge = "m1"
+            elif chargestate_defect == -2:
+                str_charge = "m2"
+            elif chargestate_defect == 1:
+                str_charge = "p1"
+            elif chargestate_defect == 2:
+                str_charge = "p2"
+
+            atomposition_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/ground/CONTCAR_cartesian"
+            atomposition_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/CONTCAR_cartesian"
+
+            fractional_triplet = "bulk/database/" + str_defect  + "/" + str_charge + "/ground/CONTCAR_fractional"
+            fractional_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/CONTCAR_fractional"
+
+            cif_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/ground/structure.cif"
+            cif_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/structure.cif"
+
+
         ##############################33 Singlet Doublet #################################    
         if spin_multiplicity == 'singlet'or spin_multiplicity == 'doublet':
 

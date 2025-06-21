@@ -1208,7 +1208,7 @@ for tabs in tab_selection:
             col5, col6 = st.columns(2,gap="medium")
             with col5:
                 with st.container(border=True):
-                    st.header("Photophysical properties of "+"${}$".format(latexdefect))
+                    st.header(f"Photophysical properties of ${latexdefect}^{{{chargestate_defect}}}$")
                             # col21, col22, col23 = st.columns(3)
                     tab1, tab2, tab3 = st.tabs(["Excitation Properties", "Emission Properties", "Quantum Memory Properties"])
                             ## col21

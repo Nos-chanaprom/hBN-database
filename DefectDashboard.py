@@ -804,22 +804,58 @@ for tabs in tab_selection:
             figs_excited[excited_charge] = fig_e
 
             # Render the six tabs
-            tab_labels = charge_bulk + ['excited']
-            tabs = st.tabs(tab_labels)
-            for lbl, tab in zip(tab_labels, tabs):
-                with tab:
-                    st.subheader(
-                        lbl if lbl != 'excited' 
-                        else f"Excited ({excited_charge})"
-                    )
-                    if lbl in figs_ground:
-                        # ground‐state figure
-                        html = figs_ground[lbl].to_html(include_mathjax='cdn')
-                        st.components.v1.html(html, width=530, height=600)
+            col1, col2 = st.columns(2, gap="small")
+
+            with col1:
+                with st.container(border=True):
+                    st.header('Kohn–Sham Electronic Transitions')
+                    # Six tabs: five ground states + one excited state
+                    tab_labels = charge_bulk + ['excited']
+                    tabs = st.tabs(tab_labels)
+                    for lbl, tab in zip(tab_labels, tabs):
+                        with tab:
+                            title = lbl if lbl != 'excited' else f"Excited ({excited_charge})"
+                            st.subheader(title)
+                            if lbl in figs_ground:
+                                # Ground‐state figure for this charge
+                                html = figs_ground[lbl].to_html(include_mathjax='cdn')
+                                st.components.v1.html(html, width=530, height=600)
+                            else:
+                                # Single excited‐state figure
+                                html = figs_excited[excited_charge].to_html(include_mathjax='cdn')
+                                st.components.v1.html(html, width=530, height=600)
+
+            with col2:
+                with st.container(border=True):
+                    ########################## atomic position data frame  ###################################
+                    if isinstance(chosen_defect, str):
+                        atomicposition_sin = pd.read_csv(
+                            f"monolayer/database_triplet/{chosen_defect}/triplet/CONTCAR_cartesian",
+                            sep=';', header=0
+                        )
                     else:
-                        # the single excited‐state figure
-                        html = figs_excited[excited_charge].to_html(include_mathjax='cdn')
-                        st.components.v1.html(html, width=530, height=600)
+                        try:
+                            atomicposition_sin = pd.read_csv(atomposition_triplet, sep=';', header=0)
+                        except (NameError, ValueError):
+                            if host == 'monolayer':
+                                atomicposition_sin = pd.read_csv(
+                                    f"monolayer/database_triplet/{str_defect}/triplet/CONTCAR_cartesian",
+                                    sep=';', header=0
+                                )
+                            elif host == 'bulk':
+                                atomicposition_sin = pd.read_csv(
+                                    f"bulk/database/{str_defect}/triplet/CONTCAR_cartesian",
+                                    sep=';', header=0
+                                )
+
+                    atomicposition = pd.DataFrame(columns=['properties', 'X', 'Y', 'Z'])
+                    for row in range(atomicposition_sin.shape[0]):
+                        if 0 < row < 4:
+                            parts = [ele for ele in atomicposition_sin.iloc[row,0].split() if ele.strip()]
+                            atomicposition.loc[row, ['X','Y','Z']] = parts
+                    atomicposition.loc[1:4, 'properties'] = ['Lattice a', 'Lattice b', 'Lattice c']
+
+                    st.dataframe(atomicposition)
 
 
         ##############################33 Singlet Doublet #################################    

@@ -833,6 +833,12 @@ for tabs in tab_selection:
                     atomposition_triplet = "bulk/database/" + str_defect + "/neutral/CONTCAR_cartesian"
                     atomposition_excited_triplet = "bulk/database/" + str_defect + "/neutral/excited/CONTCAR_cartesian"
 
+                    fractional_triplet = "bulk/database/" + str_defect + "/neutral/CONTCAR_fractional"
+                    fractional_excited_triplet = "bulk/database/" + str_defect + "/neutral/excited/CONTCAR_fractional"
+
+                    cif_triplet = "bulk/database/" + str_defect + "/neutral/structure.cif"
+                    cif_excited_triplet = "bulk/database/" + str_defect + "/neutral/excited/structure.cif"
+            
                     ########################## atomic position data frame  ###################################
                     if  type(chosen_defect) == str:
                         latexdefect = 'Al_N'

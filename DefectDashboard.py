@@ -1214,17 +1214,18 @@ for tabs in tab_selection:
                             ## col21
                             #tab1.subheader('Excitation Properties')
                     Photophysical_properties = load_table('Excitation properties')
+                    Photophysical_properties["Host"]=Photophysical_properties["Host"]
                     Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
                     Photophysical_properties["Characteristic time (ns)"]=Photophysical_properties["Characteristic time (ns)"].astype(int)
                     Photophysical_properties["Characteristic time (ns)"] = Photophysical_properties["Characteristic time (ns)"].map("{:.2E}".format)
 
                     try: 
                         ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge])]
-                    #except  NameError :
-                    #    ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
-                    #except  KeyError:
-                    #    ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
-                    #ep2=ppdefects.iloc[:,3:]
+                    except  NameError :
+                        ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                    except  KeyError:
+                        ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                    ep2=ppdefects.iloc[:,3:]
                     ep2.rename(columns={"dipole_x":"µₓ (Debye)","dipole_y":"μᵧ (Debye)","dipole_z":"µz (Debye)","Intensity":"Intensity (Debye)","Angle of excitation dipole wrt the crystal axis":"Angle of excitation dipole wrt the crystal axis (degree)"},inplace=True)
                     ep2=ep2.T
                     jj =1

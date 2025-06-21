@@ -1054,6 +1054,155 @@ for tabs in tab_selection:
                                 data= open(cif_excited_triplet, "r"),
                                 file_name=f'CIF excited-sate-{str_defect}.cif'                
                             )
+            ######## Formation energy
+            path_formationE_Nrich = "bulk/database/" + str_defect + "/formation_energies_N_rich.txt"
+            path_formationE_Npoor = "bulk/database/" + str_defect + "/formation_energies_N_poor.txt"
+            # Load both files
+            rich_data = read_formation_energies(path_formationE_Nrich)
+            poor_data = read_formation_energies(path_formationE_Npoor)
+            # Fermi level range (0 to 6 eV)
+            E_F = np.linspace(0, 6, 200) 
+            # Assign colors for charge states
+                    # You can customize this list as needed
+            color_palette = pc.qualitative.D3  # or Set1, Set2, etc.
+            charge_states = sorted(set(state['charge'] for defect in rich_data.values() for state in defect))
+            color_map = {q: color_palette[i % len(color_palette)] for i, q in enumerate(charge_states)}
+            
+                    # Plot and render N-rich diagram
+            fig_rich = plot_diagram_plotly(rich_data, 'Defect Formation Energies (N-rich)')
+                    # Plot and render N-poor diagram
+            fig_poor = plot_diagram_plotly(poor_data, 'Defect Formation Energies (N-poor)')
+
+            ######## for displaying defect formation energy and PL
+            col3, col4 = st.columns(2,gap="medium")
+            with col3:
+                with st.container(border=True):
+                    st.header("Defect Formation Energy of "+"${}$".format(latexdefect))
+                    tab1, tab2 = st.tabs(["N-rich","N-poor"])
+                    with tab1:                
+                        st.plotly_chart(fig_rich, use_container_width=True,theme=None)   #  
+                    with tab2: 
+                        st.plotly_chart(fig_poor, use_container_width=True, theme=None)   #  ← change
+            ###### for PL spectrum
+            # Path to the PL file
+            path_PL = "bulk/database/" + str_defect + "/" + str_defect + "/ground/PL.txt" 
+
+            with col4:
+                with st.container(border=True):
+                    st.header("Luminescence spectrum of "+"${}$".format(latexdefect))
+                    tab1, tab2 = st.tabs(["Photoluminescence","Absorption"])
+                    with tab1:
+                                # Check if the file exists
+                        if os.path.exists(path_PL):
+                                    # Load the data
+                            data = np.loadtxt(path_PL)
+                            wavelength = data[:, 0]
+                            intensity = data[:, 1]
+
+                                    # Create the figure
+                            fig = go.Figure()
+
+                            fig.add_trace(go.Scatter(
+                                        x=wavelength,
+                                        y=intensity,
+                                        mode='lines',
+                                        line=dict(width=2, color='orange'),
+                                        name='PL Spectrum'
+                                    ))
+
+                                    # Update axes and layout
+                            fig.update_xaxes(
+                                        title='Wavelength (nm)',
+                                        title_font={"size": 18},
+                                        showline=True,
+                                        linewidth=2,
+                                        linecolor='black',
+                                        mirror=True
+                                    )
+                            fig.update_yaxes(
+                                        title='PL Intensity (arb. units)',
+                                        title_font={"size": 18},
+                                        showline=True,
+                                        linewidth=2,
+                                        linecolor='black',
+                                        zeroline = False,
+                                        mirror=True
+                                    )
+
+                            fig.update_layout(
+                                        font=dict(size=16, color="black"),
+                                        width=600,
+                                        height=500,
+                                        margin=dict(l=70, r=70, t=30, b=90),
+                                        showlegend=False
+                                    )                
+                            st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=550, height=600)
+                        else:
+                                    # Show a message if file is not found
+                            st.write(f"**Photoluminescence absent owing to a lack of two-level defect states.**")
+
+                    with tab2:
+                                # Check if the file exists
+                        if os.path.exists(path_PL):
+                                    # Load the data
+                            data = np.loadtxt(path_PL)
+                            wavelength = data[:, 0]
+                            intensity = data[:, 1]
+                                    # Find the index of maximum PL intensity
+                            max_index = np.argmax(intensity)
+                                    # ZPL wavelength is the wavelength corresponding to max intensity
+                            ZPL_wavelength = wavelength[max_index]
+                                    # Mirror wavelengths about the ZPL
+                            wavelength_mirrored = 2 * ZPL_wavelength - wavelength
+
+                                    # Optional: sort the mirrored data by ascending wavelength for clean plotting
+                            sorted_indices = np.argsort(wavelength_mirrored)
+                            wavelength_mirrored_sorted = wavelength_mirrored[sorted_indices]
+                            intensity_sorted = intensity[sorted_indices]
+
+                                    # Create the figure
+                            fig = go.Figure()
+
+                            fig.add_trace(go.Scatter(
+                                        x=wavelength_mirrored_sorted,
+                                        y=intensity_sorted,
+                                        mode='lines',
+                                        line=dict(width=2, color='orange'),
+                                        name='PL Spectrum'
+                                    ))
+
+                                    # Update axes and layout
+                            fig.update_xaxes(
+                                        title='Wavelength (nm)',
+                                        title_font={"size": 18},
+                                        showline=True,
+                                        zeroline = False,
+                                        linewidth=2,
+                                        linecolor='black',
+                                        mirror=True
+                                    )
+                            fig.update_yaxes(
+                                        title='Normalized Intensity (arb. units)',
+                                        title_font={"size": 18},
+                                        showline=True,
+                                        linewidth=2,
+                                        zeroline = False,
+                                        linecolor='black',
+                                        mirror=True
+                                    )
+
+                            fig.update_layout(
+                                        font=dict(size=16, color="black"),
+                                        width=600,
+                                        height=500,
+                                        margin=dict(l=100, r=70, t=30, b=90),
+                                        showlegend=False
+                                    )                
+                            st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=550, height=600)
+                        else:
+                                    # Show a message if file is not found
+                            st.write(f"**Absorption spectrum absent owing to a lack of two-level defect states.**")
+
 
         elif host == 'monolayer':
             ##############################33 Singlet Doublet #################################    

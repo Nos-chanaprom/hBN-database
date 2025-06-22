@@ -1248,9 +1248,15 @@ for tabs in tab_selection:
                     )
                     ep2 = ep2.T
                     # 3) Rebuild your `[Value i]` headers
-                    newhead = [f"[Value {i}]" for i in range(1, ep2.shape[1] + 1)]
-                    ep2.columns = newhead
-
+                    #newhead = [f"[Value {i}]" for i in range(1, ep2.shape[1] + 1)]
+                    #ep2.columns = newhead
+                    jj =1
+                    newheadcol =[]
+                            #latppdefects.iloc[1,0].replace("$","")
+                    for head in emp.iloc[0]:
+                        newheadcol.append('[Value {i}]'.format(i=jj))
+                        jj+=1
+                    ep2.columns =newheadcol
                     # 4) Display
                     tab1.dataframe(ep2, use_container_width=True)
 

@@ -1280,7 +1280,7 @@ for tabs in tab_selection:
                     Photophysical_properties["Excited-state total energy (eV)"]=Photophysical_properties["Excited-state total energy (eV)"]
 
                     try: 
-                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==str_charge) & (Photophysical_properties['Host'] =='bulk')]
+                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargestate_defect) & (Photophysical_properties['Host'] =='bulk')]
                     except  NameError :
                         ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='bulk')]
                     except  KeyError:

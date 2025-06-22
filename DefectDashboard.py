@@ -1253,7 +1253,7 @@ for tabs in tab_selection:
                     jj =1
                     newheadcol =[]
                             #latppdefects.iloc[1,0].replace("$","")
-                    for head in emp.iloc[0]:
+                    for head in ep2.iloc[0]:
                         newheadcol.append('[Value {i}]'.format(i=jj))
                         jj+=1
                     ep2.columns =newheadcol

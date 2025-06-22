@@ -1225,9 +1225,9 @@ for tabs in tab_selection:
                     try: 
                         ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargestate_defect) & (Photophysical_properties['Host'] =='bulk')]
                     except  NameError :
-                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargestate_defect)& (Photophysical_properties['Host'] =='bulk')]
+                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='bulk')]
                     except  KeyError:
-                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargestate_defect)& (Photophysical_properties['Host'] =='bulk')]
+                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='bulk')]
                     
                     
                     # 1) Pick off Host plus your other columns
@@ -1248,7 +1248,7 @@ for tabs in tab_selection:
                     )
 
                     # 3) Rebuild your `[Value i]` headers
-                    newhead = [f"[Value {i}]" for i in range(1, ep2.shape[1] + 1)]
+                    newhead = [f"[Value {i}]" for i in range(1, ep2.shape[1] + 0)]
                     ep2.columns = newhead
 
                     # 4) Display

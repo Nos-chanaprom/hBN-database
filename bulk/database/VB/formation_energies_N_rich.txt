@@ -1,0 +1,4 @@
+#system   charge   corrected formation energy (eV) uncorrected formation energy (eV)
+VB             -1                   5.4267695717                   5.1054279322
+VB              0                   3.5061214122                   3.5061214122
+VB             -2                  10.4260086430                   9.2028279822

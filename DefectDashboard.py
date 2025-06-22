@@ -1244,11 +1244,11 @@ for tabs in tab_selection:
                             "Angle of excitation dipole wrt the crystal axis":
                                 "Angle of excitation dipole wrt the crystal axis (degree)"
                         })
-                        .T
+                        
                     )
 
                     # 3) Rebuild your `[Value i]` headers
-                    newhead = [f"[Value {i}]" for i in range(1, ep2.shape[1] + 0)]
+                    newhead = [f"[Value {i}]" for i in range(1, ep2.shape[1] + 1)]
                     ep2.columns = newhead
 
                     # 4) Display

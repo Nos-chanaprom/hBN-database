@@ -1214,10 +1214,6 @@ for tabs in tab_selection:
                             ## col21
                             #tab1.subheader('Excitation Properties')
                     Photophysical_properties = load_table('Excitation properties')
-                    #Photophysical_properties["Host"] = host
-                    #Photophysical_properties = Photophysical_properties[
-                    #    Photophysical_properties["Host"] == host
-                    #]
                     Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
                     Photophysical_properties["Characteristic time (ns)"]=Photophysical_properties["Characteristic time (ns)"].astype(int)
                     Photophysical_properties["Characteristic time (ns)"] = Photophysical_properties["Characteristic time (ns)"].map("{:.2E}".format)
@@ -1248,11 +1244,8 @@ for tabs in tab_selection:
                     )
                     ep2 = ep2.T
                     # 3) Rebuild your `[Value i]` headers
-                    #newhead = [f"[Value {i}]" for i in range(1, ep2.shape[1] + 1)]
-                    #ep2.columns = newhead
                     jj =1
                     newheadcol =[]
-                            #latppdefects.iloc[1,0].replace("$","")
                     for head in ep2.iloc[0]:
                         newheadcol.append('[Value {i}]'.format(i=jj))
                         jj+=1

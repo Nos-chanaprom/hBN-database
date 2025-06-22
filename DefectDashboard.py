@@ -1223,11 +1223,11 @@ for tabs in tab_selection:
                     Photophysical_properties["Characteristic time (ns)"] = Photophysical_properties["Characteristic time (ns)"].map("{:.2E}".format)
 
                     try: 
-                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge])]
-                    #except  NameError :
-                    #    ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
-                    #except  KeyError:
-                    #    ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge]) & (Photophysical_properties['Host'] == 'bulk')]
+                    except  NameError :
+                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] == 'bulk')]
+                    except  KeyError:
+                        ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
                    
                     
                     

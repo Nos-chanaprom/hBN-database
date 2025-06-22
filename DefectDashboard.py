@@ -1243,12 +1243,18 @@ for tabs in tab_selection:
                         st.error("Please select exactly one defect to view its photophysical properties.")
                         ppdefects = pd.DataFrame()  # empty fallback
                     
-                    # 1) Pick off Host plus your other columns
-                    cols = ['Host'] + list(ppdefects.columns[3:])  # Take host column and every column after the 3rd one
-
-                    # 2) Slice and rename in one go
-                    ep2 = (
-                        ppdefects[cols]
+                    # Tab 1: only excitation properties
+                    exc_cols = [
+                        "Host",
+                        "Characteristic time (ns)",
+                        "dipole_x",
+                        "dipole_y",
+                        "dipole_z",
+                        "Intensity",
+                        "Angle of excitation dipole wrt the crystal axis"
+                    ]
+                    ep_exc = (
+                        ppdefects[exc_cols]
                         .rename(columns={
                             "dipole_x": "µₓ (Debye)",
                             "dipole_y": "μᵧ (Debye)",
@@ -1260,12 +1266,10 @@ for tabs in tab_selection:
                         .T
                     )
 
-                    # 3) Rebuild your `[Value i]` headers
-                    newhead = [f"[Value {i}]" for i in range(1, ep2.shape[1] + 1)]
-                    ep2.columns = newhead
+                    # rebuild your column headers
+                    ep_exc.columns = [f"[Value {i}]" for i in range(1, ep_exc.shape[1] + 1)]
 
-                    # 4) Display
-                    tab1.dataframe(ep2, use_container_width=True)
+                    tab1.dataframe(ep_exc, use_container_width=True)
 
                             ## col22
                             #col22.subheader('Emission Properties')

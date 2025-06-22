@@ -1231,7 +1231,7 @@ for tabs in tab_selection:
                     
                     
                     # 1) Pick off Host plus your other columns
-                    cols =  list(ppdefects.columns[3:])  # Take host column and every column after the 3rd one
+                    cols = ['Host'] + list(ppdefects.columns[3:])  # Take host column and every column after the 3rd one
 
                     # 2) Slice and rename in one go
                     ep2 = (

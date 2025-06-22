@@ -1222,27 +1222,28 @@ for tabs in tab_selection:
                     Photophysical_properties["Characteristic time (ns)"]=Photophysical_properties["Characteristic time (ns)"].astype(int)
                     Photophysical_properties["Characteristic time (ns)"] = Photophysical_properties["Characteristic time (ns)"].map("{:.2E}".format)
 
-                    try: 
-                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge])]
-                    except  NameError :
-                        ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
-                    except  KeyError:
-                        ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
-                    #ep2=ppdefects.iloc[:,3:]
-                    #ep2 = ['Host'] + list(ppdefects.columns[3:])
-                    #ep2.rename(columns={"dipole_x":"µₓ (Debye)","dipole_y":"μᵧ (Debye)","dipole_z":"µz (Debye)","Intensity":"Intensity (Debye)","Angle of excitation dipole wrt the crystal axis":"Angle of excitation dipole wrt the crystal axis (degree)"},inplace=True)
-                    #ep2=ep2.T
-                    #jj =1
-                    #newheadcol =[]
-                            #latppdefects.iloc[1,0].replace("$","")
-                    #for head in ep2.iloc[0]:
-                    #    newheadcol.append('[Value {i}]'.format(i=jj))
-                    #    jj+=1
-                    #ep2.columns =newheadcol
-                    #tab1.dataframe(ep2,use_container_width=True)
+                    #try: 
+                    #    ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge])]
+                    #except  NameError :
+                    #    ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                    #except  KeyError:
+                    #    ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                   
+                    if selection.shape[0] == 1:
+                        sel = selection.iloc[0]
+                        defect_name  = sel["Defect"]
+                        charge_state = sel["Charge state"]
 
+                        ppdefects = Photophysical_properties[
+                            (Photophysical_properties["Defect"] == defect_name) &
+                            (Photophysical_properties["Charge state"] == charge_state)
+                        ]
+                    else:
+                        st.error("Please select exactly one defect to view its photophysical properties.")
+                        ppdefects = pd.DataFrame()  # empty fallback
+                    
                     # 1) Pick off Host plus your other columns
-                    cols = ['Host'] + list(ppdefects.columns[3:])
+                    cols = ['Host'] + list(ppdefects.columns[3:])  # Take host column and every column after the 3rd one
 
                     # 2) Slice and rename in one go
                     ep2 = (

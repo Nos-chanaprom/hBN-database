@@ -1244,7 +1244,7 @@ for tabs in tab_selection:
                             "Angle of excitation dipole wrt the crystal axis":
                                 "Angle of excitation dipole wrt the crystal axis (degree)"
                         })
-                        
+                        .T
                     )
 
                     # 3) Rebuild your `[Value i]` headers

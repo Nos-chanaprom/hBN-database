@@ -1229,19 +1229,13 @@ for tabs in tab_selection:
                     #except  KeyError:
                     #    ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
                    
-                    if selection.shape[0] == 1:
-                        sel = selection.iloc[0]
-                        defect_name  = sel["Defect"]
-                        charge_state = sel["Charge state"]
-
-                        ppdefects = Photophysical_properties[
-                            (Photophysical_properties["Defect"] == defect_name) &
-                            (Photophysical_properties["Charge state"] == charge_state) &
-                            (Photophysical_properties["Host"] == 'bulk')
-                        ]
-                    else:
-                        st.error("Please select exactly one defect to view its photophysical properties.")
-                        ppdefects = pd.DataFrame()  # empty fallback
+                    try: 
+                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargestate_defect) & (Photophysical_properties['Host'] =='bulk')]
+                    except  NameError :
+                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='bulk')]
+                    except  KeyError:
+                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='bulk')]
+                    
                     
                     # 1) Pick off Host plus your other columns
                     cols = ['Host'] + list(ppdefects.columns[3:])  # Take host column and every column after the 3rd one

@@ -3366,9 +3366,9 @@ for tabs in tab_selection:
                         try: 
                             ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge]) & (Photophysical_properties['Host'] =='monolayer')]
                         except  NameError :
-                            ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                            ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='monolayer')]
                         except  KeyError:
-                            ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                            ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='monolayer')]
                         ep2=ppdefects.iloc[:,3:]
                         ep2.rename(columns={"dipole_x":"µₓ (Debye)","dipole_y":"μᵧ (Debye)","dipole_z":"µz (Debye)","Intensity":"Intensity (Debye)","Angle of excitation dipole wrt the crystal axis":"Angle of excitation dipole wrt the crystal axis (degree)"},inplace=True)
                         ep2=ep2.T

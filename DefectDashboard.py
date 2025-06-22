@@ -1293,11 +1293,11 @@ for tabs in tab_selection:
                     Photophysical_properties["g (MHz)"] = Photophysical_properties["g (MHz)"].map("{:.2E}".format)
                         
                     try: 
-                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge])]
+                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge])& (Photophysical_properties['Host'] =='bulk')]
                     except  NameError :
-                        ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                        ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect & (Photophysical_properties['Host'] =='bulk')]
                     except  KeyError:
-                        ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                        ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect & (Photophysical_properties['Host'] =='bulk')]
                     qmp = ppdefects.iloc[:,3:]
                     qmp=qmp.T
                     jj =1
@@ -3407,11 +3407,11 @@ for tabs in tab_selection:
                         Photophysical_properties["g (MHz)"] = Photophysical_properties["g (MHz)"].map("{:.2E}".format)
                     
                         try: 
-                            ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge])]
+                            ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge])& (Photophysical_properties['Host'] =='monolayer')]
                         except  NameError :
-                            ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                            ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect& (Photophysical_properties['Host'] =='monolayer')]
                         except  KeyError:
-                            ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                            ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect& (Photophysical_properties['Host'] =='monolayer')]
                         qmp = ppdefects.iloc[:,3:]
                         qmp=qmp.T
                         jj =1

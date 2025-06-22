@@ -1229,17 +1229,41 @@ for tabs in tab_selection:
                     except  KeyError:
                         ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
                     #ep2=ppdefects.iloc[:,3:]
-                    ep2 = ['Host'] + list(ppdefects.columns[3:])
-                    ep2.rename(columns={"dipole_x":"µₓ (Debye)","dipole_y":"μᵧ (Debye)","dipole_z":"µz (Debye)","Intensity":"Intensity (Debye)","Angle of excitation dipole wrt the crystal axis":"Angle of excitation dipole wrt the crystal axis (degree)"},inplace=True)
-                    ep2=ep2.T
-                    jj =1
-                    newheadcol =[]
+                    #ep2 = ['Host'] + list(ppdefects.columns[3:])
+                    #ep2.rename(columns={"dipole_x":"µₓ (Debye)","dipole_y":"μᵧ (Debye)","dipole_z":"µz (Debye)","Intensity":"Intensity (Debye)","Angle of excitation dipole wrt the crystal axis":"Angle of excitation dipole wrt the crystal axis (degree)"},inplace=True)
+                    #ep2=ep2.T
+                    #jj =1
+                    #newheadcol =[]
                             #latppdefects.iloc[1,0].replace("$","")
-                    for head in ep2.iloc[0]:
-                        newheadcol.append('[Value {i}]'.format(i=jj))
-                        jj+=1
-                    ep2.columns =newheadcol
-                    tab1.dataframe(ep2,use_container_width=True)
+                    #for head in ep2.iloc[0]:
+                    #    newheadcol.append('[Value {i}]'.format(i=jj))
+                    #    jj+=1
+                    #ep2.columns =newheadcol
+                    #tab1.dataframe(ep2,use_container_width=True)
+
+                    # 1) Pick off Host plus your other columns
+                    cols = ['Host'] + list(ppdefects.columns[3:])
+
+                    # 2) Slice and rename in one go
+                    ep2 = (
+                        ppdefects[cols]
+                        .rename(columns={
+                            "dipole_x": "µₓ (Debye)",
+                            "dipole_y": "μᵧ (Debye)",
+                            "dipole_z": "µz (Debye)",
+                            "Intensity": "Intensity (Debye)",
+                            "Angle of excitation dipole wrt the crystal axis":
+                                "Angle of excitation dipole wrt the crystal axis (degree)"
+                        })
+                        .T
+                    )
+
+                    # 3) Rebuild your `[Value i]` headers
+                    newhead = [f"[Value {i}]" for i in range(1, ep2.shape[1] + 1)]
+                    ep2.columns = newhead
+
+                    # 4) Display
+                    tab1.dataframe(ep2, use_container_width=True)
 
                             ## col22
                             #col22.subheader('Emission Properties')

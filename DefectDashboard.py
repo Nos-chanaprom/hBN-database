@@ -1224,10 +1224,10 @@ for tabs in tab_selection:
 
                     try: 
                         ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge])]
-                    except  NameError :
-                        ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
-                    except  KeyError:
-                        ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                    #except  NameError :
+                    #    ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                    #except  KeyError:
+                    #    ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
                    
                     
                     

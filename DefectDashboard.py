@@ -1130,9 +1130,26 @@ for tabs in tab_selection:
                         st.plotly_chart(fig_rich, use_container_width=True,theme=None)   #  
                     with tab2: 
                         st.plotly_chart(fig_poor, use_container_width=True, theme=None)   #  ← change
+            
             ###### for PL spectrum
             # Path to the PL file
-            path_PL = "bulk/database/" + str_defect + "/" + str_charge + "/PL.txt" 
+            generic_PL = "bulk/database/" + str_defect + "/" + str_charge + "/PL.txt" 
+            if spin_transition == "up-up":
+                up_path = "bulk/database/" + str_defect + "/" + str_charge + "/PL_up.txt" 
+                if os.path.exists(up_path):
+                    path_PL = up_path
+                else:
+                    path_PL = generic_PL
+
+            elif spin_transition == "down-down":
+                down_path = "bulk/database/" + str_defect + "/" + str_charge + "/PL_down.txt" 
+                if os.path.exists(down_path):
+                    path_PL = down_path
+                else:
+                    path_PL = generic_PL
+
+            else:
+                path_PL = generic_PL
 
             with col4:
                 with st.container(border=True):

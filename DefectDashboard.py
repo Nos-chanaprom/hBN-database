@@ -713,7 +713,7 @@ for tabs in tab_selection:
 
                 figs_ground[charge] = fig_g
             
-            excited_path = f"bulk/database/{str_defect}/{excited_charge}/excited/output_database.txt"
+            # excited_path = f"bulk/database/{str_defect}/{excited_charge}/excited/output_database.txt"
             # Generic fallback path
             generic = f"bulk/database/{str_defect}/{excited_charge}/excited/output_database.txt"
 

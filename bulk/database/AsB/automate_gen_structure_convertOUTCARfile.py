@@ -19,6 +19,9 @@ def execute_cif2cell_command(folders):
             os.system('mv CONTCAR.cif structure.cif')
             add_atom = '''awk 'NR==1 {sub(/^.*order:/, "", $0); line=$0} FNR==6 {$0=line"\\n"$0} 1' CONTCAR_cartesian CONTCAR_cartesian > temp && mv temp CONTCAR_cartesian'''
             os.system(add_atom)
+            # only rename OUTCAR_transition if it’s there
+            if os.path.exists('OUTCAR_transition'):
+                os.system('mv OUTCAR_transition output_database.txt')
         except Exception as e:
             print(f"Error occurred in directory: {folder}. Error: {e}. Skipping to the next directory.")
         finally:
@@ -30,4 +33,3 @@ if __name__ == "__main__":
     print(f"Number of folders containing CONTCAR: {num_folders}")
 
     execute_cif2cell_command(folders_with_contcar)
-

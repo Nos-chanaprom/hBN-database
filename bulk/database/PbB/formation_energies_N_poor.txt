@@ -1,0 +1,6 @@
+#system   charge   corrected formation energy (eV) uncorrected formation energy (eV)
+defect         -1                  28.1922276107                  27.9874757147
+defect          0                  22.3679042647                  22.3679042647
+defect          1                  17.5115798243                  17.1639631847
+defect         -2                  34.3849590905                  33.7072066347
+defect          2                  17.7565969071                  16.9932777847

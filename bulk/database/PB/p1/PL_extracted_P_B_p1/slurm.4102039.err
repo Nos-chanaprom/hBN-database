@@ -1,0 +1,4 @@
+Loading vasp/6.4
+  Loading requirement: wannier90/3.1.0-intel21-impi
+srun: Job 4102039 step creation temporarily disabled, retrying (Requested nodes are busy)
+srun: Step created for job 4102039

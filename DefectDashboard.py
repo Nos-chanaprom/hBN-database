@@ -712,8 +712,28 @@ for tabs in tab_selection:
                             )
 
                 figs_ground[charge] = fig_g
-
+            
             excited_path = f"bulk/database/{str_defect}/{excited_charge}/excited/output_database.txt"
+            # Generic fallback path
+            generic = f"bulk/database/{str_defect}/{excited_charge}/excited/output_database.txt"
+
+            if spin_transition == "up-up":
+                up_path = f"bulk/database/{str_defect}/{excited_charge}/excited_up/output_database.txt"
+                if os.path.exists(up_path):
+                    excited_path = up_path
+                else:
+                    excited_path = generic
+
+            elif spin_transition == "down-down":
+                down_path = f"bulk/database/{str_defect}/{excited_charge}/excited_down/output_database.txt"
+                if os.path.exists(down_path):
+                    excited_path = down_path
+                else:
+                    excited_path = generic
+
+            else:
+                excited_path = generic
+
             df_exc = pd.read_fwf(excited_path, sep="\s+", header=None, skip_blank_lines=True)  # ← unchanged
             # initialize lists (unchanged)
             band_energy_spinUp_filled_excited_triplet   = []

@@ -861,15 +861,42 @@ for tabs in tab_selection:
                         str_charge = "p1"
                     elif chargestate_defect == 2:
                         str_charge = "p2"
+                    
+                    
+
+                    if spin_transition == "up-up":
+                        atomposition_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited_up/CONTCAR_cartesian"
+                        if os.path.exists(atomposition_excited_triplet):
+                            fractional_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited_up/CONTCAR_fractional"
+                            cif_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited_up/structure.cif"
+                        else:
+                            atomposition_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/CONTCAR_cartesian"
+                            fractional_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/CONTCAR_fractional"
+                            cif_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/structure.cif"
+
+                    elif spin_transition == "down-down":
+                        atomposition_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited_down/CONTCAR_cartesian"
+                        if os.path.exists(atomposition_excited_triplet):
+                            fractional_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited_down/CONTCAR_fractional"
+                            cif_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited_down/structure.cif"
+                        else:
+                            atomposition_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/CONTCAR_cartesian"
+                            fractional_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/CONTCAR_fractional"
+                            cif_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/structure.cif"
+
+                    else:
+                        atomposition_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/CONTCAR_cartesian"
+                        fractional_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/CONTCAR_fractional"
+                        cif_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/structure.cif"
 
                     atomposition_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/CONTCAR_cartesian"
-                    atomposition_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/CONTCAR_cartesian"
+                    #atomposition_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/CONTCAR_cartesian"
 
                     fractional_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/CONTCAR_fractional"
-                    fractional_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/CONTCAR_fractional"
+                    #fractional_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/CONTCAR_fractional"
 
                     cif_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/structure.cif"
-                    cif_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/structure.cif"
+                    #cif_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/structure.cif"
             
                     ########################## atomic position data frame  ###################################
                     if  type(chosen_defect) == str:

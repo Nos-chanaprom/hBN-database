@@ -199,5 +199,3 @@ with st.container(border=False):
     plt.ylabel("Frequency")
     ```
     """)
-
-    """)

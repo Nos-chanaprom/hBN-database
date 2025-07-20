@@ -1,4 +1,5 @@
 import streamlit as st
+import requests # for API
 
 ## Add background image
 st.set_page_config(page_title="Request data",layout="wide")

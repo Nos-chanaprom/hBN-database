@@ -78,6 +78,7 @@ with st.container(border=False):
     Invoke `get_database` with the desired filtering criteria as shown below:
 
     ```python
+    from get_hBN_defects_database import get_database
     data = get_database(
         option=["ZPL"],
         host=["monolayer", "bulk"],

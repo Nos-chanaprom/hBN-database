@@ -60,7 +60,6 @@ with st.container(border=False):
     To use our API, first, one needs to download the following `.py` file:
     """)
 
-    # Option 1: Streamlit-native download button (Recommended)
     url = "https://raw.githubusercontent.com/QCS-Theory/hBN-database/main/get_hBN_defects_database.py"
     response = requests.get(url)
     file_content = response.text

@@ -58,7 +58,7 @@ st.title("API tutorial")
 
 with st.container(border=False):
     st.markdown("""
-    To use our API, first, one needs to download the following `.py` file:
+    To use our API, first, one needs to download the following `.py` file and place it in your working directory.
     """)
 
     url = "https://raw.githubusercontent.com/QCS-Theory/hBN-database/main/get_hBN_defects_database.py"
@@ -71,3 +71,49 @@ with st.container(border=False):
         file_name="get_hBN_defects_database.py",
         mime="text/x-python"
     )
+
+with st.container(border=False):
+    st.markdown("""
+    In your Python script or interactive session, import the function.  
+    Invoke `get_database` with the desired filtering criteria as shown below:
+
+    ```python
+    data = get_database(
+        option=["ZPL"],
+        host=["monolayer", "bulk"],
+        spin_multiplicity=["singlet", "doublet", "triplet"],
+        charge_state=[-2, -1, 0, 1, 2],
+        optical_spin_transition=["up", "down"],
+        value_range=(2.0, 4.0),
+        download_db=False
+    )
+    ```
+
+    **The keyword arguments perform the following functions:**
+
+    - **`option`**:  
+      Specifies which database columns to return. The complete set of valid keys is listed in Table \\ref{tab:db-schema}.  
+      To retrieve all columns, use:
+
+      ```python
+      option = ["all"]
+      ```
+
+    - **`host`**:  
+      Selects between the monolayer and bulk hBN datasets. By default, both are returned.
+
+    - **`spin_multiplicity`**:  
+      Filters defects by their spin multiplicity. If omitted, all multiplicities are included.
+
+    - **`charge_state`**:  
+      Filters defects by charge state. Defaults to all if unspecified.
+
+    - **`optical_spin_transition`**:  
+      Filters by optical spin transition (e.g., `"up"` refers up→up, and `"down"` refers down→down). Both are returned if not specified.
+
+    - **`value_range`**:  
+      Restricts the numeric range of the selected property. When omitted, no range filtering is applied.
+
+    - **`download_db`**:  
+      If set to `True`, downloads the raw SQLite database file (named like `hbn_defects_<options>.db`) to the working directory.
+    """)

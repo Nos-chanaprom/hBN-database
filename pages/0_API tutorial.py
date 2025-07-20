@@ -118,3 +118,26 @@ with st.container(border=False):
     - **`download_db`**:  
       If set to `True`, downloads the raw SQLite database file (named like `hbn_defects_<options>.db`) to the working directory.
     """)
+
+    st.markdown("**Available `option` keys:**")
+
+    # Sample of your full table (add more rows as needed)
+    data = [
+        ["Host", "TEXT: host material identifier", "-"],
+        ["Defect", "TEXT: defect chemical formula/code", "-"],
+        ["Defect name", "TEXT: descriptive name of the defect", "-"],
+        ["Charge state", "INTEGER: integer charge state", "-"],
+        ["Spin multiplicity", "TEXT: spin configuration of defects", "-"],
+        ["Optical spin transition", "TEXT: allowed optical spin transition", "-"],
+        ["Excitation dipole_x", "REAL: x-component of excitation dipole moment", "abs_dipole_x"],
+        ["Excitation dipole_y", "REAL: y-component of excitation dipole moment", "abs_dipole_y"],
+        ["Excitation dipole_z", "REAL: z-component of excitation dipole moment", "abs_dipole_z"],
+        ["Excitation Intensity", "REAL: strength of excitation dipole moment", "abs_tdm"],
+        ["ZPL energy", "REAL: ZPL energy (eV)", "ZPL"],
+        ["ZPL wavelength", "REAL: ZPL wavelength (nm)", "ZPL_nm"],
+        ["HR factor", "REAL: Huang-Rhys factor", "HR"],
+        # ... add more rows as needed
+    ]
+
+    df = pd.DataFrame(data, columns=["Column name", "Type and description", "Option"])
+    st.dataframe(df, use_container_width=True)

@@ -120,25 +120,43 @@ with st.container(border=False):
       If set to `True`, downloads the raw SQLite database file (named like `hbn_defects_<options>.db`) to the working directory.
     """)
 
-    st.markdown("**Available `option` keys:**")
-
-    # Sample of your full table (add more rows as needed)
-    data = [
-        ["Host", "TEXT: host material identifier", "-"],
-        ["Defect", "TEXT: defect chemical formula/code", "-"],
-        ["Defect name", "TEXT: descriptive name of the defect", "-"],
-        ["Charge state", "INTEGER: integer charge state", "-"],
-        ["Spin multiplicity", "TEXT: spin configuration of defects", "-"],
-        ["Optical spin transition", "TEXT: allowed optical spin transition", "-"],
-        ["Excitation dipole_x", "REAL: x-component of excitation dipole moment", "abs_dipole_x"],
-        ["Excitation dipole_y", "REAL: y-component of excitation dipole moment", "abs_dipole_y"],
-        ["Excitation dipole_z", "REAL: z-component of excitation dipole moment", "abs_dipole_z"],
-        ["Excitation Intensity", "REAL: strength of excitation dipole moment", "abs_tdm"],
-        ["ZPL energy", "REAL: ZPL energy (eV)", "ZPL"],
-        ["ZPL wavelength", "REAL: ZPL wavelength (nm)", "ZPL_nm"],
-        ["HR factor", "REAL: Huang-Rhys factor", "HR"],
-        # ... add more rows as needed
+    table_data = [
+    ["Host", "TEXT: host material identifier", "-"],
+    ["Defect", "TEXT: defect chemical formula/code", "-"],
+    ["Defect name", "TEXT: descriptive name of the defect", "-"],
+    ["Charge state", "INTEGER: integer charge state", "-"],
+    ["Spin multiplicity", "TEXT: spin configuration of defects", "-"],
+    ["Optical spin transition", "TEXT: allowed optical spin transition", "-"],
+    ["Excitation properties: dipole_x (Debye)", "REAL: x-component of excitation dipole moment", "abs_dipole_x"],
+    ["Excitation properties: dipole_y (Debye)", "REAL: y-component of excitation dipole moment", "abs_dipole_y"],
+    ["Excitation properties: dipole_z (Debye)", "REAL: z-component of excitation dipole moment", "abs_dipole_z"],
+    ["Excitation properties: linear In-plane Polarization Visibility", "REAL: Visibility", "abs_visibility"],
+    ["Excitation properties: Intensity (Debye)", "REAL: Strength of excitation transition dipole moment", "abs_tdm"],
+    ["Excitation properties: Characteristic time (ns)", "REAL: Time of excitation transition", "abs_lifetime"],
+    ["Excitation properties: Angle of excitation wrt the crystal axis", "REAL: excitation polarization angle", "abs_angle"],
+    ["Emission properties: dipole_x (Debye)", "REAL: x-component of emission dipole moment", "ems_dipole_x"],
+    ["Emission properties: dipole_y (Debye)", "REAL: y-component of emission dipole moment", "ems_dipole_y"],
+    ["Emission properties: dipole_z (Debye)", "REAL: z-component of emission dipole moment", "ems_dipole_z"],
+    ["Emission properties: linear In-plane Polarization Visibility", "REAL: Visibility", "ems_visibility"],
+    ["Emission properties: Intensity (Debye)", "REAL: Strength of emission transition dipole moment", "ems_tdm"],
+    ["Emission properties: ZPL (eV)", "REAL: ZPL energy", "ZPL"],
+    ["Emission properties: ZPL (nm)", "REAL: ZPL wavelength", "ZPL_nm"],
+    ["Emission properties: lifetime (ns)", "REAL: Radiative lifetime of emission", "lifetime"],
+    ["Emission properties: Angle of emission wrt the crystal axis", "REAL: emission polarization angle", "ems_angle"],
+    ["Emission properties: Polarization misalignment (degree)", "REAL: dipole misalignment angle", "misalignment"],
+    ["Emission properties: Configuration coordinate (amu^1/2/Å)", "REAL: Q value", "Q"],
+    ["Emission properties: HR factor", "REAL: S value", "HR"],
+    ["Emission properties: DW factor", "REAL: DW value", "DW"],
+    ["Emission properties: Ground-state total energy (eV)", "REAL: total energy", "E_ground"],
+    ["Emission properties: Excited-state total energy (eV)", "REAL: total energy", "E_excited"],
+    ["Ground-state structure", "BLOB: atomic structure file (CIF file)", "structure_ground"],
+    ["Excited-state structure", "BLOB: atomic structure file (CIF file)", "structure_excited"],
+    ["Ground-state electronic structure", "BLOB: raw OUTCAR file (VASP format) for electronic structure", "band_ground"],
+    ["Excited-state electronic structure", "BLOB: raw OUTCAR file (VASP format) for electronic structure", "band_excited"],
+    ["PL lineshape", "BLOB: raw PL lineshape file with the broadening parameter (γ) equal to 1", "PL"]
     ]
 
-    df = pd.DataFrame(data, columns=["Column name", "Type and description", "Option"])
+    df = pd.DataFrame(table_data, columns=["Column name in .db file", "Type and description", "Option"])
+
+    st.markdown("**Available `option` keys and database description**")
     st.dataframe(df, use_container_width=True)

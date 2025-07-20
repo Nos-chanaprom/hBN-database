@@ -38,7 +38,7 @@ with st.container(border=True):
     with colp0:
         st.page_link("pages/0_API tutorial.py", label="API tutorial")
     with colp1:
-        st.page_link("pages/1_DFT calculation details.py", label="DFT calculation details")
+        st.page_link("pages/1_DFT calculation details.py", label="DFT details")
     with colp2: 
         st.page_link("pages/2_About.py", label="About")
     with colp21:

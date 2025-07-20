@@ -168,3 +168,36 @@ with st.container(border=False):
 
     st.markdown("**Available `option` keys and database description**")
     st.dataframe(df, use_container_width=True)
+
+    st.markdown(""" **Full code example**
+
+    In this example, we demonstrate how to retrieve data for plotting a histogram of the ZPL values from both bulk and monolayer hBN defects.
+    The retrieval is configured with the following criteria:
+    - ZPL range: 1 to 5 eV
+    - Spin transition: only spin-up optical transitions
+    - Charge states included: −2, −1, 0, +1, and +2
+    - Spin multiplicities considered: singlet, doublet, and triplet
+    - Raw database file is not downloaded (download_db=False)
+    - The filtered data can then be used to generate the desired histogram.
+
+    ```python
+    from get_hBN_defects_database import get_database
+    import matplotlib.pyplot as plt
+
+    data_ZPL = get_database(
+        option=["ZPL"],
+        host=["monolayer","bulk"], # Optional: if omitted, all host types are included
+        spin_multiplicity=["singlet","doublet","triplet"], # Optional: includes all spin multiplicities if not specified
+        charge_state=[-2, -1, 0, 1, 2],  # Optional: includes all charge states if not specified
+        optical_spin_transition=["up"],
+        value_range=(1,5),
+        download_db=False
+    )
+
+    plt.hist(data_ZPL.iloc[:,6],bins=30, edgecolor='black')
+    plt.xlabel("ZPL (eV)")
+    plt.ylabel("Frequency")
+    ```
+    """)
+
+    """)

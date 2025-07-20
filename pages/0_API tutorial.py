@@ -118,7 +118,8 @@ with st.container(border=False):
 
     - **`download_db`**:  
       If set to `True`, downloads the raw SQLite database file (named like `hbn_defects_<options>.db`) to the working directory. However, one needs to specify the function as
-       ```python
+       
+    ```python
     from get_hBN_defects_database import get_database
     data, file_path = get_database(
         option=["all"],

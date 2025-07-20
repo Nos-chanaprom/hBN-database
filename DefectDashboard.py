@@ -1344,7 +1344,6 @@ for tabs in tab_selection:
                         * (1.85 / refr_index)
                     )
 
-                    # then your existing formatting:
                     Photophysical_properties["Lifetime (ns)"] = (
                         Photophysical_properties["Lifetime (ns)"]
                         .astype(int)

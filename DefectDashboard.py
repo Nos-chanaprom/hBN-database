@@ -1279,8 +1279,21 @@ for tabs in tab_selection:
                             #tab1.subheader('Excitation Properties')
                     Photophysical_properties = load_table('Excitation properties')
                     Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
-                    Photophysical_properties["Characteristic time (ns)"]=Photophysical_properties["Characteristic time (ns)"].astype(int)
-                    Photophysical_properties["Characteristic time (ns)"] = Photophysical_properties["Characteristic time (ns)"].map("{:.2E}".format)
+                    refr_index = st.session_state.get("refractive_index", 1.85)
+                    Photophysical_properties["Characteristic time (ns)"] = (
+                        Photophysical_properties["Characteristic time (ns)"]
+                        .astype(float)
+                        * (1.85 / refr_index)
+                    )
+
+                    Photophysical_properties["Characteristic time (ns)"] = (
+                        Photophysical_properties["Characteristic time (ns)"]
+                        .astype(int)                # uncomment if you want full precision
+                        .map("{:.2E}".format)
+                    )
+
+                    # Photophysical_properties["Characteristic time (ns)"]=Photophysical_properties["Characteristic time (ns)"].astype(int)
+                    # Photophysical_properties["Characteristic time (ns)"] = Photophysical_properties["Characteristic time (ns)"].map("{:.2E}".format)
 
                     try: 
                         ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargestate_defect) & (Photophysical_properties['Host'] =='bulk')]
@@ -1323,8 +1336,23 @@ for tabs in tab_selection:
                     Photophysical_properties = load_table('Emission properties')
                     Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
                     Photophysical_properties["ZPL (nm)"]=Photophysical_properties["ZPL (nm)"].astype(int)
-                    Photophysical_properties["Lifetime (ns)"]=Photophysical_properties["Lifetime (ns)"].astype(int)
-                    Photophysical_properties["Lifetime (ns)"] = Photophysical_properties["Lifetime (ns)"].map("{:.2E}".format)
+
+                    refr_index = st.session_state.get("refractive_index", 1.85)
+                    Photophysical_properties["Lifetime (ns)"] = (
+                        Photophysical_properties["Lifetime (ns)"]
+                        .astype(float)
+                        * (1.85 / refr_index)
+                    )
+
+                    # then your existing formatting:
+                    Photophysical_properties["Lifetime (ns)"] = (
+                        Photophysical_properties["Lifetime (ns)"]
+                        .astype(int)
+                        .map("{:.2E}".format)
+                    )
+
+                    # Photophysical_properties["Lifetime (ns)"]=Photophysical_properties["Lifetime (ns)"].astype(int)
+                    # Photophysical_properties["Lifetime (ns)"] = Photophysical_properties["Lifetime (ns)"].map("{:.2E}".format)
                     Photophysical_properties["Configuration coordinate (amu^(1/2) \AA)"]=Photophysical_properties["Configuration coordinate (amu^(1/2) \AA)"]
                     Photophysical_properties["Ground-state total energy (eV)"]=Photophysical_properties["Ground-state total energy (eV)"]
                     Photophysical_properties["Excited-state total energy (eV)"]=Photophysical_properties["Excited-state total energy (eV)"]

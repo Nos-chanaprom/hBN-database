@@ -56,6 +56,18 @@ with st.container(border=True):
 st.title("Contact")
 
 with st.container(border=False):
-  st.markdown("""
-  For requesting additional data and other feature functionalities, please contact h-bn@qcs.cit.tum.de 
-  """)
+    st.markdown("""
+    To use our API, first, one needs to download the following `.py` file:
+    """)
+
+    # Option 1: Streamlit-native download button (Recommended)
+    url = "https://raw.githubusercontent.com/QCS-Theory/hBN-database/main/get_hBN_defects_database.py"
+    response = requests.get(url)
+    file_content = response.text
+
+    st.download_button(
+        label="📥 Download get_hBN_defects_database.py",
+        data=file_content,
+        file_name="get_hBN_defects_database.py",
+        mime="text/x-python"
+    )

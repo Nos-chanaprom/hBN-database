@@ -1,5 +1,6 @@
 import streamlit as st
 import requests # for API
+import pandas as pd # for Table
 
 ## Add background image
 st.set_page_config(page_title="Request data",layout="wide")

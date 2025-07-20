@@ -18,7 +18,7 @@ import plotly.colors as pc
 import sqlite3  # Added for DB support
 
 @st.cache_data
-def load_table(table_name: str, db_path: str = "Supplementary_database.db") -> pd.DataFrame:
+def load_table(table_name: str, db_path: str = "Supplementary_database_totalE_3.db") -> pd.DataFrame:
     """
     Load a full table from the SQLite database into a DataFrame.
     """

@@ -94,7 +94,7 @@ with st.container(border=False):
     **The keyword arguments perform the following functions:**
 
     - **`option`**:  
-      Specifies which database columns to return. The complete set of valid keys is listed in Table \\ref{tab:db-schema}.  
+      Specifies which database columns to return. The complete set of valid keys is listed in Table below.  
       To retrieve all columns, use:
 
       ```python
@@ -117,7 +117,14 @@ with st.container(border=False):
       Restricts the numeric range of the selected property. When omitted, no range filtering is applied.
 
     - **`download_db`**:  
-      If set to `True`, downloads the raw SQLite database file (named like `hbn_defects_<options>.db`) to the working directory.
+      If set to `True`, downloads the raw SQLite database file (named like `hbn_defects_<options>.db`) to the working directory. However, one needs to specify the function as
+       ```python
+    from get_hBN_defects_database import get_database
+    data, file_path = get_database(
+        option=["all"],
+        download_db=True
+    )
+    ```
     """)
 
     table_data = [

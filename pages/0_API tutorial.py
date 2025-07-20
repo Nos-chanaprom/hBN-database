@@ -54,7 +54,7 @@ with st.container(border=True):
     with colp6:
         st.page_link("pages/7_Version.py", label="Version")
 
-st.title("Contact")
+st.title("API tutorial")
 
 with st.container(border=False):
     st.markdown("""
@@ -66,7 +66,7 @@ with st.container(border=False):
     file_content = response.text
 
     st.download_button(
-        label="📥 Download get_hBN_defects_database.py",
+        label="Download get_hBN_defects_database.py",
         data=file_content,
         file_name="get_hBN_defects_database.py",
         mime="text/x-python"

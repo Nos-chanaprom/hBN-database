@@ -2017,6 +2017,19 @@ for tabs in tab_selection:
                                     data= open(cif_excited_triplet, "r"),
                                     file_name=f'CIF excited-sate-{str_defect}.cif'                
                                 )
+                
+                if chargestate_defect == 0:
+                    str_charge = "neutral"
+                    chosen_chargestate=["neutral"]
+                elif chargestate_defect == -1:
+                    str_charge = "charge_negative_1"
+                    chosen_chargestate=["charge_negative_1"]
+                elif chargestate_defect == 1:
+                    str_charge = "charge_positive_1"
+                    chosen_chargestate=["charge_positive_1"]
+                else:
+                    chosen_chargestate=[]
+                
                 col_raman = st.columns(1)
                 with col_raman[0]:
                     with st.container(border=True):

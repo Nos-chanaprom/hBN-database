@@ -3130,6 +3130,9 @@ for tabs in tab_selection:
 
                         elif chosen_chargestate == ["neutral"] and spin_multiplicity == 'singlet':
                             raman_path = f"monolayer/database_triplet/{str_defect}/singlet/vasp_raman.dat-broaden.dat"
+                        
+                        elif chosen_chargestate == ["neutral"] and spin_multiplicity == 'doublet':
+                            raman_path = f"monolayer/database_triplet/{str_defect}/doublet/vasp_raman.dat-broaden.dat"
 
                         elif chosen_chargestate == ["charge_negative_1"] and spin_multiplicity == 'triplet':
                             raman_path = f"monolayer/database_triplet/{str_defect}/{chosen_chargestate[0]}/triplet/vasp_raman.dat-broaden.dat"

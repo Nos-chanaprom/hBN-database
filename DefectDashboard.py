@@ -3120,7 +3120,7 @@ for tabs in tab_selection:
                 col_raman = st.columns(1)
                 with col_raman[0]:
                     with st.container(border=True):
-                        st.header("Raman Spectrum of ${latexdefect}^{{{chargestate_defect}}}$")
+                        st.header("Raman Spectrum")
                         raman_peak = []  # Initialize list to store peaks
                         raman_path = None
 

@@ -2017,6 +2017,73 @@ for tabs in tab_selection:
                                     data= open(cif_excited_triplet, "r"),
                                     file_name=f'CIF excited-sate-{str_defect}.cif'                
                                 )
+                col_raman = st.columns(1)
+                with col_raman[0]:
+                    with st.container(border=True):
+                        st.header("Raman Spectrum")
+                        raman_peak = []  # Initialize list to store peaks
+                        raman_path = None
+
+                        # Determine file path
+                        if chosen_chargestate == ["neutral"] and spin_multiplicity == 'doublet':
+                            raman_path = f"monolayer/database_doublet_singlet/{str_defect}/doublet/vasp_raman.dat-broaden.dat"
+
+                        elif chosen_chargestate == ["neutral"] and spin_multiplicity == 'singlet':
+                            raman_path = f"monolayer/database_doublet_singlet/{str_defect}/singlet/vasp_raman.dat-broaden.dat"
+                
+                        else:
+                            st.write("**Raman spectrum is not available for this defect**")
+
+                        # Load and plot Raman spectrum if file exists
+                        if raman_path and os.path.exists(raman_path):
+                            data_1 = np.loadtxt(raman_path)
+                            wavenumber_1 = data_1[:, 0]
+                            spectrum_1 = data_1[:, 1]
+
+                            # Find peaks where intensity == 1
+                            for k in range(len(spectrum_1)):
+                                if spectrum_1[k] == 1:
+                                    raman_peak.append(wavenumber_1[k])
+
+                            # Create interactive Plotly figure
+                            fig = go.Figure()
+
+                            fig.add_trace(go.Scatter(
+                                x=wavenumber_1,
+                                y=spectrum_1,
+                                mode='lines',
+                                name='Raman Spectrum',
+                                line=dict(width=2)
+                            ))
+
+                            # Add annotations for each peak
+                            for peak in raman_peak:
+                                fig.add_annotation(
+                                    x=peak,
+                                    y=1,
+                                    text=f"{peak:.0f}",
+                                    showarrow=True,
+                                    arrowhead=1,
+                                    ax=0,
+                                    ay=-40,
+                                    font=dict(size=10)
+                                )
+
+                            fig.update_layout(
+                                xaxis_title='Raman shift (cm⁻¹)',
+                                yaxis_title='Intensity (a.u.)',
+                                xaxis_range=[100, 1700],
+                                yaxis_range=[-0.05, 1.1],
+                                height=500,
+                                margin=dict(l=40, r=40, t=40, b=40),
+                                showlegend=True
+                            )
+
+                            st.plotly_chart(fig, use_container_width=True)
+
+                        elif raman_path:
+                            st.write("**Raman spectrum is not available for this defect.**")
+                
                 if host == 'monolayer':
                     col3, col4 = st.columns(2,gap="medium")
                     with col3:
@@ -3130,10 +3197,7 @@ for tabs in tab_selection:
 
                         elif chosen_chargestate == ["neutral"] and spin_multiplicity == 'singlet':
                             raman_path = f"monolayer/database_triplet/{str_defect}/singlet/vasp_raman.dat-broaden.dat"
-                        
-                        elif chosen_chargestate == ["neutral"] and spin_multiplicity == 'doublet':
-                            raman_path = f"monolayer/database_triplet/{str_defect}/doublet/vasp_raman.dat-broaden.dat"
-
+         
                         elif chosen_chargestate == ["charge_negative_1"] and spin_multiplicity == 'triplet':
                             raman_path = f"monolayer/database_triplet/{str_defect}/{chosen_chargestate[0]}/triplet/vasp_raman.dat-broaden.dat"
 

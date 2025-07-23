@@ -1458,32 +1458,6 @@ for tabs in tab_selection:
 
                     cif_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/doublet/ground/structure.cif"
                     cif_excited_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/doublet/excited/structure.cif"
-
-                elif spin_multiplicity == 'doublet' and host=='bulk':
-                    triplet_path = "bulk/database/" + str_defect + "/doublet/ground/output_database.txt"
-                    excited_triplet_path= "bulk/database/" + str_defect + "/doublet/excited/output_database.txt"
-
-                    atomposition_triplet = "bulk/database/" + str_defect + "/doublet/ground/CONTCAR_cartesian"
-                    atomposition_excited_triplet = "bulk/database/" + str_defect + "/doublet/excited/CONTCAR_cartesian"
-
-                    fractional_triplet = "bulk/database/" + str_defect + "/doublet/ground/CONTCAR_fractional"
-                    fractional_excited_triplet = "bulk/database/" + str_defect + "/doublet/excited/CONTCAR_fractional"
-
-                    cif_triplet = "bulk/database/" + str_defect + "/doublet/ground/structure.cif"
-                    cif_excited_triplet = "bulk/database/" + str_defect + "/doublet/excited/structure.cif"
-
-                elif spin_multiplicity == 'singlet' and host=='bulk':
-                    triplet_path = "bulk/database/" + str_defect + "/singlet/ground/output_database.txt"
-                    excited_triplet_path= "bulk/database/" + str_defect + "/singlet/excited/output_database.txt"
-
-                    atomposition_triplet = "bulk/database/" + str_defect + "/singlet/ground/CONTCAR_cartesian"
-                    atomposition_excited_triplet = "bulk/database/" + str_defect + "/singlet/excited/CONTCAR_cartesian"
-
-                    fractional_triplet = "bulk/database/" + str_defect + "/singlet/ground/CONTCAR_fractional"
-                    fractional_excited_triplet = "bulk/database/" + str_defect + "/singlet/excited/CONTCAR_fractional"
-
-                    cif_triplet = "bulk/database/" + str_defect + "/singlet/ground/structure.cif"
-                    cif_excited_triplet = "bulk/database/" + str_defect + "/singlet/excited/structure.cif"
                 
                 # Band structure
                 ########## Ground State ###
@@ -1636,28 +1610,6 @@ for tabs in tab_selection:
 
                         tripletunf_ref = 1
                         excited_triplet_ref = 1
-
-                elif host == 'bulk':
-                    try: 
-                        upfreiplet = np.array(band_energy_spinUp_filled_triplet)
-                        upfreipletexc = np.array(band_energy_spinUp_filled_excited_triplet)
-
-                        upunfreiplet = np.array(band_energy_spinUp_unfilled_triplet)
-                        upunfreipletexc = np.array(band_energy_spinUp_unfilled_excited_triplet)
-                        # Reference energy for filled spin-up bands (last energy below 1.24 eV)
-                        triplet_ref = upfreiplet[upfreiplet < 1.24][-1]
-                        excited_triplet_ref = upfreipletexc[upfreipletexc < 1.24][-1] 
-
-                        # Reference energy for unfilled spin-up bands (first energy above 7.25 eV)
-                        tripletunf_ref = upunfreiplet[upunfreiplet > 7.25][0]
-                        excited_triplet_ref = upunfreipletexc[upunfreipletexc > 7.25][0]
-
-                    except IndexError:
-                        triplet_ref = 1.24
-                        excited_triplet_ref = 1.24
-
-                        tripletunf_ref = 7.25
-                        excited_triplet_ref = 7.25
 
 
                 fup_t = [energy - triplet_ref for energy in band_energy_spinUp_filled_triplet[-spin_nummer:]]

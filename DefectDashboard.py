@@ -3118,6 +3118,56 @@ for tabs in tab_selection:
                                                 data= open(try1, "r"),
                                                 file_name=f'CIF excited triplet-{str_defect}-{chargestate_defect}2'
                                             )
+                col_raman = st.columns(1)
+                with col_raman[0]:
+                    with st.container(border=True):
+                        st.header('Raman Spectrum')
+                        raman_peak = []  # Initialize list to store peaks
+                        raman_path = None
+
+                        # Determine file path
+                        if chosen_chargestate == ["neutral"] and spin_multiplicity == 'triplet':
+                            raman_path = f"monolayer/database_triplet/{str_defect}/triplet/vasp_raman.dat-broaden.dat"
+
+                        elif chosen_chargestate == ["neutral"] and spin_multiplicity == 'singlet':
+                            raman_path = f"monolayer/database_triplet/{str_defect}/singlet/vasp_raman.dat-broaden.dat"
+
+                        elif chosen_chargestate == ["charge_negative_1"] and spin_multiplicity == 'triplet':
+                            raman_path = f"monolayer/database_triplet/{str_defect}/{chosen_chargestate[0]}/triplet/vasp_raman.dat-broaden.dat"
+
+                        else:
+                            st.write("**Raman spectrum is not available for this defect**")
+
+                        # Load and plot Raman spectrum if file exists
+                        if raman_path and os.path.exists(raman_path):
+                            data_1 = np.loadtxt(raman_path)
+                            wavenumber_1 = data_1[:, 0]
+                            spectrum_1 = data_1[:, 1]
+
+                            # Find peaks where intensity == 1
+                            for k in range(len(spectrum_1)):
+                                if spectrum_1[k] == 1:
+                                    raman_peak.append(wavenumber_1[k])
+
+                            # Plot
+                            fig, ax = plt.subplots()
+                            ax.plot(wavenumber_1, spectrum_1, linewidth=2, label="Raman Spectrum")
+
+                            for peak in raman_peak:
+                                ax.annotate(f"{peak:.0f}", xy=(peak - 300, 1), xytext=(peak - 300, 1.05),
+                                            arrowprops=dict(facecolor='black', shrink=0.05),
+                                            fontsize=8)
+
+                            ax.set_xlabel('Raman shift (cm$^{-1}$)')
+                            ax.set_ylabel('Intensity (a.u.)')
+                            ax.set_xlim(100, 1700)
+                            ax.set_ylim(-0.05, 1.1)
+                            ax.legend()
+
+                            st.pyplot(fig)
+
+                        elif raman_path:
+                            st.write("**Raman spectrum is not available for this defect.**")
 
 
                 col3, col4 = st.columns(2,gap="medium")

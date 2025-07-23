@@ -14,7 +14,6 @@ import os
 import warnings
 import time
 import plotly.colors as pc
-import matplotlib.pyplot as plt  # For plotting Raman
 import sqlite3  # Added for DB support
 
 @st.cache_data
@@ -3149,22 +3148,41 @@ for tabs in tab_selection:
                                 if spectrum_1[k] == 1:
                                     raman_peak.append(wavenumber_1[k])
 
-                            # Plot
-                            fig, ax = plt.subplots()
-                            ax.plot(wavenumber_1, spectrum_1, linewidth=2, label="Raman Spectrum")
+                            # Create interactive Plotly figure
+                            fig = go.Figure()
 
+                            fig.add_trace(go.Scatter(
+                                x=wavenumber_1,
+                                y=spectrum_1,
+                                mode='lines',
+                                name='Raman Spectrum',
+                                line=dict(width=2)
+                            ))
+
+                            # Add annotations for each peak
                             for peak in raman_peak:
-                                ax.annotate(f"{peak:.0f}", xy=(peak - 300, 1), xytext=(peak - 300, 1.05),
-                                            arrowprops=dict(facecolor='black', shrink=0.05),
-                                            fontsize=8)
+                                fig.add_annotation(
+                                    x=peak,
+                                    y=1,
+                                    text=f"{peak:.0f}",
+                                    showarrow=True,
+                                    arrowhead=1,
+                                    ax=0,
+                                    ay=-40,
+                                    font=dict(size=10)
+                                )
 
-                            ax.set_xlabel('Raman shift (cm$^{-1}$)')
-                            ax.set_ylabel('Intensity (a.u.)')
-                            ax.set_xlim(100, 1700)
-                            ax.set_ylim(-0.05, 1.1)
-                            ax.legend()
+                            fig.update_layout(
+                                xaxis_title='Raman shift (cm⁻¹)',
+                                yaxis_title='Intensity (a.u.)',
+                                xaxis_range=[100, 1700],
+                                yaxis_range=[-0.05, 1.1],
+                                height=500,
+                                margin=dict(l=40, r=40, t=40, b=40),
+                                showlegend=True
+                            )
 
-                            st.pyplot(fig)
+                            st.plotly_chart(fig, use_container_width=True)
 
                         elif raman_path:
                             st.write("**Raman spectrum is not available for this defect.**")

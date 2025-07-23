@@ -14,7 +14,7 @@ import os
 import warnings
 import time
 import plotly.colors as pc
-
+import matplotlib.pyplot as plt  # For plotting Raman
 import sqlite3  # Added for DB support
 
 @st.cache_data

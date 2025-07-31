@@ -1719,10 +1719,7 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
 
                         r_xz=np.dot(r_x,r_z)
                         head = np.dot(r_xz,ctrystal_axes_end)  #ctrystal_axes_end
-                        if host == 'monolayer':
-                            tail=np.array([3.736,7.960,1.668])
-                        elif host == 'bulk':
-                            tail=np.array([4.979,5.749,5.00298])
+                        tail=np.array([3.736,7.960,1.668])
 
                         head=head+ctrystal_axes_start
                         ctrystal_axes_end= ctrystal_axes_end+ctrystal_axes_start        
@@ -1735,11 +1732,8 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                                                     hoverinfo ='skip', marker=dict(size=1, color='red'), line=dict(color='red',width=5,dash='dot'),showlegend=True,name="Crystal Axis"))
                         
                         ## ploting Excitation Dipole
-                        if host == 'monolayer':
-                            ctrystal_axes_end = np.array([3.736,11.960,1.668])-ctrystal_axes_start
-                        elif host == 'bulk':
-                            ctrystal_axes_end = np.array([4.979,9.749,5.00298])-ctrystal_axes_start
-
+                        ctrystal_axes_end = np.array([3.736,11.960,1.668])-ctrystal_axes_start
+            
                         # rotate z-axis
                         c, s = np.cos(phi_exc), np.sin(phi_exc)
                         r_z = np.array(((c,-s,0), (s,c,0), (0,0,1)))
@@ -1749,11 +1743,8 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
 
                         r_xz=np.dot(r_x,r_z)
                         head = np.dot(r_xz,ctrystal_axes_end)  #ctrystal_axes_end
-                        if host == 'monolayer':
-                            tail=np.array([3.736,7.960,1.668])
-                        elif host == 'bulk':
-                            tail=np.array([4.979,5.749,5.00298])
-
+                        tail=np.array([3.736,7.960,1.668])
+                        
                         head=head+ctrystal_axes_start
                         ctrystal_axes_end= ctrystal_axes_end+ctrystal_axes_start        
 

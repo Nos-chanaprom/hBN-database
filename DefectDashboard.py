@@ -1241,6 +1241,7 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                         refr_index = st.session_state.get("refractive_index", 1.85)
                         ppdefects_exc["Characteristic time (ns)"] = (pd.to_numeric(ppdefects_exc["Characteristic time (ns)"], errors='coerce') * (1.85 / refr_index)).map("{:.2E}".format)
                         ep2 = ppdefects_exc.iloc[:,3:].rename(columns={"dipole_x":"µₓ (Debye)", "dipole_y":"μᵧ (Debye)", "dipole_z":"µz (Debye)", "Intensity":"Intensity (Debye)", "Angle of excitation dipole wrt the crystal axis": "Angle of excitation dipole wrt the crystal axis (degree)"})
+                        ep2 = ep2.round(2)
                         ep2 = ep2.T.astype(str) # FIX: ensure all data is string
                         ep2.columns = [f'[Value {i+1}]' for i in range(len(ep2.columns))]
                         with tab1: st.dataframe(ep2, use_container_width=True)
@@ -1252,6 +1253,7 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                     if not ppdefects_emi.empty:
                         ppdefects_emi["Lifetime (ns)"] = (pd.to_numeric(ppdefects_emi["Lifetime (ns)"], errors='coerce') * (1.85 / refr_index)).map("{:.2E}".format)
                         emp = ppdefects_emi.iloc[:,3:].rename(columns={"dipole_x":"µₓ (Debye)", "dipole_y":"μᵧ (Debye)", "dipole_z":"µz (Debye)", "Intensity":"Intensity (Debye)", "Angle of emission dipole wrt the crystal axis":"Angle of emission dipole wrt the crystal axis (degree)", "Configuration coordinate (amu^(1/2) \AA)":"Configuration coordinate (amu^(1/2) Å)"})
+                        emp = emp.round(2)
                         emp = emp.T.astype(str) # FIX: ensure all data is string
                         emp.columns = [f'[Value {i+1}]' for i in range(len(emp.columns))]
                         with tab2: st.dataframe(emp, use_container_width=True)
@@ -1261,7 +1263,9 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                     # Quantum Memory Properties
                     ppdefects_qmp = load_defect_properties('Quantum memory properties', str_defect, chargestate_defect, host)
                     if not ppdefects_qmp.empty:
-                        qmp = ppdefects_qmp.iloc[:,3:].T.astype(str) # FIX: ensure all data is string
+                        qmp = ppdefects_qmp.iloc[:,3:]
+                        qmp = qmp.round(2)
+                        qmp = qmp.T.astype(str) # FIX: ensure all data is string
                         qmp.columns = [f'[Value {i+1}]' for i in range(len(qmp.columns))]
                         with tab3: st.dataframe(qmp, use_container_width=True)
                     else:
@@ -1891,6 +1895,7 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                                 refr_index = st.session_state.get("refractive_index", 1.85)
                                 ppdefects_exc["Characteristic time (ns)"] = (pd.to_numeric(ppdefects_exc["Characteristic time (ns)"], errors='coerce') * (1.85 / refr_index)).map("{:.2E}".format)
                                 ep2 = ppdefects_exc.iloc[:,3:].rename(columns={"dipole_x":"µₓ (Debye)", "dipole_y":"μᵧ (Debye)", "dipole_z":"µz (Debye)", "Intensity":"Intensity (Debye)", "Angle of excitation dipole wrt the crystal axis": "Angle of excitation dipole wrt the crystal axis (degree)"})
+                                ep2 = ep2.round(2)
                                 ep2 = ep2.T.astype(str) # FIX: ensure all data is string
                                 ep2.columns = [f'[Value {i+1}]' for i in range(len(ep2.columns))]
                                 with tab1: st.dataframe(ep2, use_container_width=True)
@@ -1902,6 +1907,7 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                             if not ppdefects_emi.empty:
                                 ppdefects_emi["Lifetime (ns)"] = (pd.to_numeric(ppdefects_emi["Lifetime (ns)"], errors='coerce') * (1.85 / refr_index)).map("{:.2E}".format)
                                 emp = ppdefects_emi.iloc[:,3:].rename(columns={"dipole_x":"µₓ (Debye)", "dipole_y":"μᵧ (Debye)", "dipole_z":"µz (Debye)", "Intensity":"Intensity (Debye)", "Angle of emission dipole wrt the crystal axis":"Angle of emission dipole wrt the crystal axis (degree)", "Configuration coordinate (amu^(1/2) \AA)":"Configuration coordinate (amu^(1/2) Å)"})
+                                emp = emp.round(2)
                                 emp = emp.T.astype(str) # FIX: ensure all data is string
                                 emp.columns = [f'[Value {i+1}]' for i in range(len(emp.columns))]
                                 with tab2: st.dataframe(emp, use_container_width=True)
@@ -1911,7 +1917,9 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                             # Quantum Memory Properties
                             ppdefects_qmp = load_defect_properties('Quantum memory properties', str_defect, chargestate_defect, host)
                             if not ppdefects_qmp.empty:
-                                qmp = ppdefects_qmp.iloc[:,3:].T.astype(str) # FIX: ensure all data is string
+                                qmp = ppdefects_qmp.iloc[:,3:]
+                                qmp = qmp.round(2)
+                                qmp = qmp.T.astype(str) # FIX: ensure all data is string
                                 qmp.columns = [f'[Value {i+1}]' for i in range(len(qmp.columns))]
                                 with tab3: st.dataframe(qmp, use_container_width=True)
                             else:

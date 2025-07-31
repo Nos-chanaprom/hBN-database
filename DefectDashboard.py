@@ -3005,7 +3005,7 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                         ppdefects_exc = load_defect_properties('Excitation properties', str_defect, chargestate_defect, host)
                         if not ppdefects_exc.empty:
                             refr_index = st.session_state.get("refractive_index", 1.85)
-                            ppdefects_exc["Characteristic time (ns)"] = (pd.to_numeric(ppdefects_exc["Characteristic time (ns)"], errors='coerce') * (1.85 / refr_index)).map("{:.2E}".format)
+                            ppdefects_exc["Characteristic time (ns)"] = (pd.to_numeric(ppdefects_exc["Characteristic time (ns)"], errors='coerce') * (1.85 / refr_index)).map("{:.2f}".format)
                             ep2 = ppdefects_exc.iloc[:,3:].rename(columns={"dipole_x":"µₓ (Debye)", "dipole_y":"μᵧ (Debye)", "dipole_z":"µz (Debye)", "Intensity":"Intensity (Debye)", "Angle of excitation dipole wrt the crystal axis": "Angle of excitation dipole wrt the crystal axis (degree)"})
                             ep2 = ep2.T.astype(str) # FIX: ensure all data is string
                             ep2.columns = [f'[Value {i+1}]' for i in range(len(ep2.columns))]

@@ -25,28 +25,25 @@ def load_table(table_name: str, db_path: str = "Supplementary_database_totalE_3.
     query = f'SELECT * FROM "{table_name}"'
     df = pd.read_sql_query(query, conn)
     conn.close()
-
-    # Fix: attempt to convert all object-type columns to numeric
-    for col in df.select_dtypes(include='object').columns:
-        df[col] = pd.to_numeric(df[col], errors='ignore')  # 'ignore' avoids overwriting true strings
-        # fallback: coerce clearly numeric-looking columns
-        if df[col].str.isnumeric().any():
-            df[col] = pd.to_numeric(df[col], errors='coerce')
-
     return df
 
-# OPTIMIZATION: New function to load only specific defect data
-@st.cache_data
-def load_defect_properties(table_name: str, defect: str, charge: int, host: str, db_path: str = "Supplementary_database_totalE_3.db") -> pd.DataFrame:
-    """
-    Load specific defect properties from the database to save memory.
-    """
-    conn = sqlite3.connect(db_path)
-    # Use a WHERE clause to fetch only the required rows
-    query = f'SELECT * FROM "{table_name}" WHERE "Defect" = ? AND "Charge state" = ? AND "Host" = ?'
-    df = pd.read_sql_query(query, conn, params=(defect, charge, host))
-    conn.close()
-    return df
+# --- Replace Excel backend with DB backend ---
+
+
+### https://plotly.com/python/images/###
+
+# Get the list of all files and directories 
+# in the root directory
+#defects={}
+#path = "monolayer/database_triplet" 
+#defects_list = os.listdir(path)
+#defects_list.sort()
+#for defect in defects_list:
+#    path2 = path+"/"+defect
+#    charge_list = os.listdir(path2)
+#    defects[defect] = charge_list
+
+
 ################################### WEB ##########################################
 warnings.filterwarnings('ignore')
 
@@ -487,7 +484,7 @@ Search_cont = st.container(border=True)
 with Search_cont:
     st.header("Search engine for hBN defects")
     
-    #Photophysical_properties = load_table('updated_data')
+    Photophysical_properties = load_table('updated_data')
     #stash the original (vacuum) lifetime before formatting
     Photophysical_properties = load_table('updated_data')
     original_col = "Emission properties: Lifetime (ns)"
@@ -498,16 +495,17 @@ with Search_cont:
 
     ## rounding numbers
     Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)  ## select from columns 5
+    
     Photophysical_properties["Emission properties: ZPL (nm)"]=Photophysical_properties["Emission properties: ZPL (nm)"].astype(int)
-
-    # Format columns for display
-    for col_name in ["Excitation properties: Characteristic time (ns)", 
-                     "Emission properties: Lifetime (ns)", 
-                     "Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05", 
-                     "Quantum memory properties: g (MHz)"]:
-        if col_name in Photophysical_properties.columns:
-            Photophysical_properties[col_name] = pd.to_numeric(Photophysical_properties[col_name], errors='coerce').fillna(0).astype(int).map("{:.2E}".format)
-
+    Photophysical_properties["Excitation properties: Characteristic time (ns)"]=Photophysical_properties["Excitation properties: Characteristic time (ns)"].astype(int)
+    Photophysical_properties["Excitation properties: Characteristic time (ns)"] = Photophysical_properties["Excitation properties: Characteristic time (ns)"].map("{:.2E}".format)
+    Photophysical_properties["Emission properties: Lifetime (ns)"]=Photophysical_properties["Emission properties: Lifetime (ns)"].astype(int)
+    Photophysical_properties["Emission properties: Lifetime (ns)"] = Photophysical_properties["Emission properties: Lifetime (ns)"].map("{:.2E}".format)
+    Photophysical_properties["Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05"]=Photophysical_properties["Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05"].astype(int)
+    Photophysical_properties["Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05"] = Photophysical_properties["Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05"].map("{:.2E}".format)
+    Photophysical_properties["Quantum memory properties: g (MHz)"]=Photophysical_properties["Quantum memory properties: g (MHz)"].astype(int)
+    Photophysical_properties["Quantum memory properties: g (MHz)"] = Photophysical_properties["Quantum memory properties: g (MHz)"].map("{:.2E}".format)
+   
     Photophysical_properties['Defect name']=Photophysical_properties['Defect name'].map(lambda x: "${}$".format(x.replace("$","")))
     # Apply filters (renders Defect search + refractive-index)
     df_filtered = filter_dataframe(Photophysical_properties)
@@ -515,13 +513,15 @@ with Search_cont:
     # Retrieve user-provided refractive index (default 1.85)
     refr_index = st.session_state.get("refractive_index", 1.85)
 
-    # Overwrite lifetime and characteristic time for filtered rows based on refractive index 31.07.2025
-    if not df_filtered.empty:
-        Photophysical_properties.loc[df_filtered.index, original_col] = \
-            Photophysical_properties.loc[df_filtered.index, 'lifetime_db'].apply(lambda τ: f"{τ * 1.85 / refr_index:.2E}")
-        
-        Photophysical_properties.loc[df_filtered.index, char_col] = \
-            Photophysical_properties.loc[df_filtered.index, 'char_db'].apply(lambda τ: f"{τ * 1.85 / refr_index:.2E}")
+    # Overwrite lifetime for filtered rows
+    Photophysical_properties.loc[df_filtered.index, original_col] = \
+        Photophysical_properties.loc[df_filtered.index, 'lifetime_db'] \
+            .apply(lambda τ: f"{τ * 1.85 / refr_index:.2E}")
+
+    # Overwrite characteristic time for filtered rows
+    Photophysical_properties.loc[df_filtered.index, char_col] = \
+        Photophysical_properties.loc[df_filtered.index, 'char_db'] \
+            .apply(lambda τ: f"{τ * 1.85 / refr_index:.2E}")
 
     # Drop helper column
     Photophysical_properties.drop(columns=['lifetime_db','char_db'], inplace=True)
@@ -549,8 +549,39 @@ if selection.empty :
         (Photophysical_properties["Host"]  == "monolayer")]
     ele2 = Photophysical_properties[Photophysical_properties['Defect']=="AlNPB"]
     ele12 = pd.concat([ele1,ele2])
+
+    chosen_defect = ele12.loc[:,'Defect']
+    chosen_defect_m = chosen_defect.reset_index().drop("index", axis='columns')
+
+    chargestate_defect = ele12.loc[:,'Charge state']
+    chargestate_defect_m = chargestate_defect.reset_index().drop("index", axis='columns')
+
+    spin_transition = ele12.loc[:,'Optical spin transition']
+    spin_transition_m = spin_transition.reset_index().drop("index", axis='columns')
+
+    spin_multiplicity = ele12.loc[:,"Spin multiplicity"]
+    spin_multiplicity_m = spin_multiplicity.reset_index().drop("index", axis='columns')
+
+    host = ele12.loc[:,"Host"]
+    host_m = host.reset_index().drop("index", axis='columns')
+
     chosenlist = ele12.loc[:,['Defect','Charge state','Optical spin transition','Spin multiplicity','Host']].to_numpy()
 else:
+    chosen_defect = selection.loc[:,'Defect']
+    chosen_defect_m = chosen_defect.reset_index().drop("index", axis='columns')
+    
+    chargestate_defect = selection.loc[:,'Charge state']
+    chargestate_defect_m = chargestate_defect.reset_index().drop("index", axis='columns')
+    
+    spin_transition = selection.loc[:,'Optical spin transition']
+    spin_transition_m = spin_transition.reset_index().drop("index", axis='columns')
+
+    spin_multiplicity = selection.loc[:,"Spin multiplicity"]
+    spin_multiplicity_m = spin_multiplicity.reset_index().drop("index", axis='columns')
+
+    host = selection.loc[:,"Host"]
+    host_m = host.reset_index().drop("index", axis='columns')
+    
     chosenlist = selection.loc[:,['Defect','Charge state','Optical spin transition','Spin multiplicity','Host']].to_numpy()
 
 selection_str =[]
@@ -558,9 +589,13 @@ for ele in chosenlist:
     selection_str.append(ele[0] + " (charge state: " +str(ele[1]) + ", " +ele[2] +", " + str(ele[3]) + ", "+ str(ele[4])+")")
 tab_selection = st.tabs(selection_str)
 tabs_index =0
-for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
+for tabs in tab_selection:
     with tabs:
-        str_defect, chargestate_defect, spin_transition, spin_multiplicity, host = chosen_defect_details
+        str_defect = chosen_defect_m.iloc[tabs_index,0]
+        chargestate_defect = chargestate_defect_m.iloc[tabs_index,0]
+        spin_transition = spin_transition_m.iloc[tabs_index,0]
+        spin_multiplicity = spin_multiplicity_m.iloc[tabs_index,0]
+        host = host_m.iloc[tabs_index,0]
 
         try: 
             name_change = load_table('updated_data')
@@ -865,7 +900,15 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                     #cif_excited_triplet = "bulk/database/" + str_defect + "/" + str_charge + "/excited/structure.cif"
             
                     ########################## atomic position data frame  ###################################
-                    atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
+                    if  type(chosen_defect) == str:
+                        latexdefect = 'Al_N'
+                        atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian",sep=';', header=0)        
+                    else:
+                        try: 
+                            atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
+                        except NameError or ValueError:
+                            latexdefect = 'Al_N'
+                            atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
                     atomicposition = pd.DataFrame(columns = ['properties', 'X','Y','Z'])
                     for row in range(atomicposition_sin.shape[0]):
                         if 0 <row<4:
@@ -926,7 +969,7 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                         numcounter+=1
                         indexcounter=indexcounter+numberint
 
-                    ## atom bonds
+                    ## atome bonds
                     atoms= atomicposition.iloc[3:]
                     for ele in atoms['properties']:
                         if  list(ele)[0] =='B':
@@ -1235,42 +1278,128 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                     tab1, tab2, tab3 = st.tabs(["Excitation Properties", "Emission Properties", "Quantum Memory Properties"])
                             ## col21
                             #tab1.subheader('Excitation Properties')
-                    # Excitation Properties
-                    ppdefects_exc = load_defect_properties('Excitation properties', str_defect, chargestate_defect, host)
-                    if not ppdefects_exc.empty:
-                        refr_index = st.session_state.get("refractive_index", 1.85)
-                        ppdefects_exc["Characteristic time (ns)"] = (pd.to_numeric(ppdefects_exc["Characteristic time (ns)"], errors='coerce') * (1.85 / refr_index)).map("{:.2E}".format)
-                        ep2 = ppdefects_exc.iloc[:,3:].rename(columns={"dipole_x":"µₓ (Debye)", "dipole_y":"μᵧ (Debye)", "dipole_z":"µz (Debye)", "Intensity":"Intensity (Debye)", "Angle of excitation dipole wrt the crystal axis": "Angle of excitation dipole wrt the crystal axis (degree)"})
-                        ep2 = ep2.round(2)
-                        ep2 = ep2.T.astype(str) # FIX: ensure all data is string
-                        ep2.columns = [f'[Value {i+1}]' for i in range(len(ep2.columns))]
-                        with tab1: st.dataframe(ep2, use_container_width=True)
-                    else:
-                        with tab1: st.write("No excitation properties available.")
+                    Photophysical_properties = load_table('Excitation properties')
+                    Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
+                    refr_index = st.session_state.get("refractive_index", 1.85)
+                    Photophysical_properties["Characteristic time (ns)"] = (
+                        Photophysical_properties["Characteristic time (ns)"]
+                        .astype(float)
+                        * (1.85 / refr_index)
+                    )
 
-                    # Emission Properties
-                    ppdefects_emi = load_defect_properties('Emission properties', str_defect, chargestate_defect, host)
-                    if not ppdefects_emi.empty:
-                        ppdefects_emi["Lifetime (ns)"] = (pd.to_numeric(ppdefects_emi["Lifetime (ns)"], errors='coerce') * (1.85 / refr_index)).map("{:.2E}".format)
-                        emp = ppdefects_emi.iloc[:,3:].rename(columns={"dipole_x":"µₓ (Debye)", "dipole_y":"μᵧ (Debye)", "dipole_z":"µz (Debye)", "Intensity":"Intensity (Debye)", "Angle of emission dipole wrt the crystal axis":"Angle of emission dipole wrt the crystal axis (degree)", "Configuration coordinate (amu^(1/2) \AA)":"Configuration coordinate (amu^(1/2) Å)"})
-                        emp = emp.round(2)
-                        emp = emp.T.astype(str) # FIX: ensure all data is string
-                        emp.columns = [f'[Value {i+1}]' for i in range(len(emp.columns))]
-                        with tab2: st.dataframe(emp, use_container_width=True)
-                    else:
-                        with tab2: st.write("No emission properties available.")
+                    Photophysical_properties["Characteristic time (ns)"] = (
+                        Photophysical_properties["Characteristic time (ns)"]
+                        .astype(int)                # uncomment if you want full precision
+                        .map("{:.2E}".format)
+                    )
 
-                    # Quantum Memory Properties
-                    ppdefects_qmp = load_defect_properties('Quantum memory properties', str_defect, chargestate_defect, host)
-                    if not ppdefects_qmp.empty:
-                        qmp = ppdefects_qmp.iloc[:,3:]
-                        qmp = qmp.round(2)
-                        qmp = qmp.T.astype(str) # FIX: ensure all data is string
-                        qmp.columns = [f'[Value {i+1}]' for i in range(len(qmp.columns))]
-                        with tab3: st.dataframe(qmp, use_container_width=True)
-                    else:
-                        with tab3: st.write("No quantum memory properties available.")
+                    # Photophysical_properties["Characteristic time (ns)"]=Photophysical_properties["Characteristic time (ns)"].astype(int)
+                    # Photophysical_properties["Characteristic time (ns)"] = Photophysical_properties["Characteristic time (ns)"].map("{:.2E}".format)
 
+                    try: 
+                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargestate_defect) & (Photophysical_properties['Host'] =='bulk')]
+                    except  NameError :
+                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='bulk')]
+                    except  KeyError:
+                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='bulk')]
+                    
+                    
+                    # 1) Pick off Host plus your other columns
+                    cols = ['Host'] + list(ppdefects.columns[3:])  # Take host column and every column after the 3rd one
+
+                    # 2) Slice and rename in one go
+                    ep2 = (
+                        ppdefects[cols]
+                        .rename(columns={
+                            "dipole_x": "µₓ (Debye)",
+                            "dipole_y": "μᵧ (Debye)",
+                            "dipole_z": "µz (Debye)",
+                            "Intensity": "Intensity (Debye)",
+                            "Angle of excitation dipole wrt the crystal axis":
+                                "Angle of excitation dipole wrt the crystal axis (degree)"
+                        })
+                        
+                    )
+                    ep2 = ep2.T
+                    # 3) Rebuild your `[Value i]` headers
+                    jj =1
+                    newheadcol =[]
+                    for head in ep2.iloc[0]:
+                        newheadcol.append('[Value {i}]'.format(i=jj))
+                        jj+=1
+                    ep2.columns =newheadcol
+                    # 4) Display
+                    tab1.dataframe(ep2, use_container_width=True)
+
+                            ## col22
+                            #col22.subheader('Emission Properties')
+
+                    Photophysical_properties = load_table('Emission properties')
+                    Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
+                    Photophysical_properties["ZPL (nm)"]=Photophysical_properties["ZPL (nm)"].astype(int)
+
+                    refr_index = st.session_state.get("refractive_index", 1.85)
+                    Photophysical_properties["Lifetime (ns)"] = (
+                        Photophysical_properties["Lifetime (ns)"]
+                        .astype(float)
+                        * (1.85 / refr_index)
+                    )
+
+                    Photophysical_properties["Lifetime (ns)"] = (
+                        Photophysical_properties["Lifetime (ns)"]
+                        .astype(int)
+                        .map("{:.2E}".format)
+                    )
+
+                    # Photophysical_properties["Lifetime (ns)"]=Photophysical_properties["Lifetime (ns)"].astype(int)
+                    # Photophysical_properties["Lifetime (ns)"] = Photophysical_properties["Lifetime (ns)"].map("{:.2E}".format)
+                    Photophysical_properties["Configuration coordinate (amu^(1/2) \AA)"]=Photophysical_properties["Configuration coordinate (amu^(1/2) \AA)"]
+                    Photophysical_properties["Ground-state total energy (eV)"]=Photophysical_properties["Ground-state total energy (eV)"]
+                    Photophysical_properties["Excited-state total energy (eV)"]=Photophysical_properties["Excited-state total energy (eV)"]
+
+                    try: 
+                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargestate_defect) & (Photophysical_properties['Host'] =='bulk')]
+                    except  NameError :
+                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='bulk')]
+                    except  KeyError:
+                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='bulk')]
+                    emp=ppdefects.iloc[:,3:]
+                    emp.rename(columns={"dipole_x":"µₓ (Debye)","dipole_y":"μᵧ (Debye)","dipole_z":"µz (Debye)","Intensity":"Intensity (Debye)","Angle of emission dipole wrt the crystal axis":"Angle of emission dipole wrt the crystal axis (degree)","Configuration coordinate (amu^(1/2) \AA)":"Configuration coordinate (amu^(1/2) Å)","Ground-state total energy (eV)":"Ground-state total energy (eV)","Excited-state total energy (eV)":"Excited-state total energy (eV)"},inplace=True)
+                    emp=emp.T
+                    jj =1
+                    newheadcol =[]
+                            #latppdefects.iloc[1,0].replace("$","")
+                    for head in emp.iloc[0]:
+                        newheadcol.append('[Value {i}]'.format(i=jj))
+                        jj+=1
+                    emp.columns =newheadcol
+                    tab2.dataframe(emp,use_container_width=True)
+                            
+                            #col23
+                            #col23.subheader('Quantum Memory Properties')
+                    Photophysical_properties = load_table('Quantum memory properties')
+                    Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
+                    Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"]=Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].astype(int)
+                    Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"] = Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].map("{:.2E}".format)
+                    Photophysical_properties["g (MHz)"]=Photophysical_properties["g (MHz)"].astype(int)
+                    Photophysical_properties["g (MHz)"] = Photophysical_properties["g (MHz)"].map("{:.2E}".format)
+                        
+                    try: 
+                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge])& (Photophysical_properties['Host'] =='bulk')]
+                    except  NameError :
+                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='bulk')]
+                    except  KeyError:
+                        ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='bulk')]
+                    qmp = ppdefects.iloc[:,3:]
+                    qmp=qmp.T
+                    jj =1
+                    newheadcol =[]
+                            #latppdefects.iloc[1,0].replace("$","")
+                    for head in qmp.iloc[0]:
+                        newheadcol.append('[Value {i}]'.format(i=jj))
+                        jj+=1
+                    qmp.columns =newheadcol
+                    tab3.dataframe(qmp,use_container_width=True)
             with col6:
                 with st.container(border=True):
                     st.header('Computational setting')
@@ -1282,7 +1411,9 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                                 }
                             )
                     st.dataframe(df, hide_index=True)
-    
+
+
+
         elif host == 'monolayer':
             ##############################33 Singlet Doublet #################################    
             if spin_multiplicity == 'singlet'or spin_multiplicity == 'doublet':
@@ -1338,26 +1469,59 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                 band_energy_spinDown_filled_triplet = []
                 band_energy_spinDown_unfilled_triplet = []
                 fermi_energy_triplet = []
-                for row in range(0,512,1):
-                    if row == 0 or row == 256:
-                        df2 = df.iloc[row,0].split(" ")
-                        df_row = [ele for ele in df2 if ele.strip()]
-                        fermi_energy_triplet.append(df_row[2])
-                    elif row > 3 and row < 256: 
-                        df2 = df.iloc[row,0].split(" ")
-                        df_row = [ele for ele in df2 if ele.strip()]
-                        if round(float(df_row[2])) == 1 :
-                            band_energy_spinUp_filled_triplet.append(float(df_row[1]))
-                        elif round(float(df_row[2])) == 0:
-                            band_energy_spinUp_unfilled_triplet.append(float(df_row[1]))
-                    elif row > 259: 
-                        df2 = df.iloc[row,0].split(" ")
-                        df_row = [ele for ele in df2 if ele.strip()]
-                        if round(float(df_row[2])) == 1 :
-                            band_energy_spinDown_filled_triplet.append(float(df_row[1]))
-                        elif round(float(df_row[2])) == 0:
-                            band_energy_spinDown_unfilled_triplet.append(float(df_row[1]))
-                      
+                if host == 'monolayer':
+                    for row in range(0,512,1):
+                        if row == 0 or row == 256:
+                            df2 = df.iloc[row,0].split(" ")
+                            df_row = [ele for ele in df2 if ele.strip()]
+                            fermi_energy_triplet.append(df_row[2])
+                        elif row > 3 and row < 256: 
+                            df2 = df.iloc[row,0].split(" ")
+                            df_row = [ele for ele in df2 if ele.strip()]
+                            if round(float(df_row[2])) == 1 :
+                                band_energy_spinUp_filled_triplet.append(float(df_row[1]))
+                            elif round(float(df_row[2])) == 0:
+                                band_energy_spinUp_unfilled_triplet.append(float(df_row[1]))
+                        elif row > 259: 
+                            df2 = df.iloc[row,0].split(" ")
+                            df_row = [ele for ele in df2 if ele.strip()]
+                            if round(float(df_row[2])) == 1 :
+                                band_energy_spinDown_filled_triplet.append(float(df_row[1]))
+                            elif round(float(df_row[2])) == 0:
+                                band_energy_spinDown_unfilled_triplet.append(float(df_row[1]))
+                elif host == 'bulk':
+                    NBANDS = extract_nbands(triplet_path)
+                    for row in range(len(df)):
+                        if row == 0 or row == NBANDS + 4:    # NBANDS + 4
+                            # Extract Fermi energy
+                            df2 = df.iloc[row,0].split()
+                            #df_row = [ele for ele in df2 if ele.strip()]
+                            if len(df2) >= 3:
+                                fermi_energy_triplet.append(df2[2])
+                        elif 4 <= row < NBANDS + 4:  # NBANDS + 4
+                            # Spin-up bands
+                            df2 = df.iloc[row, 0].split()
+                            df_row = [ele for ele in df2 if ele.strip()]
+                            if len(df_row) >= 3:
+                                occupancy = round(float(df_row[2]))
+                                energy = float(df_row[1])
+                                if occupancy == 1:
+                                    band_energy_spinUp_filled_triplet.append(energy)
+                                elif occupancy == 0:
+                                    band_energy_spinUp_unfilled_triplet.append(energy)
+                        elif row > NBANDS + 9:  # NBANDS + 9
+                            # Spin-down bands
+                            df2 = df.iloc[row, 0].split()
+                            # print(df2)
+                            df_row = [ele for ele in df2 if ele.strip()]
+                            if len(df_row) >= 3:
+                                occupancy = round(float(df_row[2]))
+                                energy = float(df_row[1])
+                                if occupancy == 1:
+                                    band_energy_spinDown_filled_triplet.append(energy)
+                                elif occupancy == 0:
+                                    band_energy_spinDown_unfilled_triplet.append(energy)
+                                    
                 ###### Excited State ###
                 #df = pd.read_fwf(excited_triplet_path, sep=" ",header=None)  
                 df = pd.read_fwf(excited_triplet_path, sep="\s+", header=None, skip_blank_lines=True)
@@ -1367,26 +1531,59 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                 band_energy_spinDown_filled_excited_triplet = []
                 band_energy_spinDown_unfilled_excited_triplet = []
                 fermi_energy_excited_triplet_path = []
-                
-                for row in range(0,512,1):
-                    if row == 0 or row == 256:
-                        df2 = df.iloc[row,0].split(" ")
-                        df_row = [ele for ele in df2 if ele.strip()]
-                        fermi_energy_excited_triplet.append(df_row[2])
-                    elif row > 3 and row < 256: 
-                        df2 = df.iloc[row,0].split(" ")
-                        df_row = [ele for ele in df2 if ele.strip()]
-                        if round(float(df_row[2])) == 1 :
-                            band_energy_spinUp_filled_excited_triplet.append(float(df_row[1]))
-                        elif round(float(df_row[2])) == 0:
-                            band_energy_spinUp_unfilled_excited_triplet.append(float(df_row[1]))
-                    elif row > 259: 
-                        df2 = df.iloc[row,0].split(" ")
-                        df_row = [ele for ele in df2 if ele.strip()]
-                        if round(float(df_row[2])) == 1 :
-                            band_energy_spinDown_filled_excited_triplet.append(float(df_row[1]))
-                        elif round(float(df_row[2])) == 0:
-                            band_energy_spinDown_unfilled_excited_triplet.append(float(df_row[1]))
+                if host == 'monolayer':
+                    for row in range(0,512,1):
+                        if row == 0 or row == 256:
+                            df2 = df.iloc[row,0].split(" ")
+                            df_row = [ele for ele in df2 if ele.strip()]
+                            fermi_energy_excited_triplet.append(df_row[2])
+                        elif row > 3 and row < 256: 
+                            df2 = df.iloc[row,0].split(" ")
+                            df_row = [ele for ele in df2 if ele.strip()]
+                            if round(float(df_row[2])) == 1 :
+                                band_energy_spinUp_filled_excited_triplet.append(float(df_row[1]))
+                            elif round(float(df_row[2])) == 0:
+                                band_energy_spinUp_unfilled_excited_triplet.append(float(df_row[1]))
+                        elif row > 259: 
+                            df2 = df.iloc[row,0].split(" ")
+                            df_row = [ele for ele in df2 if ele.strip()]
+                            if round(float(df_row[2])) == 1 :
+                                band_energy_spinDown_filled_excited_triplet.append(float(df_row[1]))
+                            elif round(float(df_row[2])) == 0:
+                                band_energy_spinDown_unfilled_excited_triplet.append(float(df_row[1]))
+                elif host == 'bulk':
+                    NBANDS = extract_nbands(excited_triplet_path)
+                    for row in range(len(df)):
+                        if row == 0 or row == NBANDS + 4:    # NBANDS + 4
+                            # Extract Fermi energy
+                            df2 = df.iloc[row,0].split()
+                            #df_row = [ele for ele in df2 if ele.strip()]
+                            if len(df2) >= 3:
+                                fermi_energy_excited_triplet.append(df2[2])
+                        elif 4 <= row < NBANDS + 4:  # NBANDS + 4
+                            # Spin-up bands
+                            df2 = df.iloc[row, 0].split()
+                            df_row = [ele for ele in df2 if ele.strip()]
+                            if len(df_row) >= 3:
+                                occupancy = round(float(df_row[2]))
+                                energy = float(df_row[1])
+                                if occupancy == 1:
+                                    band_energy_spinUp_filled_excited_triplet.append(energy)
+                                elif occupancy == 0:
+                                    band_energy_spinUp_unfilled_excited_triplet.append(energy)
+                        elif row > NBANDS + 9:  # NBANDS + 9
+                            # Spin-down bands
+                            df2 = df.iloc[row, 0].split()
+                            # print(df2)
+                            df_row = [ele for ele in df2 if ele.strip()]
+                            if len(df_row) >= 3:
+                                occupancy = round(float(df_row[2]))
+                                energy = float(df_row[1])
+                                if occupancy == 1:
+                                    band_energy_spinDown_filled_excited_triplet.append(energy)
+                                elif occupancy == 0:
+                                    band_energy_spinDown_unfilled_excited_triplet.append(energy)
+
 
                 fermi_energy_triplet = [float(i) for i in fermi_energy_triplet]
                 fermi_energy_excited_triplet = [float(i) for i in fermi_energy_excited_triplet]
@@ -1601,7 +1798,18 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                 with col2:
                     with st.container(border=True):
                         ########################## atomic position data frame  ###################################
-                        atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
+                        if  type(chosen_defect) == str:
+                            latexdefect = 'Al_N'
+                            atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian",sep=';', header=0)        
+                        else:
+                            try: 
+                                atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
+                            except NameError or ValueError:
+                                ## latexdefect = 'Al_N'
+                                if host == 'monolayer':
+                                    atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
+                                elif host == 'bulk':
+                                    atomicposition_sin = pd.read_csv("bulk/database/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
                         atomicposition = pd.DataFrame(columns = ['properties', 'X','Y','Z'])
                         for row in range(atomicposition_sin.shape[0]):
                             if 0 <row<4:
@@ -1723,7 +1931,10 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
 
                         r_xz=np.dot(r_x,r_z)
                         head = np.dot(r_xz,ctrystal_axes_end)  #ctrystal_axes_end
-                        tail=np.array([3.736,7.960,1.668])
+                        if host == 'monolayer':
+                            tail=np.array([3.736,7.960,1.668])
+                        elif host == 'bulk':
+                            tail=np.array([4.979,5.749,5.00298])
 
                         head=head+ctrystal_axes_start
                         ctrystal_axes_end= ctrystal_axes_end+ctrystal_axes_start        
@@ -1736,8 +1947,11 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                                                     hoverinfo ='skip', marker=dict(size=1, color='red'), line=dict(color='red',width=5,dash='dot'),showlegend=True,name="Crystal Axis"))
                         
                         ## ploting Excitation Dipole
-                        ctrystal_axes_end = np.array([3.736,11.960,1.668])-ctrystal_axes_start
-            
+                        if host == 'monolayer':
+                            ctrystal_axes_end = np.array([3.736,11.960,1.668])-ctrystal_axes_start
+                        elif host == 'bulk':
+                            ctrystal_axes_end = np.array([4.979,9.749,5.00298])-ctrystal_axes_start
+
                         # rotate z-axis
                         c, s = np.cos(phi_exc), np.sin(phi_exc)
                         r_z = np.array(((c,-s,0), (s,c,0), (0,0,1)))
@@ -1747,8 +1961,11 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
 
                         r_xz=np.dot(r_x,r_z)
                         head = np.dot(r_xz,ctrystal_axes_end)  #ctrystal_axes_end
-                        tail=np.array([3.736,7.960,1.668])
-                        
+                        if host == 'monolayer':
+                            tail=np.array([3.736,7.960,1.668])
+                        elif host == 'bulk':
+                            tail=np.array([4.979,5.749,5.00298])
+
                         head=head+ctrystal_axes_start
                         ctrystal_axes_end= ctrystal_axes_end+ctrystal_axes_start        
 
@@ -1889,42 +2106,84 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                             tab1, tab2, tab3 = st.tabs(["Excitation Properties", "Emission Properties", "Quantum Memory Properties"])
                             ## col21
                             #tab1.subheader('Excitation Properties')
-                            # Excitation Properties
-                            ppdefects_exc = load_defect_properties('Excitation properties', str_defect, chargestate_defect, host)
-                            if not ppdefects_exc.empty:
-                                refr_index = st.session_state.get("refractive_index", 1.85)
-                                ppdefects_exc["Characteristic time (ns)"] = (pd.to_numeric(ppdefects_exc["Characteristic time (ns)"], errors='coerce') * (1.85 / refr_index)).map("{:.2E}".format)
-                                ep2 = ppdefects_exc.iloc[:,3:].rename(columns={"dipole_x":"µₓ (Debye)", "dipole_y":"μᵧ (Debye)", "dipole_z":"µz (Debye)", "Intensity":"Intensity (Debye)", "Angle of excitation dipole wrt the crystal axis": "Angle of excitation dipole wrt the crystal axis (degree)"})
-                                ep2 = ep2.round(2)
-                                ep2 = ep2.T.astype(str) # FIX: ensure all data is string
-                                ep2.columns = [f'[Value {i+1}]' for i in range(len(ep2.columns))]
-                                with tab1: st.dataframe(ep2, use_container_width=True)
-                            else:
-                                with tab1: st.write("No excitation properties available.")
+                            Photophysical_properties = load_table('Excitation properties')
+                            Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
+                            Photophysical_properties["Characteristic time (ns)"]=Photophysical_properties["Characteristic time (ns)"].astype(int)
+                            Photophysical_properties["Characteristic time (ns)"] = Photophysical_properties["Characteristic time (ns)"].map("{:.2E}".format)
 
-                            # Emission Properties
-                            ppdefects_emi = load_defect_properties('Emission properties', str_defect, chargestate_defect, host)
-                            if not ppdefects_emi.empty:
-                                ppdefects_emi["Lifetime (ns)"] = (pd.to_numeric(ppdefects_emi["Lifetime (ns)"], errors='coerce') * (1.85 / refr_index)).map("{:.2E}".format)
-                                emp = ppdefects_emi.iloc[:,3:].rename(columns={"dipole_x":"µₓ (Debye)", "dipole_y":"μᵧ (Debye)", "dipole_z":"µz (Debye)", "Intensity":"Intensity (Debye)", "Angle of emission dipole wrt the crystal axis":"Angle of emission dipole wrt the crystal axis (degree)", "Configuration coordinate (amu^(1/2) \AA)":"Configuration coordinate (amu^(1/2) Å)"})
-                                emp = emp.round(2)
-                                emp = emp.T.astype(str) # FIX: ensure all data is string
-                                emp.columns = [f'[Value {i+1}]' for i in range(len(emp.columns))]
-                                with tab2: st.dataframe(emp, use_container_width=True)
-                            else:
-                                with tab2: st.write("No emission properties available.")
+                            try: 
+                                ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge])]
+                            except  NameError :
+                                ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                            except  KeyError:
+                                ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                            ep2=ppdefects.iloc[:,3:]
+                            ep2.rename(columns={"dipole_x":"µₓ (Debye)","dipole_y":"μᵧ (Debye)","dipole_z":"µz (Debye)","Intensity":"Intensity (Debye)","Angle of excitation dipole wrt the crystal axis":"Angle of excitation dipole wrt the crystal axis (degree)"},inplace=True)
+                            ep2=ep2.T
+                            jj =1
+                            newheadcol =[]
+                            #latppdefects.iloc[1,0].replace("$","")
+                            for head in ep2.iloc[0]:
+                                newheadcol.append('[Value {i}]'.format(i=jj))
+                                jj+=1
+                            ep2.columns =newheadcol
+                            tab1.dataframe(ep2,use_container_width=True)
 
-                            # Quantum Memory Properties
-                            ppdefects_qmp = load_defect_properties('Quantum memory properties', str_defect, chargestate_defect, host)
-                            if not ppdefects_qmp.empty:
-                                qmp = ppdefects_qmp.iloc[:,3:]
-                                qmp = qmp.round(2)
-                                qmp = qmp.T.astype(str) # FIX: ensure all data is string
-                                qmp.columns = [f'[Value {i+1}]' for i in range(len(qmp.columns))]
-                                with tab3: st.dataframe(qmp, use_container_width=True)
-                            else:
-                                with tab3: st.write("No quantum memory properties available.")
+                            ## col22
+                            #col22.subheader('Emission Properties')
 
+                            Photophysical_properties = load_table('Emission properties')
+                            Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
+                            Photophysical_properties["ZPL (nm)"]=Photophysical_properties["ZPL (nm)"].astype(int)
+                            Photophysical_properties["Lifetime (ns)"]=Photophysical_properties["Lifetime (ns)"].astype(int)
+                            Photophysical_properties["Lifetime (ns)"] = Photophysical_properties["Lifetime (ns)"].map("{:.2E}".format)
+                            Photophysical_properties["Configuration coordinate (amu^(1/2) \AA)"]=Photophysical_properties["Configuration coordinate (amu^(1/2) \AA)"]
+                            Photophysical_properties["Ground-state total energy (eV)"]=Photophysical_properties["Ground-state total energy (eV)"]
+                            Photophysical_properties["Excited-state total energy (eV)"]=Photophysical_properties["Excited-state total energy (eV)"]
+
+                            try: 
+                                ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge])]
+                            except  NameError :
+                                ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                            except  KeyError:
+                                ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                            emp=ppdefects.iloc[:,3:]
+                            emp.rename(columns={"dipole_x":"µₓ (Debye)","dipole_y":"μᵧ (Debye)","dipole_z":"µz (Debye)","Intensity":"Intensity (Debye)","Angle of emission dipole wrt the crystal axis":"Angle of emission dipole wrt the crystal axis (degree)","Configuration coordinate (amu^(1/2) \AA)":"Configuration coordinate (amu^(1/2) Å)","Ground-state total energy (eV)":"Ground-state total energy (eV)","Excited-state total energy (eV)":"Excited-state total energy (eV)"},inplace=True)
+                            emp=emp.T
+                            jj =1
+                            newheadcol =[]
+                            #latppdefects.iloc[1,0].replace("$","")
+                            for head in emp.iloc[0]:
+                                newheadcol.append('[Value {i}]'.format(i=jj))
+                                jj+=1
+                            emp.columns =newheadcol
+                            tab2.dataframe(emp,use_container_width=True)
+                            
+                            #col23
+                            #col23.subheader('Quantum Memory Properties')
+                            Photophysical_properties = load_table('Quantum memory properties')
+                            Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
+                            Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"]=Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].astype(int)
+                            Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"] = Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].map("{:.2E}".format)
+                            Photophysical_properties["g (MHz)"]=Photophysical_properties["g (MHz)"].astype(int)
+                            Photophysical_properties["g (MHz)"] = Photophysical_properties["g (MHz)"].map("{:.2E}".format)
+                        
+                            try: 
+                                ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge])]
+                            except  NameError :
+                                ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                            except  KeyError:
+                                ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                            qmp = ppdefects.iloc[:,3:]
+                            qmp=qmp.T
+                            jj =1
+                            newheadcol =[]
+                            #latppdefects.iloc[1,0].replace("$","")
+                            for head in qmp.iloc[0]:
+                                newheadcol.append('[Value {i}]'.format(i=jj))
+                                jj+=1
+                            qmp.columns =newheadcol
+                            tab3.dataframe(qmp,use_container_width=True)
                     with col4:
                         with st.container(border=True):
                             st.header('Computational setting')
@@ -2552,7 +2811,15 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                 with col2:
                     with st.container(border=True):
                         ######################### atomic position data frame  #################################3
-                        atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
+                        if  type(chosen_defect) == str:
+                            latexdefect = 'Al_N'
+                            atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian",sep=';', header=0)        
+                        else:
+                            try: 
+                                atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
+                            except NameError or ValueError:
+                                latexdefect = 'Al_N'
+                                atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
                         atomicposition = pd.DataFrame(columns = ['properties', 'X','Y','Z'])
                         for row in range(atomicposition_sin.shape[0]):
                             if 0 <row<4:
@@ -3009,42 +3276,84 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                         tab1, tab2, tab3 = st.tabs(["Excitation Properties", "Emission Properties", "Quantum Memory Properties"])
                         ## col21
                         #tab1.subheader('Excitation Properties')
-                        # Excitation Properties
-                        ppdefects_exc = load_defect_properties('Excitation properties', str_defect, chargestate_defect, host)
-                        if not ppdefects_exc.empty:
-                            refr_index = st.session_state.get("refractive_index", 1.85)
-                            ppdefects_exc["Characteristic time (ns)"] = (pd.to_numeric(ppdefects_exc["Characteristic time (ns)"], errors='coerce') * (1.85 / refr_index)).map("{:.2E}".format)
-                            ep2 = ppdefects_exc.iloc[:,3:].rename(columns={"dipole_x":"µₓ (Debye)", "dipole_y":"μᵧ (Debye)", "dipole_z":"µz (Debye)", "Intensity":"Intensity (Debye)", "Angle of excitation dipole wrt the crystal axis": "Angle of excitation dipole wrt the crystal axis (degree)"})
-                            ep2 = ep2.round(2)
-                            ep2 = ep2.T.astype(str) # FIX: ensure all data is string
-                            ep2.columns = [f'[Value {i+1}]' for i in range(len(ep2.columns))]
-                            with tab1: st.dataframe(ep2, use_container_width=True)
-                        else:
-                            with tab1: st.write("No excitation properties available.")
+                        Photophysical_properties = load_table('Excitation properties')
+                        Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
+                        Photophysical_properties["Characteristic time (ns)"]=Photophysical_properties["Characteristic time (ns)"].astype(int)
+                        Photophysical_properties["Characteristic time (ns)"] = Photophysical_properties["Characteristic time (ns)"].map("{:.2E}".format)
 
-                        # Emission Properties
-                        ppdefects_emi = load_defect_properties('Emission properties', str_defect, chargestate_defect, host)
-                        if not ppdefects_emi.empty:
-                            ppdefects_emi["Lifetime (ns)"] = (pd.to_numeric(ppdefects_emi["Lifetime (ns)"], errors='coerce') * (1.85 / refr_index)).map("{:.2E}".format)
-                            emp = ppdefects_emi.iloc[:,3:].rename(columns={"dipole_x":"µₓ (Debye)", "dipole_y":"μᵧ (Debye)", "dipole_z":"µz (Debye)", "Intensity":"Intensity (Debye)", "Angle of emission dipole wrt the crystal axis":"Angle of emission dipole wrt the crystal axis (degree)", "Configuration coordinate (amu^(1/2) \AA)":"Configuration coordinate (amu^(1/2) Å)"})
-                            emp = emp.round(2)
-                            emp = emp.T.astype(str) # FIX: ensure all data is string
-                            emp.columns = [f'[Value {i+1}]' for i in range(len(emp.columns))]
-                            with tab2: st.dataframe(emp, use_container_width=True)
-                        else:
-                            with tab2: st.write("No emission properties available.")
+                        try: 
+                            ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge]) & (Photophysical_properties['Host'] =='monolayer')]
+                        except  NameError :
+                            ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='monolayer')]
+                        except  KeyError:
+                            ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='monolayer')]
+                        ep2=ppdefects.iloc[:,3:]
+                        ep2.rename(columns={"dipole_x":"µₓ (Debye)","dipole_y":"μᵧ (Debye)","dipole_z":"µz (Debye)","Intensity":"Intensity (Debye)","Angle of excitation dipole wrt the crystal axis":"Angle of excitation dipole wrt the crystal axis (degree)"},inplace=True)
+                        ep2=ep2.T
+                        jj =1
+                        newheadcol =[]
+                        #latppdefects.iloc[1,0].replace("$","")
+                        for head in ep2.iloc[0]:
+                            newheadcol.append('[Value {i}]'.format(i=jj))
+                            jj+=1
+                        ep2.columns =newheadcol
+                        tab1.dataframe(ep2,use_container_width=True)
 
-                        # Quantum Memory Properties
-                        ppdefects_qmp = load_defect_properties('Quantum memory properties', str_defect, chargestate_defect, host)
-                        if not ppdefects_qmp.empty:
-                            qmp = ppdefects_qmp.iloc[:,3:]
-                            qmp = qmp.round(2)
-                            qmp = qmp.T.astype(str) # FIX: ensure all data is string
-                            qmp.columns = [f'[Value {i+1}]' for i in range(len(qmp.columns))]
-                            with tab3: st.dataframe(qmp, use_container_width=True)
-                        else:
-                            with tab3: st.write("No quantum memory properties available.")
+                        ## col22
+                        #col22.subheader('Emission Properties')
 
+                        Photophysical_properties = load_table('Emission properties')
+                        Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
+                        Photophysical_properties["ZPL (nm)"]=Photophysical_properties["ZPL (nm)"].astype(int)
+                        Photophysical_properties["Lifetime (ns)"]=Photophysical_properties["Lifetime (ns)"].astype(int)
+                        Photophysical_properties["Lifetime (ns)"] = Photophysical_properties["Lifetime (ns)"].map("{:.2E}".format)
+                        Photophysical_properties["Configuration coordinate (amu^(1/2) \AA)"]=Photophysical_properties["Configuration coordinate (amu^(1/2) \AA)"]
+                        Photophysical_properties["Ground-state total energy (eV)"]=Photophysical_properties["Ground-state total energy (eV)"]
+                        Photophysical_properties["Excited-state total energy (eV)"]=Photophysical_properties["Excited-state total energy (eV)"]
+
+                        try: 
+                            ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge])]
+                        except  NameError :
+                            ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                        except  KeyError:
+                            ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                        emp=ppdefects.iloc[:,3:]
+                        emp.rename(columns={"dipole_x":"µₓ (Debye)","dipole_y":"μᵧ (Debye)","dipole_z":"µz (Debye)","Intensity":"Intensity (Debye)","Angle of emission dipole wrt the crystal axis":"Angle of emission dipole wrt the crystal axis (degree)","Configuration coordinate (amu^(1/2) \AA)":"Configuration coordinate (amu^(1/2) Å)","Ground-state total energy (eV)":"Ground-state total energy (eV)","Excited-state total energy (eV)":"Excited-state total energy (eV)"},inplace=True)
+                        emp=emp.T
+                        jj =1
+                        newheadcol =[]
+                        #latppdefects.iloc[1,0].replace("$","")
+                        for head in emp.iloc[0]:
+                            newheadcol.append('[Value {i}]'.format(i=jj))
+                            jj+=1
+                        emp.columns =newheadcol
+                        tab2.dataframe(emp,use_container_width=True)
+                        
+                        #col23
+                        #col23.subheader('Quantum Memory Properties')
+                        Photophysical_properties = load_table('Quantum memory properties')
+                        Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
+                        Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"]=Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].astype(int)
+                        Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"] = Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].map("{:.2E}".format)
+                        Photophysical_properties["g (MHz)"]=Photophysical_properties["g (MHz)"].astype(int)
+                        Photophysical_properties["g (MHz)"] = Photophysical_properties["g (MHz)"].map("{:.2E}".format)
+                    
+                        try: 
+                            ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge])& (Photophysical_properties['Host'] =='monolayer')]
+                        except  NameError :
+                            ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='monolayer')]
+                        except  KeyError:
+                            ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='monolayer')]
+                        qmp = ppdefects.iloc[:,3:]
+                        qmp=qmp.T
+                        jj =1
+                        newheadcol =[]
+                        #latppdefects.iloc[1,0].replace("$","")
+                        for head in qmp.iloc[0]:
+                            newheadcol.append('[Value {i}]'.format(i=jj))
+                            jj+=1
+                        qmp.columns =newheadcol
+                        tab3.dataframe(qmp,use_container_width=True)
                 with col4:
                     with st.container(border=True):
                         st.header('Computational setting')
@@ -3067,12 +3376,6 @@ with st.container(border=False):
     [Chanaprom Cholsuk, Sujin Suwanna, Tobias Vogl, *"Advancing the hBN Defects Database through Photophysical Characterization of Bulk hBN."* 2025, arXiv:2507.18093.](https://doi.org/10.48550/arXiv.2507.18093) \n
     [Chanaprom Cholsuk, Ashkan Zand, Asli Cakan, Tobias Vogl, *"The hBN defects database: a theoretical compilation of color centers in hexagonal boron nitride."* The Journal of Physical Chemistry C, 2024, 128 (30), 12716.](https://doi.org/10.1021/acs.jpcc.4c03404) \n
     For specific properties of particular defects, please also cite the data originally published as follows:
-    ''')
-    st.markdown('''
-    Raman spectrum
-    * [Cholsuk, Chanaprom, Asli Çakan, Volker Deckert, Sujin Suwanna, and Tobias Vogl. *"Raman signatures of single point defects \
-    in hexagonal boron nitride quantum emitters."* 2025, arXiv: 2502.21118. \
-    ](https://doi.org/10.48550/arXiv.2502.21118)
     ''')
     st.markdown('''
     Quantum memory properties

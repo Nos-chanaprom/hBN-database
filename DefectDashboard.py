@@ -487,7 +487,7 @@ Search_cont = st.container(border=True)
 with Search_cont:
     st.header("Search engine for hBN defects")
     
-    Photophysical_properties = load_table('updated_data')
+    #Photophysical_properties = load_table('updated_data')
     #stash the original (vacuum) lifetime before formatting
     Photophysical_properties = load_table('updated_data')
     original_col = "Emission properties: Lifetime (ns)"
@@ -498,17 +498,16 @@ with Search_cont:
 
     ## rounding numbers
     Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)  ## select from columns 5
-    
     Photophysical_properties["Emission properties: ZPL (nm)"]=Photophysical_properties["Emission properties: ZPL (nm)"].astype(int)
-    Photophysical_properties["Excitation properties: Characteristic time (ns)"]=Photophysical_properties["Excitation properties: Characteristic time (ns)"].astype(int)
-    Photophysical_properties["Excitation properties: Characteristic time (ns)"] = Photophysical_properties["Excitation properties: Characteristic time (ns)"].map("{:.2E}".format)
-    Photophysical_properties["Emission properties: Lifetime (ns)"]=Photophysical_properties["Emission properties: Lifetime (ns)"].astype(int)
-    Photophysical_properties["Emission properties: Lifetime (ns)"] = Photophysical_properties["Emission properties: Lifetime (ns)"].map("{:.2E}".format)
-    Photophysical_properties["Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05"]=Photophysical_properties["Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05"].astype(int)
-    Photophysical_properties["Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05"] = Photophysical_properties["Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05"].map("{:.2E}".format)
-    Photophysical_properties["Quantum memory properties: g (MHz)"]=Photophysical_properties["Quantum memory properties: g (MHz)"].astype(int)
-    Photophysical_properties["Quantum memory properties: g (MHz)"] = Photophysical_properties["Quantum memory properties: g (MHz)"].map("{:.2E}".format)
-   
+
+    # Format columns for display
+    for col_name in ["Excitation properties: Characteristic time (ns)", 
+                     "Emission properties: Lifetime (ns)", 
+                     "Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05", 
+                     "Quantum memory properties: g (MHz)"]:
+        if col_name in Photophysical_properties.columns:
+            Photophysical_properties[col_name] = pd.to_numeric(Photophysical_properties[col_name], errors='coerce').fillna(0).astype(int).map("{:.2E}".format)
+
     Photophysical_properties['Defect name']=Photophysical_properties['Defect name'].map(lambda x: "${}$".format(x.replace("$","")))
     # Apply filters (renders Defect search + refractive-index)
     df_filtered = filter_dataframe(Photophysical_properties)
@@ -550,39 +549,8 @@ if selection.empty :
         (Photophysical_properties["Host"]  == "monolayer")]
     ele2 = Photophysical_properties[Photophysical_properties['Defect']=="AlNPB"]
     ele12 = pd.concat([ele1,ele2])
-
-    chosen_defect = ele12.loc[:,'Defect']
-    chosen_defect_m = chosen_defect.reset_index().drop("index", axis='columns')
-
-    chargestate_defect = ele12.loc[:,'Charge state']
-    chargestate_defect_m = chargestate_defect.reset_index().drop("index", axis='columns')
-
-    spin_transition = ele12.loc[:,'Optical spin transition']
-    spin_transition_m = spin_transition.reset_index().drop("index", axis='columns')
-
-    spin_multiplicity = ele12.loc[:,"Spin multiplicity"]
-    spin_multiplicity_m = spin_multiplicity.reset_index().drop("index", axis='columns')
-
-    host = ele12.loc[:,"Host"]
-    host_m = host.reset_index().drop("index", axis='columns')
-
     chosenlist = ele12.loc[:,['Defect','Charge state','Optical spin transition','Spin multiplicity','Host']].to_numpy()
 else:
-    chosen_defect = selection.loc[:,'Defect']
-    chosen_defect_m = chosen_defect.reset_index().drop("index", axis='columns')
-    
-    chargestate_defect = selection.loc[:,'Charge state']
-    chargestate_defect_m = chargestate_defect.reset_index().drop("index", axis='columns')
-    
-    spin_transition = selection.loc[:,'Optical spin transition']
-    spin_transition_m = spin_transition.reset_index().drop("index", axis='columns')
-
-    spin_multiplicity = selection.loc[:,"Spin multiplicity"]
-    spin_multiplicity_m = spin_multiplicity.reset_index().drop("index", axis='columns')
-
-    host = selection.loc[:,"Host"]
-    host_m = host.reset_index().drop("index", axis='columns')
-    
     chosenlist = selection.loc[:,['Defect','Charge state','Optical spin transition','Spin multiplicity','Host']].to_numpy()
 
 selection_str =[]
@@ -590,14 +558,10 @@ for ele in chosenlist:
     selection_str.append(ele[0] + " (charge state: " +str(ele[1]) + ", " +ele[2] +", " + str(ele[3]) + ", "+ str(ele[4])+")")
 tab_selection = st.tabs(selection_str)
 tabs_index =0
-for tabs in tab_selection:
+for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
     with tabs:
-        str_defect = chosen_defect_m.iloc[tabs_index,0]
-        chargestate_defect = chargestate_defect_m.iloc[tabs_index,0]
-        spin_transition = spin_transition_m.iloc[tabs_index,0]
-        spin_multiplicity = spin_multiplicity_m.iloc[tabs_index,0]
-        host = host_m.iloc[tabs_index,0]
-
+        str_defect, chargestate_defect, spin_transition, spin_multiplicity, host = chosen_defect_details
+        
         try: 
             name_change = load_table('updated_data')
             latexdefect = name_change[name_change['Defect']==str_defect]['Defect name'].reset_index().iloc[0,1]
@@ -970,7 +934,7 @@ for tabs in tab_selection:
                         numcounter+=1
                         indexcounter=indexcounter+numberint
 
-                    ## atome bonds
+                    ## atom bonds
                     atoms= atomicposition.iloc[3:]
                     for ele in atoms['properties']:
                         if  list(ele)[0] =='B':

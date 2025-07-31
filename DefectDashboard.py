@@ -1406,9 +1406,7 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                                 }
                             )
                     st.dataframe(df, hide_index=True)
-
-
-
+    
         elif host == 'monolayer':
             ##############################33 Singlet Doublet #################################    
             if spin_multiplicity == 'singlet'or spin_multiplicity == 'doublet':

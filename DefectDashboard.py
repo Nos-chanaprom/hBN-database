@@ -1597,18 +1597,7 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                 with col2:
                     with st.container(border=True):
                         ########################## atomic position data frame  ###################################
-                        if  type(chosen_defect) == str:
-                            latexdefect = 'Al_N'
-                            atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian",sep=';', header=0)        
-                        else:
-                            try: 
-                                atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
-                            except NameError or ValueError:
-                                ## latexdefect = 'Al_N'
-                                if host == 'monolayer':
-                                    atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
-                                elif host == 'bulk':
-                                    atomicposition_sin = pd.read_csv("bulk/database/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
+                        atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
                         atomicposition = pd.DataFrame(columns = ['properties', 'X','Y','Z'])
                         for row in range(atomicposition_sin.shape[0]):
                             if 0 <row<4:

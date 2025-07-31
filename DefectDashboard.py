@@ -3016,7 +3016,7 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                         # Emission Properties
                         ppdefects_emi = load_defect_properties('Emission properties', str_defect, chargestate_defect, host)
                         if not ppdefects_emi.empty:
-                            ppdefects_emi["Lifetime (ns)"] = (pd.to_numeric(ppdefects_emi["Lifetime (ns)"], errors='coerce') * (1.85 / refr_index)).map("{:.2E}".format)
+                            ppdefects_emi["Lifetime (ns)"] = (pd.to_numeric(ppdefects_emi["Lifetime (ns)"], errors='coerce') * (1.85 / refr_index)).map("{:.2f}".format)
                             emp = ppdefects_emi.iloc[:,3:].rename(columns={"dipole_x":"µₓ (Debye)", "dipole_y":"μᵧ (Debye)", "dipole_z":"µz (Debye)", "Intensity":"Intensity (Debye)", "Angle of emission dipole wrt the crystal axis":"Angle of emission dipole wrt the crystal axis (degree)", "Configuration coordinate (amu^(1/2) \AA)":"Configuration coordinate (amu^(1/2) Å)"})
                             emp = emp.T.astype(str) # FIX: ensure all data is string
                             emp.columns = [f'[Value {i+1}]' for i in range(len(emp.columns))]

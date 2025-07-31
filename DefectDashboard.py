@@ -1334,59 +1334,26 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                 band_energy_spinDown_filled_triplet = []
                 band_energy_spinDown_unfilled_triplet = []
                 fermi_energy_triplet = []
-                if host == 'monolayer':
-                    for row in range(0,512,1):
-                        if row == 0 or row == 256:
-                            df2 = df.iloc[row,0].split(" ")
-                            df_row = [ele for ele in df2 if ele.strip()]
-                            fermi_energy_triplet.append(df_row[2])
-                        elif row > 3 and row < 256: 
-                            df2 = df.iloc[row,0].split(" ")
-                            df_row = [ele for ele in df2 if ele.strip()]
-                            if round(float(df_row[2])) == 1 :
-                                band_energy_spinUp_filled_triplet.append(float(df_row[1]))
-                            elif round(float(df_row[2])) == 0:
-                                band_energy_spinUp_unfilled_triplet.append(float(df_row[1]))
-                        elif row > 259: 
-                            df2 = df.iloc[row,0].split(" ")
-                            df_row = [ele for ele in df2 if ele.strip()]
-                            if round(float(df_row[2])) == 1 :
-                                band_energy_spinDown_filled_triplet.append(float(df_row[1]))
-                            elif round(float(df_row[2])) == 0:
-                                band_energy_spinDown_unfilled_triplet.append(float(df_row[1]))
-                elif host == 'bulk':
-                    NBANDS = extract_nbands(triplet_path)
-                    for row in range(len(df)):
-                        if row == 0 or row == NBANDS + 4:    # NBANDS + 4
-                            # Extract Fermi energy
-                            df2 = df.iloc[row,0].split()
-                            #df_row = [ele for ele in df2 if ele.strip()]
-                            if len(df2) >= 3:
-                                fermi_energy_triplet.append(df2[2])
-                        elif 4 <= row < NBANDS + 4:  # NBANDS + 4
-                            # Spin-up bands
-                            df2 = df.iloc[row, 0].split()
-                            df_row = [ele for ele in df2 if ele.strip()]
-                            if len(df_row) >= 3:
-                                occupancy = round(float(df_row[2]))
-                                energy = float(df_row[1])
-                                if occupancy == 1:
-                                    band_energy_spinUp_filled_triplet.append(energy)
-                                elif occupancy == 0:
-                                    band_energy_spinUp_unfilled_triplet.append(energy)
-                        elif row > NBANDS + 9:  # NBANDS + 9
-                            # Spin-down bands
-                            df2 = df.iloc[row, 0].split()
-                            # print(df2)
-                            df_row = [ele for ele in df2 if ele.strip()]
-                            if len(df_row) >= 3:
-                                occupancy = round(float(df_row[2]))
-                                energy = float(df_row[1])
-                                if occupancy == 1:
-                                    band_energy_spinDown_filled_triplet.append(energy)
-                                elif occupancy == 0:
-                                    band_energy_spinDown_unfilled_triplet.append(energy)
-                                    
+                for row in range(0,512,1):
+                    if row == 0 or row == 256:
+                        df2 = df.iloc[row,0].split(" ")
+                        df_row = [ele for ele in df2 if ele.strip()]
+                        fermi_energy_triplet.append(df_row[2])
+                    elif row > 3 and row < 256: 
+                        df2 = df.iloc[row,0].split(" ")
+                        df_row = [ele for ele in df2 if ele.strip()]
+                        if round(float(df_row[2])) == 1 :
+                            band_energy_spinUp_filled_triplet.append(float(df_row[1]))
+                        elif round(float(df_row[2])) == 0:
+                            band_energy_spinUp_unfilled_triplet.append(float(df_row[1]))
+                    elif row > 259: 
+                        df2 = df.iloc[row,0].split(" ")
+                        df_row = [ele for ele in df2 if ele.strip()]
+                        if round(float(df_row[2])) == 1 :
+                            band_energy_spinDown_filled_triplet.append(float(df_row[1]))
+                        elif round(float(df_row[2])) == 0:
+                            band_energy_spinDown_unfilled_triplet.append(float(df_row[1]))
+                      
                 ###### Excited State ###
                 #df = pd.read_fwf(excited_triplet_path, sep=" ",header=None)  
                 df = pd.read_fwf(excited_triplet_path, sep="\s+", header=None, skip_blank_lines=True)
@@ -1396,59 +1363,26 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                 band_energy_spinDown_filled_excited_triplet = []
                 band_energy_spinDown_unfilled_excited_triplet = []
                 fermi_energy_excited_triplet_path = []
-                if host == 'monolayer':
-                    for row in range(0,512,1):
-                        if row == 0 or row == 256:
-                            df2 = df.iloc[row,0].split(" ")
-                            df_row = [ele for ele in df2 if ele.strip()]
-                            fermi_energy_excited_triplet.append(df_row[2])
-                        elif row > 3 and row < 256: 
-                            df2 = df.iloc[row,0].split(" ")
-                            df_row = [ele for ele in df2 if ele.strip()]
-                            if round(float(df_row[2])) == 1 :
-                                band_energy_spinUp_filled_excited_triplet.append(float(df_row[1]))
-                            elif round(float(df_row[2])) == 0:
-                                band_energy_spinUp_unfilled_excited_triplet.append(float(df_row[1]))
-                        elif row > 259: 
-                            df2 = df.iloc[row,0].split(" ")
-                            df_row = [ele for ele in df2 if ele.strip()]
-                            if round(float(df_row[2])) == 1 :
-                                band_energy_spinDown_filled_excited_triplet.append(float(df_row[1]))
-                            elif round(float(df_row[2])) == 0:
-                                band_energy_spinDown_unfilled_excited_triplet.append(float(df_row[1]))
-                elif host == 'bulk':
-                    NBANDS = extract_nbands(excited_triplet_path)
-                    for row in range(len(df)):
-                        if row == 0 or row == NBANDS + 4:    # NBANDS + 4
-                            # Extract Fermi energy
-                            df2 = df.iloc[row,0].split()
-                            #df_row = [ele for ele in df2 if ele.strip()]
-                            if len(df2) >= 3:
-                                fermi_energy_excited_triplet.append(df2[2])
-                        elif 4 <= row < NBANDS + 4:  # NBANDS + 4
-                            # Spin-up bands
-                            df2 = df.iloc[row, 0].split()
-                            df_row = [ele for ele in df2 if ele.strip()]
-                            if len(df_row) >= 3:
-                                occupancy = round(float(df_row[2]))
-                                energy = float(df_row[1])
-                                if occupancy == 1:
-                                    band_energy_spinUp_filled_excited_triplet.append(energy)
-                                elif occupancy == 0:
-                                    band_energy_spinUp_unfilled_excited_triplet.append(energy)
-                        elif row > NBANDS + 9:  # NBANDS + 9
-                            # Spin-down bands
-                            df2 = df.iloc[row, 0].split()
-                            # print(df2)
-                            df_row = [ele for ele in df2 if ele.strip()]
-                            if len(df_row) >= 3:
-                                occupancy = round(float(df_row[2]))
-                                energy = float(df_row[1])
-                                if occupancy == 1:
-                                    band_energy_spinDown_filled_excited_triplet.append(energy)
-                                elif occupancy == 0:
-                                    band_energy_spinDown_unfilled_excited_triplet.append(energy)
-
+                
+                for row in range(0,512,1):
+                    if row == 0 or row == 256:
+                        df2 = df.iloc[row,0].split(" ")
+                        df_row = [ele for ele in df2 if ele.strip()]
+                        fermi_energy_excited_triplet.append(df_row[2])
+                    elif row > 3 and row < 256: 
+                        df2 = df.iloc[row,0].split(" ")
+                        df_row = [ele for ele in df2 if ele.strip()]
+                        if round(float(df_row[2])) == 1 :
+                            band_energy_spinUp_filled_excited_triplet.append(float(df_row[1]))
+                        elif round(float(df_row[2])) == 0:
+                            band_energy_spinUp_unfilled_excited_triplet.append(float(df_row[1]))
+                    elif row > 259: 
+                        df2 = df.iloc[row,0].split(" ")
+                        df_row = [ele for ele in df2 if ele.strip()]
+                        if round(float(df_row[2])) == 1 :
+                            band_energy_spinDown_filled_excited_triplet.append(float(df_row[1]))
+                        elif round(float(df_row[2])) == 0:
+                            band_energy_spinDown_unfilled_excited_triplet.append(float(df_row[1]))
 
                 fermi_energy_triplet = [float(i) for i in fermi_energy_triplet]
                 fermi_energy_excited_triplet = [float(i) for i in fermi_energy_excited_triplet]
@@ -2002,7 +1936,7 @@ for tabs, chosen_defect_details in zip(tab_selection, chosenlist):
                                 with tab3: st.dataframe(qmp, use_container_width=True)
                             else:
                                 with tab3: st.write("No quantum memory properties available.")
-                                
+
                     with col4:
                         with st.container(border=True):
                             st.header('Computational setting')

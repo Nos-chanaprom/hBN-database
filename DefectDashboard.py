@@ -1211,9 +1211,9 @@ for tabs in tab_selection:
             color_map = {q: color_palette[i % len(color_palette)] for i, q in enumerate(charge_states)}
             
                     # Plot and render N-rich diagram
-            fig_rich = plot_diagram_plotly(rich_data, 'Defect Formation Energies (N-rich)')
+            #fig_rich = plot_diagram_plotly(rich_data, 'Defect Formation Energies (N-rich)')
                     # Plot and render N-poor diagram
-            fig_poor = plot_diagram_plotly(poor_data, 'Defect Formation Energies (N-poor)')
+            #fig_poor = plot_diagram_plotly(poor_data, 'Defect Formation Energies (N-poor)')
 
             ######## for displaying defect formation energy and PL
             col3, col4 = st.columns(2, gap="medium")

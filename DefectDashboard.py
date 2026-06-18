@@ -1216,22 +1216,36 @@ for tabs in tab_selection:
             fig_poor = plot_diagram_plotly(poor_data, 'Defect Formation Energies (N-poor)')
 
             ######## for displaying defect formation energy and PL
-            col3, col4 = st.columns(2,gap="medium")
+            col3, col4 = st.columns(2, gap="medium")
             with col3:
                 with st.container(border=True):
-                    st.header("Defect Formation Energy of "+"${}$".format(latexdefect))
-                    tab1, tab2 = st.tabs(["N-rich","N-poor"])
-                    with tab1:                
+                    st.header("Defect Formation Energy of " + "${}$".format(latexdefect))
+
+                    formation_condition = st.radio(
+                        "Select chemical condition",
+                        ["N-rich", "N-poor"],
+                        horizontal=True,
+                        key=f"formation_condition_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
+                    )
+
+                    if formation_condition == "N-rich":
+                        fig_form = plot_diagram_plotly(
+                            rich_data,
+                            'Defect Formation Energies (N-rich)'
+                        )
                         st.plotly_chart(
-                            fig_rich,
+                            fig_form,
                             use_container_width=True,
                             theme=None,
                             key=f"formation_energy_rich_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
                         )
-
-                    with tab2:     
+                    else:
+                        fig_form = plot_diagram_plotly(
+                            poor_data,
+                            'Defect Formation Energies (N-poor)'
+                        )
                         st.plotly_chart(
-                            fig_poor,
+                            fig_form,
                             use_container_width=True,
                             theme=None,
                             key=f"formation_energy_poor_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",

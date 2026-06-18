@@ -674,7 +674,7 @@ for tabs in tab_selection:
                 horizontal=True,
                 key=f"bulk_transition_selector_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
             )
-            spun_nummer = 4
+            spin_nummer = 4
             #for charge in charge_bulk:
             charges_to_build = [] if selected_bulk_transition == 'excited' else [selected_bulk_transition]
             for charge in charges_to_build:

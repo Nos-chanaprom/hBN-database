@@ -25,7 +25,7 @@ jobs:
         echo "::set-output name=count::$count"
 
     - name: Stop if limit reached
-      if: ${{ steps.read_count.outputs.count == '200' }}  # Stop after 200 pings
+      if: ${{ steps.read_count.outputs.count == '200' }}  # Stop after 200 pings 08.05.2026
       run: |
         echo "Ping limit reached. Stopping."
         exit 0 # Stop the workflow

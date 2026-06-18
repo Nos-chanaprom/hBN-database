@@ -54,9 +54,18 @@ with st.container(border=True):
 
 st.title("Version")
 
+st.subheader("[1.3] - 01.07.2025 ")
+with st.container(border=False):
+  st.markdown(''' Raman spectra of 100 defects in hBN monolayer are added.
+''')
+
 st.subheader("[1.2] - 01.05.2025 ")
 with st.container(border=False):
+<<<<<<< HEAD
   st.markdown(''' Values of total energies for ground and excited states are added. test-3
+=======
+  st.markdown(''' Values of total energies for ground and excited states are added.
+>>>>>>> cbf1fbc04ec25b207980f441260079819b4adc8e
 ''')
 
 st.subheader("[1.1] - 28.11.2024 ")

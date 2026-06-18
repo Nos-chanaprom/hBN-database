@@ -73,6 +73,20 @@ with st.container(border=False):
         mime="text/x-python"
     )
 
+<<<<<<< HEAD
+=======
+    url_code_example = "https://raw.githubusercontent.com/QCS-Theory/hBN-database/main/full_code_example_ZPLhistogram.ipynb"
+    response_code_example = requests.get(url_code_example)
+    file_content_code_example = response_code_example.text
+
+    st.download_button(
+        label="Download API_tutorial.ipynb",
+        data=file_content_code_example,
+        file_name="full_code_example_ZPLhistogram.ipynb",
+        mime="text/x-python"
+    )
+
+>>>>>>> cbf1fbc04ec25b207980f441260079819b4adc8e
 with st.container(border=False):
     st.markdown("""
     In your Python script or interactive session, import the function.  
@@ -161,7 +175,12 @@ with st.container(border=False):
     ["Excited-state structure", "BLOB: atomic structure file (CIF file)", "structure_excited"],
     ["Ground-state electronic structure", "BLOB: raw OUTCAR file (VASP format) for electronic structure", "band_ground"],
     ["Excited-state electronic structure", "BLOB: raw OUTCAR file (VASP format) for electronic structure", "band_excited"],
+<<<<<<< HEAD
     ["PL lineshape", "BLOB: raw PL lineshape file with the broadening parameter (γ) equal to 1", "PL"]
+=======
+    ["PL lineshape", "BLOB: raw PL lineshape file with the broadening parameter (γ) equal to 1", "PL"],
+    ["Raman spectrum", "BLOB: raw Raman spectrum file", "raman"]
+>>>>>>> cbf1fbc04ec25b207980f441260079819b4adc8e
     ]
 
     df = pd.DataFrame(table_data, columns=["Column name in .db file", "Type and description", "Option"])

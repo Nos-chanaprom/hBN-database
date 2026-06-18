@@ -17,7 +17,11 @@ import plotly.colors as pc
 import sqlite3  # Added for DB support
 
 @st.cache_data
+<<<<<<< HEAD
 def load_table(table_name: str, db_path: str = "Supplementary_database_totalE_3.db") -> pd.DataFrame:
+=======
+def load_table(table_name: str, db_path: str = "Supplementary_database_totalE_4.db") -> pd.DataFrame:
+>>>>>>> cbf1fbc04ec25b207980f441260079819b4adc8e
     """
     Load a full table from the SQLite database into a DataFrame.
     """
@@ -25,6 +29,17 @@ def load_table(table_name: str, db_path: str = "Supplementary_database_totalE_3.
     query = f'SELECT * FROM "{table_name}"'
     df = pd.read_sql_query(query, conn)
     conn.close()
+<<<<<<< HEAD
+=======
+
+    # Fix: attempt to convert all object-type columns to numeric
+    for col in df.select_dtypes(include='object').columns:
+        df[col] = pd.to_numeric(df[col], errors='ignore')  # 'ignore' avoids overwriting true strings
+        # fallback: coerce clearly numeric-looking columns
+        if df[col].str.isnumeric().any():
+            df[col] = pd.to_numeric(df[col], errors='coerce')
+
+>>>>>>> cbf1fbc04ec25b207980f441260079819b4adc8e
     return df
 
 # --- Replace Excel backend with DB backend ---
@@ -332,7 +347,13 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
                 )
                 st.session_state["refractive_index"] = refractive_index
 
+<<<<<<< HEAD
             elif column == "Excitation properties: Characteristic time (ns)" or "Emission properties: Lifetime (ns)" or "Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05" or "Quantum memory properties: g (MHz)":
+=======
+            #elif column == "Excitation properties: Characteristic time (ns)" or "Emission properties: Lifetime (ns)" or "Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05" or "Quantum memory properties: g (MHz)":
+            elif column in ("Excitation properties: Characteristic time (ns)", "Emission properties: Lifetime (ns)", 
+            "Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05", "Quantum memory properties: g (MHz)",):
+>>>>>>> cbf1fbc04ec25b207980f441260079819b4adc8e
                 df[column] = df[column].astype(float)
                 _min = float(df[column].min())
                 _max = float(df[column].max())
@@ -906,7 +927,12 @@ for tabs in tab_selection:
                     else:
                         try: 
                             atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
+<<<<<<< HEAD
                         except NameError or ValueError:
+=======
+                        #except NameError or ValueError:
+                        except (NameError, ValueError):
+>>>>>>> cbf1fbc04ec25b207980f441260079819b4adc8e
                             latexdefect = 'Al_N'
                             atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
                     atomicposition = pd.DataFrame(columns = ['properties', 'X','Y','Z'])
@@ -1320,7 +1346,12 @@ for tabs in tab_selection:
                         })
                         
                     )
+<<<<<<< HEAD
                     ep2 = ep2.T
+=======
+                    ##ep2 = ep2.T
+                    ep2 = ep2.T.astype(str) ## corrected the conversion error 31.07.2025
+>>>>>>> cbf1fbc04ec25b207980f441260079819b4adc8e
                     # 3) Rebuild your `[Value i]` headers
                     jj =1
                     newheadcol =[]
@@ -1365,7 +1396,12 @@ for tabs in tab_selection:
                         ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='bulk')]
                     emp=ppdefects.iloc[:,3:]
                     emp.rename(columns={"dipole_x":"µₓ (Debye)","dipole_y":"μᵧ (Debye)","dipole_z":"µz (Debye)","Intensity":"Intensity (Debye)","Angle of emission dipole wrt the crystal axis":"Angle of emission dipole wrt the crystal axis (degree)","Configuration coordinate (amu^(1/2) \AA)":"Configuration coordinate (amu^(1/2) Å)","Ground-state total energy (eV)":"Ground-state total energy (eV)","Excited-state total energy (eV)":"Excited-state total energy (eV)"},inplace=True)
+<<<<<<< HEAD
                     emp=emp.T
+=======
+                    ###emp=emp.T
+                    emp=emp.T.astype(str) # Fixed 31.07.2025
+>>>>>>> cbf1fbc04ec25b207980f441260079819b4adc8e
                     jj =1
                     newheadcol =[]
                             #latppdefects.iloc[1,0].replace("$","")
@@ -1391,7 +1427,12 @@ for tabs in tab_selection:
                     except  KeyError:
                         ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='bulk')]
                     qmp = ppdefects.iloc[:,3:]
+<<<<<<< HEAD
                     qmp=qmp.T
+=======
+                    ###qmp=qmp.T
+                    qmp=qmp.T.astype(str) ## Fixed 31.07.2025
+>>>>>>> cbf1fbc04ec25b207980f441260079819b4adc8e
                     jj =1
                     newheadcol =[]
                             #latppdefects.iloc[1,0].replace("$","")
@@ -1804,7 +1845,12 @@ for tabs in tab_selection:
                         else:
                             try: 
                                 atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
+<<<<<<< HEAD
                             except NameError or ValueError:
+=======
+                            #except NameError or ValueError:
+                            except (NameError, ValueError):
+>>>>>>> cbf1fbc04ec25b207980f441260079819b4adc8e
                                 ## latexdefect = 'Al_N'
                                 if host == 'monolayer':
                                     atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
@@ -2817,7 +2863,12 @@ for tabs in tab_selection:
                         else:
                             try: 
                                 atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
+<<<<<<< HEAD
                             except NameError or ValueError:
+=======
+                            #except NameError or ValueError:
+                            except (NameError, ValueError):
+>>>>>>> cbf1fbc04ec25b207980f441260079819b4adc8e
                                 latexdefect = 'Al_N'
                                 atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
                         atomicposition = pd.DataFrame(columns = ['properties', 'X','Y','Z'])
@@ -3289,7 +3340,12 @@ for tabs in tab_selection:
                             ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='monolayer')]
                         ep2=ppdefects.iloc[:,3:]
                         ep2.rename(columns={"dipole_x":"µₓ (Debye)","dipole_y":"μᵧ (Debye)","dipole_z":"µz (Debye)","Intensity":"Intensity (Debye)","Angle of excitation dipole wrt the crystal axis":"Angle of excitation dipole wrt the crystal axis (degree)"},inplace=True)
+<<<<<<< HEAD
                         ep2=ep2.T
+=======
+                        #ep2=ep2.T
+                        ep2=ep2.T.astype(str)  ## Fixed 31.07.2025
+>>>>>>> cbf1fbc04ec25b207980f441260079819b4adc8e
                         jj =1
                         newheadcol =[]
                         #latppdefects.iloc[1,0].replace("$","")
@@ -3319,7 +3375,12 @@ for tabs in tab_selection:
                             ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
                         emp=ppdefects.iloc[:,3:]
                         emp.rename(columns={"dipole_x":"µₓ (Debye)","dipole_y":"μᵧ (Debye)","dipole_z":"µz (Debye)","Intensity":"Intensity (Debye)","Angle of emission dipole wrt the crystal axis":"Angle of emission dipole wrt the crystal axis (degree)","Configuration coordinate (amu^(1/2) \AA)":"Configuration coordinate (amu^(1/2) Å)","Ground-state total energy (eV)":"Ground-state total energy (eV)","Excited-state total energy (eV)":"Excited-state total energy (eV)"},inplace=True)
+<<<<<<< HEAD
                         emp=emp.T
+=======
+                        #emp=emp.T
+                        emp=emp.T.astype(str) ## Fixed 31.07.2025
+>>>>>>> cbf1fbc04ec25b207980f441260079819b4adc8e
                         jj =1
                         newheadcol =[]
                         #latppdefects.iloc[1,0].replace("$","")
@@ -3345,7 +3406,12 @@ for tabs in tab_selection:
                         except  KeyError:
                             ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='monolayer')]
                         qmp = ppdefects.iloc[:,3:]
+<<<<<<< HEAD
                         qmp=qmp.T
+=======
+                        #qmp=qmp.T
+                        qmp=qmp.T.astype(str) # Fixed 31.07.2025
+>>>>>>> cbf1fbc04ec25b207980f441260079819b4adc8e
                         jj =1
                         newheadcol =[]
                         #latppdefects.iloc[1,0].replace("$","")
@@ -3373,11 +3439,25 @@ st.header("References")
 with st.container(border=False):
     st.markdown('''
     For using any of the data, please cite: \n
+<<<<<<< HEAD
     [Chanaprom Cholsuk, Sujin Suwanna, Tobias Vogl, *"Advancing the hBN Defects Database through Photophysical Characterization of Bulk hBN."* 2025, arXiv:2507.18093.](https://doi.org/10.48550/arXiv.2507.18093) \n
+=======
+    [Chanaprom Cholsuk, Sujin Suwanna, Tobias Vogl, *"Advancing the hBN Defects Database through Photophysical Characterization of Bulk hBN."* Journal of Materials Chemistry C, 2025, 13, 21826.](https://doi.org/10.1039/D5TC02805A) \n
+>>>>>>> cbf1fbc04ec25b207980f441260079819b4adc8e
     [Chanaprom Cholsuk, Ashkan Zand, Asli Cakan, Tobias Vogl, *"The hBN defects database: a theoretical compilation of color centers in hexagonal boron nitride."* The Journal of Physical Chemistry C, 2024, 128 (30), 12716.](https://doi.org/10.1021/acs.jpcc.4c03404) \n
     For specific properties of particular defects, please also cite the data originally published as follows:
     ''')
     st.markdown('''
+<<<<<<< HEAD
+=======
+    Raman spectrum
+    * [Cholsuk, Chanaprom, Asli Çakan, Volker Deckert, Sujin Suwanna, and Tobias Vogl. *"Raman signatures of single point defects \
+    in hexagonal boron nitride quantum emitters."* npj Computational Materials, 2025, 12 (3). \
+    ](https://doi.org/10.1038/s41524-025-01921-x)
+    ''')
+
+    st.markdown('''
+>>>>>>> cbf1fbc04ec25b207980f441260079819b4adc8e
     Quantum memory properties
     * [Cholsuk, Chanaprom, Asli Çakan, Sujin Suwanna, and Tobias Vogl. *"Identifying electronic transitions of defects \
     in hexagonal boron nitride for quantum memories."* Advanced Optical Materials, 2024, 12, 2302760. \

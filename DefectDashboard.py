@@ -674,7 +674,7 @@ for tabs in tab_selection:
                 horizontal=True,
                 key=f"bulk_transition_selector_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
             )
-
+            spun_nummer = 4
             #for charge in charge_bulk:
             charges_to_build = [] if selected_bulk_transition == 'excited' else [selected_bulk_transition]
             for charge in charges_to_build:
@@ -841,14 +841,15 @@ for tabs in tab_selection:
                 fermi_energy_excited_triplet = [float(i) for i in fermi_energy_excited_triplet]
 
                 # compute references (you can reuse ground refs or recompute)
+                triplet_ref_exc    = 1.24
+                tripletunf_ref_exc = 7.25
                 try:
                     upfreipletexc = np.array(band_energy_spinUp_filled_excited_triplet)
                     upunfreipletexc = np.array(band_energy_spinUp_unfilled_excited_triplet)
                     triplet_ref_exc     = upfreipletexc[upfreipletexc < 1.24][-1]
                     tripletunf_ref_exc  = upunfreipletexc[upunfreipletexc > 7.25][0]
                 except IndexError:
-                    triplet_ref_exc    = 1.24
-                    tripletunf_ref_exc = 7.25
+                    pass
 
                 # shift energies (unchanged)
                 fup_t_exc    = [e - triplet_ref_exc for e in band_energy_spinUp_filled_excited_triplet[-spin_nummer:]]

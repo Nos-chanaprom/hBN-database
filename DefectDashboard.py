@@ -911,10 +911,10 @@ for tabs in tab_selection:
                     st.subheader(title)
 
                     if selected_bulk_transition != 'excited':
-                        html = figs_ground[selected_bulk_transition].to_html(include_mathjax='cdn')
+                        html = figs_ground[selected_bulk_transition].to_html(include_mathjax='cdn',include_plotlyjs='cdn',full_html=False)
                         st.components.v1.html(html, width=530, height=600)
                     else:
-                        html = figs_excited[excited_charge].to_html(include_mathjax='cdn')
+                        html = figs_excited[excited_charge].to_html(include_mathjax='cdn',include_plotlyjs='cdn',full_html=False)
                         st.components.v1.html(html, width=530, height=600)
                     # Six tabs: five ground states + one excited state
                     #tab_labels = charge_bulk + ['excited']
@@ -1322,7 +1322,13 @@ for tabs in tab_selection:
                                         margin=dict(l=70, r=70, t=30, b=90),
                                         showlegend=False
                                     )                
-                            st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=550, height=600)
+                            #st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=550, height=600)
+                            html = fig.to_html(
+                                include_plotlyjs='cdn',
+                                include_mathjax='cdn',
+                                full_html=False,
+                            )
+                            st.components.v1.html(html, width=550, height=600)
                         else:
                                     # Show a message if file is not found
                             st.write(f"**Photoluminescence absent owing to a lack of two-level defect states.**")
@@ -1384,7 +1390,13 @@ for tabs in tab_selection:
                                         margin=dict(l=100, r=70, t=30, b=90),
                                         showlegend=False
                                     )                
-                            st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=550, height=600)
+                            #st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=550, height=600)
+                            html = fig.to_html(
+                                include_plotlyjs='cdn',
+                                include_mathjax='cdn',
+                                full_html=False,
+                            )
+                            st.components.v1.html(html, width=550, height=600)
                         else:
                                     # Show a message if file is not found
                             st.write(f"**Absorption spectrum absent owing to a lack of two-level defect states.**")
@@ -1909,9 +1921,21 @@ for tabs in tab_selection:
                         st.header('Kohn-Sham electronic transition')
                         tab1, tab2 = st.tabs(["Ground State","Excited State"])
                         with tab1:                
-                            st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=530, height=600)
+                            #st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=530, height=600)
+                            html = fig.to_html(
+                                include_plotlyjs='cdn',
+                                include_mathjax='cdn',
+                                full_html=False,
+                            )
+                            st.components.v1.html(html, width=530, height=600)
                         with tab2: 
-                            st.components.v1.html(fig2.to_html(include_mathjax='cdn'),width=530, height=600)
+                            #st.components.v1.html(fig2.to_html(include_mathjax='cdn'),width=530, height=600)
+                            html = fig2.to_html(
+                                include_plotlyjs='cdn',
+                                include_mathjax='cdn',
+                                full_html=False,
+                            )
+                            st.components.v1.html(html, width=530, height=600)
                 with col2:
                     with st.container(border=True):
                         ########################## atomic position data frame  ###################################
@@ -2948,9 +2972,21 @@ for tabs in tab_selection:
                         st.header('Kohn-Sham electronic transition')
                         tab1, tab2 = st.tabs(["Ground State","Excited State"])
                         with tab1:                
-                            st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=530, height=600)
+                            #st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=530, height=600)
+                            html = fig.to_html(
+                                include_plotlyjs='cdn',
+                                include_mathjax='cdn',
+                                full_html=False,
+                            )
+                            st.components.v1.html(html, width=530, height=600)
                         with tab2: 
-                            st.components.v1.html(fig2.to_html(include_mathjax='cdn'),width=530, height=600)
+                            #st.components.v1.html(fig2.to_html(include_mathjax='cdn'),width=530, height=600)
+                            html = fig2.to_html(
+                                include_plotlyjs='cdn',
+                                include_mathjax='cdn',
+                                full_html=False,
+                            )
+                            st.components.v1.html(html, width=530, height=600)
                 with col2:
                     with st.container(border=True):
                         ######################### atomic position data frame  #################################3
